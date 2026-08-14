@@ -33,7 +33,8 @@ canonical. Site and CV may use different wording for the same approved facts.
 See the [public projection contract](public-projection-contract.md) and
 [ADR 001](decisions/001-private-source-public-projection.md).
 
-The current increment intentionally contains no complete professional content,
-public projection schema, visual system, cable, CV, browser automation,
-unit-test framework, UI framework, backend, CMS, database, authentication,
-public AI, or publishing infrastructure.
+R1.1-A adds the strict public projection schema, a local empty synthetic
+projection, consumer validation, and boundary tests. It intentionally contains
+no new visible professional content, visual system, cable, CV, browser
+automation, UI framework, backend, CMS, database, authentication, public AI, or
+publishing infrastructure.

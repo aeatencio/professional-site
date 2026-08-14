@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "professional-public-projection/v1",
+  "title": "Professional public projection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "version", "publicId", "values", "representations", "metadata"],
+  "properties": {
+    "contract": { "const": "professional-public-projection/v1" },
+    "version": { "const": 1 },
+    "publicId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "values": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "value"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "kind": { "enum": ["identity", "role", "skill", "experience", "education", "project", "contact"] },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "representations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site", "cv"],
+      "properties": {
+        "site": { "$ref": "#/$defs/representations" },
+        "cv": { "$ref": "#/$defs/representations" }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generatedAt", "language"],
+      "properties": {
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "language": { "type": "string", "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$" }
+      }
+    }
+  },
+  "$defs": {
+    "representations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["factId", "text"],
+        "properties": {
+          "factId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "text": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

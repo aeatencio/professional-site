@@ -2,43 +2,43 @@
 
 ## Authority and boundary
 
-This repository is not the complete factual authority. The permanently private
-`professional-source` repository owns canonical facts, evidence references,
-permissions, and internal decisions. `professional-site` is authoritative only
-for the public representation implemented here.
+This repository is not the factual authority. The permanently private
+`professional-source` owns canonical facts, evidence references, permissions,
+approvals, and internal decisions. This repository owns only its public
+representation.
 
-The private source will produce a versioned, sanitized, validated, and
-human-approved projection reserved as `professional-public-projection/v1`. This
-repository accepts only that projection. A technically valid export does not by
-itself authorize publication.
+The accepted contract is exactly `professional-public-projection/v1`, numeric
+version `1`. The private repository is authoritative for
+`contracts/professional-public-projection.v1.schema.json`; this repository keeps
+a byte-identical copy at the same relative path for autonomous validation. A
+review command in the authority verifies equality. Builds do not compare across
+repositories and no automatic transfer bypasses human approval.
 
 ## Accepted and rejected material
 
-The consumer accepts only facts and values explicitly approved for public use,
-plus the minimum versioning and public metadata required by the eventual
-contract. Site and CV may use different copy while representing the same
-approved facts.
+The closed schema accepts only the contract identifier and version, `publicId`,
+approved `values`, independent site/CV representations, and indispensable
+generation time and language metadata. Unknown fields are rejected.
 
-The consumer rejects private evidence, internal locators, open questions,
-disputed or unapproved facts, internal editorial notes, evidentiary documents,
-secrets, unnecessary personal data, and the complete canonical source. Chats,
-copy drafts, and visual references can propose information but cannot establish
-canonical facts or publication permission.
+Private evidence, internal locators, open questions, disputed, unreviewed, or
+unapproved facts, internal editorial notes, evidentiary documents, secrets,
+unnecessary personal data, approval internals, traceability, and the canonical
+source are rejected or structurally impossible.
 
-## Consumer guarantees
+## Self-contained consumer
 
-Every commit and the complete Git history are treated as potentially public.
-Build, test, preview, and deploy are self-contained and never read, clone, mount,
-or query the private repository. No automation may grant publication permission,
-change repository visibility, publish, or deploy without human approval. Opening
-the repository and deploying the site are independent decisions.
+`data/professional-public-projection.v1.json` is the sole local input. It is an
+empty synthetic fixture until a later human-approved transfer. Run:
 
-## Future executable contract
+```powershell
+npm run projection:validate
+npm test
+npm run check
+npm run build
+```
 
-No exporter, importer, public schema, or exchange mechanism exists yet. R1.1
-will define the executable contract only after the private source has been
-structured and reviewed; this document intentionally does not speculate about
-the exact exchange-file shape.
+Scripts, tests, check, build, preview, and deploy contain no path or dependency
+on the private repository. A valid artifact is not publication authorization;
+transfer, visibility, and deployment remain separate human decisions.
 
-See [ADR 001](decisions/001-private-source-public-projection.md) for the boundary
-decision.
+See [ADR 001](decisions/001-private-source-public-projection.md).

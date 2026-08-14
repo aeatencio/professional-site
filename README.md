@@ -28,9 +28,11 @@ npm run dev      # local development server
 npm run check    # Astro and TypeScript diagnostics
 npm run build    # static production build in dist/
 npm run preview  # preview the production build
+npm test         # public-projection boundary tests
 ```
 
 Astro is installed locally through this project. Do not install project tools
-globally. See the [architecture](docs/architecture.md),
+globally. `check` and `build` first validate the repository-local projection;
+no private repository is accessed. See the [architecture](docs/architecture.md),
 [public projection contract](docs/public-projection-contract.md), and
 [DATA-BOUNDARY-001 decision](docs/decisions/001-private-source-public-projection.md).

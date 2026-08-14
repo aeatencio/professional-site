@@ -1,0 +1,14 @@
+{
+  "contract": "professional-public-projection/v1",
+  "version": 1,
+  "publicId": "synthetic-profile",
+  "values": [],
+  "representations": {
+    "site": [],
+    "cv": []
+  },
+  "metadata": {
+    "generatedAt": "2026-01-01T00:00:00.000Z",
+    "language": "es"
+  }
+}

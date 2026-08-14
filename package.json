@@ -9,11 +9,15 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run projection:validate && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "npm run projection:validate && astro check",
+    "projection:validate": "node scripts/validate-public-projection.mjs",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "astro": "^7.2.1"
   },
   "devDependencies": {

@@ -58,8 +58,9 @@ invalid, unapproved, or unavailable projection must stop ingestion. Contract
 changes require explicit version handling. Opening the code repository does not
 deploy the site, and deployment does not authorize opening the repository.
 
-No executable contract or transfer mechanism is introduced in this increment.
-R1.1 will define it after the private source is structured and reviewed.
+The decision increment introduced no executable contract or transfer mechanism.
+R1.1-A subsequently implements the local v1 consumer and empty synthetic fixture
+without transferring professional facts.
 
 ## Alternatives rejected
 
