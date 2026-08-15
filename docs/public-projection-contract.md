@@ -27,8 +27,24 @@ source are rejected or structurally impossible.
 
 ## Self-contained consumer
 
-`data/professional-public-projection.v1.json` is the sole local input. It is an
-empty synthetic fixture until a later human-approved transfer. Run:
+`data/professional-public-projection.v1.json` is the sole productive input. It
+is an empty synthetic fixture until a later human-approved transfer.
+
+`loadPublicProjection` is a generic loader for controlled callers and tests: the
+caller supplies both paths. `loadLocalPublicProjection` is the parameterless
+productive entry. It resolves only this repository's schema and projection
+relative to its own module, and the validation CLI uses that local entry. The
+generic loader does not make arbitrary caller-provided paths safe; productive
+code must use the local entry.
+
+The consumer parses both JSON files, validates the closed public schema, rejects
+prohibited private fields, and verifies identifiers and site/CV representation
+references. It does not establish factual truth, permission, approval, transfer
+authorization, repository visibility, or publication authorization.
+
+Contract synchronization is an external review operation owned by the private
+authority. Site build, check, test, preview, and deploy never compare against or
+read the private repository. Run:
 
 ```powershell
 npm run projection:validate
