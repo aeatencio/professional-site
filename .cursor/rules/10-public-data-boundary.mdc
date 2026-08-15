@@ -1,0 +1,23 @@
+---
+globs: data/**, src/data/**, lib/**, scripts/**, test/**, tests/**, public/**, docs/public-projection-contract.md, docs/decisions/**
+alwaysApply: false
+---
+
+# Public projection consumer rules
+
+- Consume only `professional-public-projection/v1` already present in this repo.
+- Never read, clone, mount, query or fetch the private source during build,
+  tests, preview or deploy.
+- Reject unknown versions, unknown fields, prohibited private/internal material
+  at any depth and missing/orphan/duplicate relations.
+- Site and CV representations are independent; shared facts do not require
+  identical copy.
+- Make error behavior consistent and contextual. Do not hide relational failures
+  behind a different undocumented interface.
+- Generic helpers may accept test paths, but production entry points must use
+  explicit repository-local files. Document the actual guarantee, not a stronger
+  one.
+- Tests must match their names: a recursive guarantee needs fixtures at several
+  meaningful depths.
+- Technical validity never authorizes publishing, deployment or repository
+  visibility.

@@ -1,0 +1,26 @@
+---
+description: SITE-V1 product, content, visual, responsive, cable and CV constraints for page, style, asset or UX work
+alwaysApply: false
+---
+
+# SITE-V1 design and product constraints
+
+- Implement the public projection; never turn visual/reference text into facts.
+- Every repository artifact and public product is English, including site copy
+  and the Software Development CV. Direct interaction with Andrés remains
+  Spanish and does not change this file language.
+- Surveda is the selected-work anchor only to the extent represented by the
+  approved projection.
+- Use generic part-time/remote availability wording; no precise capacity figure
+  unless a later approved projection contains it.
+- Use `Software Developer` for the public Manas role unless a later projection
+  explicitly changes it.
+- Preserve one continuous page, normal scrolling and semantic order: Home,
+  Experience, Background, Working together, Contact. CV is a utility, not a
+  narrative station.
+- R1 succeeds without moving cable. R2 may add deterministic S0–S3 behavior and
+  three reversible anchors. R3 hardens production and final CV.
+- The cable never carries unique information, blocks controls or consumes mobile
+  reading width. Reduced motion keeps full understanding.
+- Protect the editorial visual system and avoid generic developer-portfolio
+  tropes. Treat reference PNG copy as non-authoritative.
