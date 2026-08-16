@@ -91,3 +91,9 @@ authoritative than a dated handover summary.
   changed or untracked file, and review Git status and diff diagnostics.
 - Close every increment with: changed files; decisions; tests/results; known
   defects/risks; Git status; next step; proposed commit message.
+- Advance page structure, layout and English draft copy without waiting for
+  fact-by-fact copy approval. Andrés reviews by reading and will say when
+  something is wrong. Draft progress is not a transferred projection,
+  repository opening, deployment or publication.
+- Tell Andrés the copy and other material decisions as they are made; do not
+  wait for a batch review to report them.
