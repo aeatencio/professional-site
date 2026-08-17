@@ -23,26 +23,27 @@ This brief does not authorize literal facts or copy absent from that document.
 One continuous document with normal scrolling:
 
 1. **Home** — identity, concise present framing and primary actions.
-2. **Experience** — selected work, software chronology and current teaching/
-   technical practice.
+2. **Experience** — software chronology, current development and current/
+   earlier teaching.
 3. **Background** — completed qualification, pedagogical training and broader
    multidisciplinary study.
 4. **Working together** — suitable collaboration and generic availability.
-5. **Contact** — direct action, public links and CV.
+5. **Contact** — direct email action, broad location and public profile links.
 
-The CV is a utility available from navigation and contact, not a narrative
-chapter that the visitor must scroll through.
+The CV will be a utility rather than a narrative chapter when its independent
+content and artifact exist. Do not expose a placeholder link before then.
 
 ## Editorial priorities
 
 - Development remains the main hiring focus.
 - Teaching appears early as current professional work and part of the integrated
   trajectory.
-- Surveda is the selected-work anchor only through the approved, evidenced
-  personal contribution represented in the projection.
+- The site does not require a selected-work case. Current development is shown
+  through modest institutional, educational and site examples.
 - Historical technologies stay attached to roles and periods. Do not create a
   flat current-skills cloud.
-- Current technical practice uses cautious, evidence-backed language.
+- Current technical practice uses cautious, contextual language and does not
+  imply post-2023 commercial software employment.
 - Availability remains generic. Do not publish a precise weekly capacity unless
   a later projection deliberately contains it.
 - Public Manas role is `Software Developer` unless a later projection changes
@@ -53,11 +54,11 @@ chapter that the visitor must scroll through.
 
 - Who is Andrés professionally?
 - Does he have real software-development experience?
-- What work can I inspect?
+- How has software development continued alongside teaching?
 - What is his current professional situation?
 - How does the broad academic/teaching trajectory relate to the whole profile?
 - What kind of collaboration may fit?
-- How do I contact him or open the CV/GitHub?
+- How do I reach his public professional profiles?
 
 ## Copy discipline
 
@@ -74,8 +75,9 @@ chapter that the visitor must scroll through.
 ## Exclusions
 
 - visitor-facing AI or project estimator;
-- claims of leadership, metrics or outcomes absent from approved data;
+- claims of leadership, metrics or outcomes absent from the projection;
 - personal data beyond what the public projection explicitly permits;
-- unapproved projects or product stacks presented as personal skills;
+- product stacks presented as current personal skills without contextual
+  support;
 - teacher-CV framing or application-specific school content;
 - artificial work added to fill a portfolio grid.

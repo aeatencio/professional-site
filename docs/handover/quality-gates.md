@@ -47,7 +47,8 @@ this dated list is exact.
 - Product stack is not misread as personal contribution.
 - No superseded title, duration, certification or exact availability value
   reappears from a mockup/draft.
-- Surveda scope remains bounded to approved evidence.
+- Current-development examples remain modest and do not imply commercial
+  software employment after 2023, metrics or unverified impact.
 - Headings, names, dates, link labels and calls to action are consistent.
 
 ## Responsive and accessibility

@@ -2,20 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import projection from '../../data/professional-public-projection.v1.json';
 
-interface ContentSection {
-  heading: string;
-  paragraphs: string[];
-  groups?: ContentSection[];
-}
-
 const { shared, site } = projection;
 const { sections } = site;
-const chapters: Array<{ id: string; content: ContentSection; shifted: boolean }> = [
-  { id: 'experience', content: sections.experience, shifted: false },
-  { id: 'background', content: sections.background, shifted: true },
-  { id: 'working-together', content: sections.workingTogether, shifted: false },
-  { id: 'contact', content: sections.contact, shifted: true }
-];
 ---
 
 <BaseLayout
@@ -36,23 +24,82 @@ const chapters: Array<{ id: string; content: ContentSection; shifted: boolean }>
       </div>
     </section>
 
-    {chapters.map(({ id, content, shifted }) => (
-      <section
-        id={id}
-        class:list={['chapter', { 'chapter--shift': shifted }]}
-        aria-labelledby={`${id}-heading`}
-      >
-        <div class="chapter__body">
-          <h2 id={`${id}-heading`}>{content.heading}</h2>
-          {content.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-          {content.groups?.map((group) => (
-            <>
-              <h3>{group.heading}</h3>
-              {group.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-            </>
+    <section id="experience" class="chapter" aria-labelledby="experience-heading">
+      <div class="chapter__body chapter__body--wide">
+        <h2 id="experience-heading">{sections.experience.heading}</h2>
+        {sections.experience.paragraphs.map((paragraph) => <p class="section-intro">{paragraph}</p>)}
+
+        <div class="experience-block">
+          <h3>{sections.experience.softwareDevelopment.heading}</h3>
+          <div class="role-list">
+            {sections.experience.softwareDevelopment.roles.map((role) => (
+              <article class="role">
+                <header class="role__header">
+                  <div>
+                    <h4>{role.organization}</h4>
+                    <p class="role__title">{role.role}</p>
+                  </div>
+                  <p class="role__period">{role.period}</p>
+                </header>
+                <p>{role.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="experience-block">
+          <h3>{sections.experience.currentDevelopment.heading}</h3>
+          {sections.experience.currentDevelopment.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          <div class="content-grid">
+            {sections.experience.currentDevelopment.items.map((item) => (
+              <article class="content-item">
+                <h4>{item.heading}</h4>
+                {item.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="experience-block">
+          <h3>{sections.experience.teaching.heading}</h3>
+          {sections.experience.teaching.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section id="background" class="chapter chapter--shift" aria-labelledby="background-heading">
+      <div class="chapter__body chapter__body--wide">
+        <h2 id="background-heading">{sections.background.heading}</h2>
+        <div class="content-grid content-grid--background">
+          {sections.background.items.map((item) => (
+            <article class="content-item">
+              <h3>{item.heading}</h3>
+              {item.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+            </article>
           ))}
         </div>
-      </section>
-    ))}
+      </div>
+    </section>
+
+    <section id="working-together" class="chapter" aria-labelledby="working-together-heading">
+      <div class="chapter__body">
+        <h2 id="working-together-heading">{sections.workingTogether.heading}</h2>
+        {sections.workingTogether.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </section>
+
+    <section id="contact" class="chapter" aria-labelledby="contact-heading">
+      <div class="chapter__body">
+        <h2 id="contact-heading">{sections.contact.heading}</h2>
+        {sections.contact.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        <p class="contact-location">{shared.location}</p>
+        <ul class="contact-links">
+          <li><a href={`mailto:${shared.email}`}>{shared.email}</a></li>
+          {shared.links.map((link) => (
+            <li><a href={link.url} rel="me">{link.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
   </main>
 </BaseLayout>

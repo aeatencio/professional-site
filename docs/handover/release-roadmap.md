@@ -15,15 +15,16 @@ not the letter suffix, to determine what remains.
 
 ## R1 · Complete static editorial experience
 
-Outcome: a credible, navigable, responsive site and first functional CV source/
-PDF path that still work with cable mode `off`.
+Outcome: a credible, navigable, responsive site that works with cable mode
+`off`; CV content remains independent and may be delivered in a later release.
 
 Includes:
 
 - semantic continuous document and navigation;
 - deliberate English projection content for Home, Experience, Background, Working together
   and Contact;
-- Surveda selected-work treatment;
+- historical software roles, current development and teaching in one coherent
+  experience chapter;
 - visual tokens, typography, layout and layered-asset contract;
 - responsive desktop/tablet/mobile composition;
 - cable origin/anchor markers without relying on motion;

@@ -11,12 +11,39 @@ test('local projection is the authority for current professional copy', async ()
     projection.shared.professionalIdentity,
     'Software Developer · IT Teacher'
   );
+  assert.equal(projection.shared.email, 'aeatencio@gmail.com');
   assert.equal(projection.site.sections.experience.heading, 'Experience');
   assert.equal(projection.site.sections.background.heading, 'Background');
+  assert.deepEqual(
+    projection.site.sections.experience.softwareDevelopment.roles.map(({ organization }) => organization),
+    ['RVM Soluciones', 'Mobile Streams', 'Manas Technology Solutions']
+  );
+  assert.equal(
+    projection.site.sections.experience.currentDevelopment.heading,
+    'Current development'
+  );
+  assert.equal(
+    projection.site.sections.experience.currentDevelopment.paragraphs.length,
+    1
+  );
+  assert.equal(
+    projection.site.sections.experience.currentDevelopment.items.length,
+    3
+  );
+  assert.equal(
+    projection.site.sections.experience.teaching.heading,
+    'Teaching and technology education'
+  );
+  assert.ok(
+    projection.site.sections.experience.teaching.paragraphs.some((paragraph) =>
+      paragraph.includes('UNAHUR')
+    )
+  );
   assert.equal(
     projection.site.sections.workingTogether.heading,
     'Working together'
   );
+  assert.equal(projection.site.sections.workingTogether.paragraphs.length, 2);
   assert.equal(projection.site.sections.contact.heading, 'Contact');
   assert.deepEqual(projection.cv, {});
 });
@@ -29,9 +56,12 @@ test('Astro owns structure while professional copy stays out of page and layout 
     page.includes("import projection from '../../data/professional-public-projection.v1.json'"),
     true
   );
-  assert.equal(page.includes('Software development and IT teaching are one present trajectory.'), false);
-  assert.equal(page.includes('Selected work, a reverse chronology of software roles'), false);
-  assert.equal(page.includes('Public availability stays generic'), false);
+  assert.equal(page.includes('I’m a software developer and IT teacher based in Buenos Aires.'), false);
+  assert.equal(page.includes('RVM Soluciones'), false);
+  assert.equal(page.includes('Since moving into teaching as my main activity'), false);
+  assert.equal(page.includes('part-time, remote-friendly software work'), false);
+  assert.equal(page.includes('Buenos Aires, Argentina'), false);
+  assert.equal(page.includes('aeatencio@gmail.com'), false);
   assert.equal(page.includes('loadLocalPublicProjection'), false);
   assert.equal(layout.includes('Andrés Atencio'), false);
 });
@@ -57,5 +87,13 @@ test('public content has no workflow or private-source fields', async () => {
     'traceability'
   ]) {
     assert.equal(serialized.includes(`"${prohibited}"`), false);
+  }
+
+  for (const internalNarrative of [
+    'private factual source',
+    'public content layer',
+    'supporting content pipeline'
+  ]) {
+    assert.equal(serialized.includes(internalNarrative), false);
   }
 });

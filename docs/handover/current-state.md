@@ -14,8 +14,10 @@
 `data/professional-public-projection.v1.json` contains the current English
 professional content for SITE-V1. It is organized as:
 
-- `shared`: public name, professional identity and language;
-- `site`: title, description and five-section copy;
+- `shared`: public name, professional identity, language, broad location,
+  contact email and profile links;
+- `site`: title, description and complete five-section private-V1 copy,
+  including software roles, current development, teaching and education;
 - `cv`: currently empty and independent.
 
 The local JSON is validated against the closed v1 schema before development,
@@ -34,12 +36,14 @@ Implemented:
   document;
 - English landmarks, navigation and skip link;
 - first ivory/cobalt/orange visual-system and responsive layout;
-- professional copy sourced from the local projection;
+- complete provisional professional copy sourced from the local projection;
+- structured RVM, Mobile Streams and Manas roles; current development and
+  teaching; compact background; collaboration and contact content;
 - self-contained validation, tests and static build.
 
 Not yet complete:
 
-- final fact-rich professional copy and public contact links;
+- final factual/editorial review and publication-ready copy;
 - illustrations and static cable anchor treatment;
 - full responsive/browser accessibility QA;
 - R2 cable behavior;

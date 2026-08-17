@@ -12,8 +12,11 @@ duplicated in Astro source.
 
 The projection is organized around the real artifacts:
 
-- `shared`: English language, public name and professional identity;
-- `site`: title, description and content for the five SITE-V1 sections;
+- `shared`: English language, public name, professional identity, broad
+  location, public contact email and profile links;
+- `site`: title, description and content for the five SITE-V1 sections,
+  including explicit software roles, current-development examples, teaching
+  copy and compact education items;
 - `cv`: independent future CV copy; it may be empty until R3.
 
 It is not a public fact registry and contains no fact IDs, approvals,

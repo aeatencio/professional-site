@@ -17,14 +17,17 @@ validation.
 The closed document has six top-level fields:
 
 - `contract`, `version`, `publicId`;
-- `shared`: English language, name and professional identity;
+- `shared`: English language, name, professional identity, broad location,
+  public contact email and profile links;
 - `site`: title, description and Home, Experience, Background, Working
   together and Contact content;
 - `cv`: independent CV content, currently allowed to be empty.
 
-Home uses the shared professional identity as its H1. Other sections contain
-headings, paragraphs and optional grouped subsections. The projection contains
-no public fact ontology, `factId` relations, approval
+Home uses the shared professional identity as its H1. Experience contains
+explicit software roles, current-development examples and teaching copy.
+Background contains compact education items. Working together and Contact are
+text sections; Contact also renders shared location, email and profile links. The
+projection contains no public fact ontology, `factId` relations, approval
 actors, permissions, editorial states, audit timestamps or language-selection
 workflow.
 

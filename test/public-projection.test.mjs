@@ -22,17 +22,56 @@ const valid = () => ({
   shared: {
     language: 'en',
     name: 'Synthetic Person',
-    professionalIdentity: 'Software Developer · IT Teacher'
+    professionalIdentity: 'Software Developer · IT Teacher',
+    location: 'Synthetic City',
+    email: 'synthetic@example.com',
+    links: [{ label: 'Profile', url: 'https://example.com/profile' }]
   },
   site: {
     title: 'Synthetic professional site',
     description: 'Synthetic public description.',
     sections: {
       home: { paragraphs: ['Synthetic home copy.'] },
-      experience: { heading: 'Experience', paragraphs: [] },
-      background: { heading: 'Background', paragraphs: [] },
-      workingTogether: { heading: 'Working together', paragraphs: [] },
-      contact: { heading: 'Contact', paragraphs: [] }
+      experience: {
+        heading: 'Experience',
+        paragraphs: ['Synthetic experience summary.'],
+        softwareDevelopment: {
+          heading: 'Software development',
+          roles: [{
+            organization: 'Synthetic Organization',
+            period: '2000–2001',
+            role: 'Software Developer',
+            description: 'Synthetic role description.'
+          }]
+        },
+        currentDevelopment: {
+          heading: 'Current development',
+          paragraphs: ['Synthetic current development summary.'],
+          items: [{
+            heading: 'Synthetic project',
+            paragraphs: ['Synthetic project description.']
+          }]
+        },
+        teaching: {
+          heading: 'Teaching',
+          paragraphs: ['Synthetic teaching summary.']
+        }
+      },
+      background: {
+        heading: 'Background',
+        items: [{
+          heading: 'Synthetic education',
+          paragraphs: ['Synthetic education description.']
+        }]
+      },
+      workingTogether: {
+        heading: 'Working together',
+        paragraphs: ['Synthetic collaboration copy.']
+      },
+      contact: {
+        heading: 'Contact',
+        paragraphs: ['Synthetic contact copy.']
+      }
     }
   },
   cv: {}
@@ -57,6 +96,7 @@ test('accepts public site content without requiring equivalent CV content', () =
   const projection = valid();
   assert.deepEqual(validatePublicProjection(schema, projection), []);
   assert.ok(projection.site.sections.home.paragraphs.length > 0);
+  assert.ok(projection.site.sections.experience.softwareDevelopment.roles.length > 0);
   assert.deepEqual(projection.cv, {});
 });
 
@@ -68,6 +108,12 @@ test('productive entry validates and loads the repository-local content', async 
   assert.equal(
     projection.shared.professionalIdentity,
     'Software Developer · IT Teacher'
+  );
+  assert.equal(projection.shared.location, 'Buenos Aires, Argentina');
+  assert.equal(projection.shared.email, 'aeatencio@gmail.com');
+  assert.deepEqual(
+    projection.shared.links.map(({ label }) => label),
+    ['GitHub', 'LinkedIn']
   );
 });
 
@@ -109,6 +155,7 @@ test('closed schema rejects unknown and private fields wherever objects allow co
     projection => projection.shared,
     projection => projection.site,
     projection => projection.site.sections.home,
+    projection => projection.site.sections.experience.softwareDevelopment.roles[0],
     projection => projection.cv
   ];
 

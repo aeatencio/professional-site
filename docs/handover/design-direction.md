@@ -53,7 +53,7 @@ Do not preserve literal reference copy. Known later decisions differ:
 - mockup wording remains non-authoritative even though the site is English;
 - Manas public role is `Software Developer`, not Full-stack;
 - availability is generic, not a precise weekly range;
-- current-practice examples require factual review;
+- current-development examples remain provisional until final factual review;
 - Background's many crossing arrows must not compete with the global cable.
 
 ## Longitudinal architecture
@@ -83,9 +83,9 @@ to content.
 ## Experience
 
 - This is the longest and densest chapter.
-- Combine selected work, reverse professional chronology and current teaching/
-  practice without treating each as a generic card.
-- Surveda receives differentiated but contained treatment.
+- Combine software chronology, current development and teaching without
+  treating each as a generic card.
+- Do not force a selected-work case into this version.
 - Historical technology labels remain secondary to role, period and work.
 - The first cable anchor is associated with the notebook/spiral object.
 
@@ -105,14 +105,15 @@ to content.
   sales funnel.
 - Keep public availability generic and part-time/remote-friendly.
 - A small, well-defined piece of existing-system work is a useful entry frame,
-  if supported by approved copy.
+  as represented in the projection.
 - The third cable anchor passes beneath an orange folder clip.
 - No public AI assistant or estimator belongs here in SITE-V1.
 
 ## Contact
 
-- Resolve the editorial journey with a direct contact action, public links and
-  CV access.
+- Resolve the editorial journey with a direct email action, broad location and
+  public profile links.
+- Add CV access only when the independent CV artifact exists.
 - The cable approaches/resolves near an ordinary contact object; it does not
   plug into an AI machine or become a metaphor that carries unique meaning.
 - Contact remains fully functional in interactive, static and off modes.
@@ -163,7 +164,6 @@ controlled prototype and then implementation tests.
 
 - exact font families and loading strategy;
 - final English line lengths after real projection content;
-- Surveda screenshots/assets that add genuine understanding;
 - exact CTA hierarchy and contact resolution;
 - desktop/tablet/mobile cable geometry and whether mobile shows every segment;
 - damping/amplitude values and browser-specific fallbacks;

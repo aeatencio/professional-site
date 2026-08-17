@@ -12,11 +12,18 @@
     "shared": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["language", "name", "professionalIdentity"],
+      "required": ["language", "name", "professionalIdentity", "location", "email", "links"],
       "properties": {
         "language": { "const": "en" },
         "name": { "type": "string", "minLength": 1 },
-        "professionalIdentity": { "type": "string", "minLength": 1 }
+        "professionalIdentity": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "links": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/link" }
+        }
       }
     },
     "site": {
@@ -32,10 +39,10 @@
           "required": ["home", "experience", "background", "workingTogether", "contact"],
           "properties": {
             "home": { "$ref": "#/$defs/homeSection" },
-            "experience": { "$ref": "#/$defs/section" },
-            "background": { "$ref": "#/$defs/section" },
-            "workingTogether": { "$ref": "#/$defs/section" },
-            "contact": { "$ref": "#/$defs/section" }
+            "experience": { "$ref": "#/$defs/experienceSection" },
+            "background": { "$ref": "#/$defs/backgroundSection" },
+            "workingTogether": { "$ref": "#/$defs/textSection" },
+            "contact": { "$ref": "#/$defs/textSection" }
           }
         }
       }
@@ -48,7 +55,8 @@
         "summary": { "$ref": "#/$defs/paragraphs" },
         "sections": {
           "type": "array",
-          "items": { "$ref": "#/$defs/section" }
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/textSection" }
         }
       }
     }
@@ -56,7 +64,17 @@
   "$defs": {
     "paragraphs": {
       "type": "array",
+      "minItems": 1,
       "items": { "type": "string", "minLength": 1 }
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "url"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" }
+      }
     },
     "homeSection": {
       "type": "object",
@@ -66,16 +84,84 @@
         "paragraphs": { "$ref": "#/$defs/paragraphs" }
       }
     },
-    "section": {
+    "textSection": {
       "type": "object",
       "additionalProperties": false,
       "required": ["heading", "paragraphs"],
       "properties": {
         "heading": { "type": "string", "minLength": 1 },
-        "paragraphs": { "$ref": "#/$defs/paragraphs" },
-        "groups": {
+        "paragraphs": { "$ref": "#/$defs/paragraphs" }
+      }
+    },
+    "contentItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "paragraphs"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "paragraphs": { "$ref": "#/$defs/paragraphs" }
+      }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organization", "period", "role", "description"],
+      "properties": {
+        "organization": { "type": "string", "minLength": 1 },
+        "period": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "softwareDevelopment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "roles"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "roles": {
           "type": "array",
-          "items": { "$ref": "#/$defs/section" }
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/role" }
+        }
+      }
+    },
+    "currentDevelopment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "paragraphs", "items"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "paragraphs": { "$ref": "#/$defs/paragraphs" },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/contentItem" }
+        }
+      }
+    },
+    "experienceSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "paragraphs", "softwareDevelopment", "currentDevelopment", "teaching"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "paragraphs": { "$ref": "#/$defs/paragraphs" },
+        "softwareDevelopment": { "$ref": "#/$defs/softwareDevelopment" },
+        "currentDevelopment": { "$ref": "#/$defs/currentDevelopment" },
+        "teaching": { "$ref": "#/$defs/textSection" }
+      }
+    },
+    "backgroundSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "items"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/contentItem" }
         }
       }
     }
