@@ -6,7 +6,7 @@
 
 This directory explains SITE-V1 around the current implementation. It contains
 no private canonical payload, evidence, internal locator, candidate review or
-publication approval.
+editorial-workflow metadata.
 
 ## Reading order
 
@@ -29,25 +29,26 @@ task and never copy them into this history.
 ## Authority rule
 
 Current repository code, tests, accepted ADRs and the executable projection
-contract override a dated handover statement. An approved local
-`professional-public-projection/v1` controls public facts and representation
-values. Visual references and draft documents never do.
+contract override a dated handover statement. The local
+`professional-public-projection/v1` controls professional public copy and
+structured public values. Visual references and draft documents never do.
 
 If sources disagree, stop and identify whether the conflict is implementation,
 contract, product or wording. Do not reach into the private repo to settle it.
 
 ## Stable boundary
 
-The site consumes only an approved public projection already present in this
-repo. Build, test, preview and deploy never access `professional-source`. Every
-commit remains safe for possible public visibility.
+The site consumes only its closed public-content projection already present in
+this repo. It contains no editorial-workflow machinery. Build, test, preview and
+deploy never access `professional-source`. Every commit remains safe for
+possible public visibility.
 
 ## Operating roles
 
 - ChatGPT Project retains primary product direction and cross-conversation
   continuity.
 - Cursor is the primary coding agent and works from current repository truth.
-- Andrés authorizes facts, wording, commits, pushes, visibility, deployment and
-  publication.
+- Andrés decides facts and wording and authorizes commits, pushes, visibility,
+  deployment and publication.
 
-No handover file grants any of those approvals.
+No handover file performs any of those actions.

@@ -17,10 +17,10 @@ this dated list is exact.
 
 - Projection version and schema validate.
 - Unknown versions and fields reject.
-- Prohibited private/internal fields reject recursively at meaningful depths.
-- Missing, orphaned and duplicate relationships reject.
-- Site and CV representation IDs/copy remain independent where intended.
-- No source evidence, locator, approval, open question or full private payload
+- The closed schema excludes private/internal fields wherever content objects
+  occur.
+- Site and CV content remain independent where intended.
+- No source evidence, locator, open question, working note or full private payload
   enters this repository.
 - No code, script, test, build or deployment reads/fetches
   `professional-source`.
@@ -41,7 +41,7 @@ this dated list is exact.
 
 ## Content and coherence
 
-- Every professional statement is traceable to the approved public projection.
+- Every professional statement comes from the public-content projection.
 - English site and English CV do not contradict.
 - Historical technologies remain contextualized.
 - Product stack is not misread as personal contribution.
@@ -99,7 +99,7 @@ this dated list is exact.
 Stop and report rather than improvise when:
 
 - repository state differs materially from the task assumptions;
-- the approved projection is missing/invalid;
+- the local public projection is missing/invalid;
 - a change would require private-source access from the site build;
 - a factual/content decision is absent;
 - a new dependency or architecture expands scope materially;

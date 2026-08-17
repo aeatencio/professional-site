@@ -5,7 +5,8 @@
 Before visual R1 work depends on real content:
 
 - reconcile the public consumer implementation and tests;
-- receive only an explicitly approved `professional-public-projection/v1`;
+- receive only a deliberately exported and transferred
+  `professional-public-projection/v1`;
 - validate it locally with a self-contained build;
 - keep the full private source and review state outside this repo.
 
@@ -20,20 +21,20 @@ PDF path that still work with cable mode `off`.
 Includes:
 
 - semantic continuous document and navigation;
-- approved English content for Home, Experience, Background, Working together
+- deliberate English projection content for Home, Experience, Background, Working together
   and Contact;
 - Surveda selected-work treatment;
 - visual tokens, typography, layout and layered-asset contract;
 - responsive desktop/tablet/mobile composition;
 - cable origin/anchor markers without relying on motion;
 - accessibility, focus, reduced-motion/static fallback;
-- first reproducible Software Development CV in English, if the approved
-  projection and R1 scope are ready;
+- first reproducible Software Development CV in English, if its projection
+  content and R1 scope are ready;
 - base unit/browser/PDF checks justified by implemented behavior.
 
 R1 does not close if the profile becomes unclear with the cable hidden, mobile
 compresses the composition, essential content is absent, navigation/focus is
-broken or public data does not come from the approved projection.
+broken or professional copy does not come from the public projection.
 
 ## R2 · Deterministic cable interaction
 
@@ -62,7 +63,7 @@ Outcome: SITE-V1 and the Software Development CV are ready for immediate use.
 
 Includes:
 
-- final public copy and approved projection version;
+- final public copy and projection version;
 - final one- or two-page A4 CV PDF generated from source;
 - selectable/extractable text, correct reading order, links and metadata;
 - stable CV route and all access points;
@@ -81,7 +82,7 @@ or publication was not explicitly approved.
 - Content works without animation.
 - Every site commit remains public-safe.
 - Build never reaches the private repo.
-- Site and CV share approved facts but own their copy.
+- Site and CV share canonical facts but own their copy.
 - Later releases do not knowingly defer invisible debt that invalidates earlier
   acceptance.
 - Publication, repository visibility and deployment remain separate human gates.

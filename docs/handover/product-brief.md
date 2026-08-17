@@ -6,8 +6,8 @@ Andrés Atencio is represented as **Software Developer · IT Teacher**: a
 professional with approximately fifteen years of formal software-development
 work and current IT teaching, open to focused part-time software work.
 
-The site must communicate this naturally from approved projection content. This
-brief does not authorize literal facts or copy absent from the projection.
+The site must communicate this naturally from the public-content projection.
+This brief does not authorize literal facts or copy absent from that document.
 
 ## Language and representations
 
@@ -44,9 +44,9 @@ chapter that the visitor must scroll through.
   flat current-skills cloud.
 - Current technical practice uses cautious, evidence-backed language.
 - Availability remains generic. Do not publish a precise weekly capacity unless
-  a later approved projection explicitly contains it.
-- Public Manas role is `Software Developer` unless a later approved projection
-  changes it.
+  a later projection deliberately contains it.
+- Public Manas role is `Software Developer` unless a later projection changes
+  it.
 - Use fluent professional English wording without claiming a certification.
 
 ## What the reader should be able to answer

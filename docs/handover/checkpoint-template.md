@@ -35,7 +35,8 @@ Include exact failures and relevant counts/paths.
 - Projection path/version:
 - Private/internal fields absent:
 - No private-source dependency:
-- Site/CV representation consistency:
+- Site/CV content independence:
+- Professional copy sourced only from projection:
 - Build output inspected:
 
 ## UX/accessibility review

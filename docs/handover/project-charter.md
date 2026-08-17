@@ -35,11 +35,11 @@ rockstar/10x/wizard language and generic "passionate problem solver" copy.
 - Site works completely without the decorative cable.
 - The entire repository, including public site content and the Software
   Development CV, is English.
-- Site and CV may use different copy for shared approved facts.
+- Site and CV may use different copy for shared canonical facts.
 - No visitor-facing AI, backend, CMS, database or authentication in SITE-V1.
 - No artificial portfolio projects added only for appearance.
-- Public history contains only approved projection data and public-safe code,
-  assets and documentation.
+- Public history contains only deliberate public-projection content and
+  public-safe code, assets and documentation.
 
 ## Method
 

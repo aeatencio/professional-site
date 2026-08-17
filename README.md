@@ -5,9 +5,11 @@ Static professional site and future reproducible CV for Andrés Atencio,
 the code and complete history are maintained as safe for possible future public
 visibility. Opening the repository would not publish or deploy the site.
 
-Visible professional data will be an approved public projection produced by the
-separate, permanently private canonical source. Build, test, preview, and deploy
-must remain self-contained and never access that private repository.
+Professional copy and required public structured data come from the local
+`professional-public-projection/v1` produced in the separate, permanently
+private source repository. The projection contains content, not approval
+workflow. Build, test, preview and deploy remain self-contained and never
+access the private repository.
 
 ## Requirements
 

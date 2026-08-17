@@ -1,103 +1,55 @@
-# Current state · last reported checkpoint
+# Current state
 
-**Cut-off:** 2026-08-15
-**Verification status:** reconstructed from prior repository reports; Cursor
-must reconcile this with the actual worktree before editing.
+**Cut-off:** 2026-08-16
 
-## Workspace reconciliation at integration (2026-08-15)
+## Stack
 
-Observed locally during handover integration. This section overrides stale
-hashes and the four-file list below. Do not fetch, reset or rewrite history to
-match the older reported anchor.
+- Astro 7 static output
+- strict TypeScript
+- Node 24 and npm 11 project constraints
+- no React, backend, CMS, database, authentication or visitor-facing AI
 
-- HEAD: `a4554e52e017fb5f57f770a2fa0a9781a9a7cbca`
-  (`feat: validate and consume public projection v1 locally`), branch `main`.
-- Known pre-existing worktree paths to preserve (modified or untracked is
-  expected): `docs/public-projection-contract.md`, `lib/public-projection.mjs`,
-  `lib/load-public-projection.mjs`, `scripts/validate-public-projection.mjs`,
-  `test/public-projection.test.mjs`.
-- Durable language policy confirmed during this verification: interact with
-  Andrés in Spanish; every artifact and public product in this repository is
-  English.
+## Public content consumer
 
-## Reported anchor
+`data/professional-public-projection.v1.json` contains the current English
+professional content for SITE-V1. It is organized as:
 
-- Last reported `professional-site` commit: `c3e9859`.
-- Repository remote was private, but complete history was treated as potentially
-  public.
+- `shared`: public name, professional identity and language;
+- `site`: title, description and five-section copy;
+- `cv`: currently empty and independent.
 
-Do not fetch, reset or rewrite history to match this hash.
+The local JSON is validated against the closed v1 schema before development,
+check and build. Astro imports that same JSON directly. The previous
+`values[]`/`representations` join, privacy-key walker, relational-integrity
+checks and Vite loader URL plugin were removed.
 
-## Stack and foundation
-
-- Astro 7.2.1, static output.
-- Strict TypeScript 6.0.3.
-- Node 24 and npm 11 project constraints.
-- Local commands include `dev`, `check`, `build` and `preview`.
-- DATA-BOUNDARY-001 accepted.
-- No React, backend, CMS, database, authentication or visitor-facing AI.
-
-## Last reported consumer work
-
-Four files were originally reported as an active/recent base. Local workspace
-reconciliation added `lib/public-projection.mjs`. Preserve all five if they
-remain current work:
-
-- `docs/public-projection-contract.md`;
-- `lib/public-projection.mjs`;
-- `lib/load-public-projection.mjs`;
-- `scripts/validate-public-projection.mjs`;
-- `test/public-projection.test.mjs`.
-
-Reported behavior: a reusable loader reads schema and projection JSON, validates
-`professional-public-projection/v1` and returns only valid public data. Reported
-tests cover real loading, independent site/CV copy, version/unknown-field
-rejection, prohibited private/internal fields, relational integrity and absence
-of direct private-source dependency.
-
-Cursor must determine whether these files are committed, uncommitted or
-superseded and preserve current user work.
-
-## Review findings to reconcile
-
-1. The generic loader accepts supplied paths, while the production CLI uses
-   fixed local paths. Document the narrower real guarantee or add a separate
-   production entry point; do not claim the generic helper itself enforces repo
-   locality.
-2. Some validation failures reportedly return error arrays while relational
-   failures throw directly. All fail closed, but the public error contract may
-   need normalization and contextualization.
-3. Some test names reportedly promise recursive rejection at any depth while
-   their fixtures exercise only one nested location. Strengthen coverage or
-   narrow the names.
+The generic filesystem loader remains for validation tools and controlled
+tests. Production page rendering does not use it.
 
 ## Product state
 
-Completed:
+Implemented:
 
-- static repository foundation;
-- permanent private/public boundary;
-- executable public contract/validation reported;
-- product direction and five desktop composition checkpoints.
+- one continuous Home → Experience → Background → Working together → Contact
+  document;
+- English landmarks, navigation and skip link;
+- first ivory/cobalt/orange visual-system and responsive layout;
+- professional copy sourced from the local projection;
+- self-contained validation, tests and static build.
 
-Not yet completed:
+Not yet complete:
 
-- confirmed first real public projection in this repo;
-- full English content implementation;
-- final visual system and responsive implementation;
+- final fact-rich professional copy and public contact links;
+- illustrations and static cable anchor treatment;
+- full responsive/browser accessibility QA;
 - R2 cable behavior;
-- Software Development CV source and PDF;
-- browser/device QA, metadata, deployment and publication.
+- Software Development CV and production release.
 
-## Immediate next sequence
+## Boundary
 
-1. Integrate and review this handover.
-2. Reconcile actual Git state and the five known consumer files.
-3. Finish consumer-contract hardening if current code confirms the review
-   findings remain open.
-4. Wait for an explicitly approved public projection; do not synthesize one
-   here.
-5. Implement R1 from approved content, first without cable motion.
+Build, tests, preview and runtime never access `professional-source`. Private
+evidence, locators, factual questions and working notes are structurally absent.
+The projection contains no approval or editorial-workflow machinery.
 
-Older documents used R1.1-A/B/C labels inconsistently. Prefer concrete
-deliverables over the label.
+Transfer, commits, pushes, repository visibility, deployment and publication
+remain separate explicit human actions.

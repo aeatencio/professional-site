@@ -1,20 +1,39 @@
 ---
+import '../styles/global.css';
+import PrimaryNav from '../components/PrimaryNav.astro';
+
 interface Props {
   title: string;
+  description: string;
+  lang: string;
+  name: string;
 }
 
-const { title } = Astro.props;
+const { title, description, lang, name } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="Base técnica del sitio profesional de Andrés Atencio." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="page">
+      <header class="site-header">
+        <p class="identity">
+          <a href="#home">{name}</a>
+          <span class="identity-mark" aria-hidden="true"></span>
+        </p>
+        <PrimaryNav />
+      </header>
+      <slot />
+      <footer class="site-footer">
+        <p>{name}</p>
+      </footer>
+    </div>
   </body>
 </html>

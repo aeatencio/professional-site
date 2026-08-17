@@ -1,81 +1,70 @@
-# ADR 001: Consume an approved public projection
+# ADR 001: Consume a public-content projection
 
-- Status: Accepted
-- Date: 2026-08-13
+- Status: Accepted, revised
+- Original date: 2026-08-13
+- Revised: 2026-08-16
 - Identifier: `DATA-BOUNDARY-001`
 
 ## Context
 
-The site repository's code and history may become public. A later deletion does
-not remove sensitive content from earlier Git commits, so both the current tree
-and the complete history must remain safe before any visibility change. The site
-also needs reproducible builds that do not depend on privileged access.
+This repository and its history may become public, while professional evidence,
+private locators, uncertainty and research notes must remain private. The site
+also needs reproducible builds without privileged access.
 
-Professional work includes evidence, open questions, permissions, and editorial
-decisions that belong in a permanently private canonical source. Chats, draft
-copy, and visual references may suggest information but do not establish truth.
+The original contract represented public facts plus approval and editorial
+workflow. That did not fit the real product: Andrés is the only owner/editor,
+site copy may summarize several facts, and the CV does not need to mirror site
+content.
 
 ## Decision
 
-`professional-site` consumes only a versioned, sanitized, validated, and
-human-approved projection produced by `professional-source`, with the future
-identifier `professional-public-projection/v1`. This repository is authoritative
-for its implemented public representation, not for the complete factual source.
+Consume a versioned, closed `professional-public-projection/v1` prepared in the
+private repository and deliberately transferred here.
 
-It accepts approved public facts and the minimum public metadata required by the
-contract. It rejects private evidence, internal locators, open questions,
-disputed or unapproved facts, internal editorial notes, evidentiary documents,
-secrets, unnecessary personal data, and the full canonical source. Site and CV
-may use different copy for common approved facts.
+The projection contains finished public content organized as `shared`, `site`
+and `cv`. It contains the professional copy and public structured values used by
+the artifacts. Astro remains responsible for semantic structure, components,
+layout, styles and behavior.
 
-The shared invariants are:
+The projection contains no fact registry, fact-to-copy relations, approval
+actors, permissions, draft/approved states, per-language gates or audit
+timestamps. Site and CV content are independent; the CV may be empty.
+
+The local projection is validated against the closed schema before check,
+development and build. Astro imports the same local JSON. The site never reads,
+clones, mounts, queries or fetches `professional-source`.
+
+This revision explicitly supersedes the earlier workflow-oriented portions of
+DATA-BOUNDARY-001 while preserving its privacy boundary.
+
+## Invariants
 
 1. `professional-source` remains private.
-2. Every site commit is potentially public, including historical commits.
-3. Only a versioned, sanitized, validated, approved projection enters the site.
-4. The site excludes private and internal material, disputed or unapproved
-   facts, secrets, and unnecessary personal data.
-5. Its build is self-contained and never reads, clones, mounts, or queries the
-   private repository.
-6. A technical export alone is not publication authorization.
-7. Repository visibility and site deployment are independent decisions.
-8. Chats, copy, and visual references may propose but cannot canonize facts.
-9. Automation cannot change publication permissions or exposure without human
-   approval.
-10. The complete source is not duplicated between repositories.
-
-## Reasons
-
-Storing only the projection minimizes disclosure risk and keeps public history
-reviewable. A self-contained consumer is reproducible in environments without
-private credentials. Separating the canonical source from its representations
-also lets site and CV use suitable wording without redefining facts.
+2. Every site commit and historical commit remains public-safe.
+3. Only the closed public projection enters this repository.
+4. Private evidence, locators, questions and notes are excluded.
+5. The site is self-contained.
+6. Public professional copy has one authority: the local projection, not
+   duplicate Astro literals.
+7. Transfer, repository visibility, deployment and publication are independent
+   deliberate human actions.
 
 ## Consequences
 
-The site cannot resolve uncertainty by reaching into the private repository; an
-invalid, unapproved, or unavailable projection must stop ingestion. Contract
-changes require explicit version handling. Opening the code repository does not
-deploy the site, and deployment does not authorize opening the repository.
+The public schema itself is the allowlist, so no recursive prohibited-key walker
+or relational-integrity engine is needed. Contract changes still require
+explicit version handling and synchronization with the private authority.
 
-The decision increment introduced no executable contract or transfer mechanism.
-R1.1-A subsequently implements the local v1 consumer and empty synthetic fixture
-without transferring professional facts.
+An invalid or missing local projection stops validation. The site cannot repair
+content by reaching into the private repository.
 
 ## Alternatives rejected
 
-- Store the full source and filter it at build time: rejected because sensitive
-  material would enter both the repository and its history.
-- Read the private source during builds: rejected because privileged coupling
-  breaks self-contained reproducibility.
-- Copy facts manually from chats or drafts: rejected because proposals are not
-  canonical facts or publication approval.
-- Equate export with publication consent: rejected because validation and human
-  authorization are separate gates.
-
-## Review conditions
-
-Review this consumer decision if privacy requirements materially change, a
-self-contained build becomes impossible, or the versioned projection cannot
-represent the required public site and CV. Revision requires explicit human
-approval and a complete history-safety assessment.
+- Keep workflow flags: rejected because they model actors and states that do not
+  exist.
+- Keep public `values[]` plus `factId` representations: rejected because no real
+  consumer needs the ontology or one-to-one mapping.
+- Duplicate projection copy in Astro: rejected because it creates competing
+  public-content authorities.
+- Read the private source during builds: rejected because it breaks privacy and
+  reproducibility.

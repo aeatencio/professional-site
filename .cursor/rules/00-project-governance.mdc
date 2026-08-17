@@ -9,8 +9,8 @@ alwaysApply: true
   dated handover summaries are orientation.
 - Keep every commit safe for public history and preserve the private/public data
   boundary.
-- Never infer factual approval, projection approval, commit authority,
-  visibility, deployment or publication permission.
+- Never infer factual review or authorization for transfer, commit, visibility,
+  deployment or publication.
 - Do not stage, commit, push, change remotes/visibility, deploy or publish unless
   Andrés explicitly authorizes that exact action.
 - Keep increments small, inspect all changes and close with

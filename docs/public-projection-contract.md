@@ -3,48 +3,48 @@
 ## Authority and boundary
 
 This repository is not the factual authority. The permanently private
-`professional-source` owns canonical facts, evidence references, permissions,
-approvals, and internal decisions. This repository owns only its public
-representation.
+`professional-source` owns canonical facts and the editable public-content
+document. This repository owns presentation and consumes only the deliberately
+transferred local projection.
 
-The accepted contract is exactly `professional-public-projection/v1`, numeric
-version `1`. The private repository is authoritative for
-`contracts/professional-public-projection.v1.schema.json`; this repository keeps
-a byte-identical copy at the same relative path for autonomous validation. A
-review command in the authority verifies equality. Builds do not compare across
-repositories and no automatic transfer bypasses human approval.
+The contract is `professional-public-projection/v1`, version `1`. The private
+repository owns the authoritative schema; this repository keeps a byte-identical
+copy at `contracts/professional-public-projection.v1.schema.json` for autonomous
+validation.
 
-## Accepted and rejected material
+## Public shape
 
-The closed schema accepts only the contract identifier and version, `publicId`,
-approved `values`, independent site/CV representations, and indispensable
-generation time and language metadata. Unknown fields are rejected.
+The closed document has six top-level fields:
 
-Private evidence, internal locators, open questions, disputed, unreviewed, or
-unapproved facts, internal editorial notes, evidentiary documents, secrets,
-unnecessary personal data, approval internals, traceability, and the canonical
-source are rejected or structurally impossible.
+- `contract`, `version`, `publicId`;
+- `shared`: English language, name and professional identity;
+- `site`: title, description and Home, Experience, Background, Working
+  together and Contact content;
+- `cv`: independent CV content, currently allowed to be empty.
 
-## Self-contained consumer
+Home uses the shared professional identity as its H1. Other sections contain
+headings, paragraphs and optional grouped subsections. The projection contains
+no public fact ontology, `factId` relations, approval
+actors, permissions, editorial states, audit timestamps or language-selection
+workflow.
 
-`data/professional-public-projection.v1.json` is the sole productive input. It
-is an empty synthetic fixture until a later human-approved transfer.
+Unknown fields are rejected. That closed shape structurally excludes private
+evidence, locators, factual questions, working notes, traceability and the
+canonical source.
 
-`loadPublicProjection` is a generic loader for controlled callers and tests: the
-caller supplies both paths. `loadLocalPublicProjection` is the parameterless
-productive entry. It resolves only this repository's schema and projection
-relative to its own module, and the validation CLI uses that local entry. The
-generic loader does not make arbitrary caller-provided paths safe; productive
-code must use the local entry.
+## Consumer
 
-The consumer parses both JSON files, validates the closed public schema, rejects
-prohibited private fields, and verifies identifiers and site/CV representation
-references. It does not establish factual truth, permission, approval, transfer
-authorization, repository visibility, or publication authorization.
+`data/professional-public-projection.v1.json` is the sole productive content
+input. `loadLocalPublicProjection` validates that path for commands and tests.
+Astro imports the same JSON after `projection:validate` succeeds; it does not
+use a filesystem loader inside the prerender graph.
 
-Contract synchronization is an external review operation owned by the private
-authority. Site build, check, test, preview, and deploy never compare against or
-read the private repository. Run:
+The projection owns professional copy and public structured data. Astro owns
+HTML structure, components, layout, styling and behavior. Do not hardcode a
+second copy of professional text in Astro.
+
+The generic `loadPublicProjection` helper accepts caller-provided paths only for
+controlled tests and tools. It does not make arbitrary paths production-safe.
 
 ```powershell
 npm run projection:validate
@@ -53,8 +53,6 @@ npm run check
 npm run build
 ```
 
-Scripts, tests, check, build, preview, and deploy contain no path or dependency
-on the private repository. A valid artifact is not publication authorization;
-transfer, visibility, and deployment remain separate human decisions.
-
-See [ADR 001](decisions/001-private-source-public-projection.md).
+No command reads or compares against `professional-source`. Export and transfer
+occur outside this repository. A local projection does not authorize repository
+visibility, deployment or publication.

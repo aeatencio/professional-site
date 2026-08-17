@@ -11,7 +11,7 @@ authoritative than a dated handover summary.
 - Treat development and IT teaching as an integrated trajectory. Do not frame
   Andrés as an ex-developer or fabricate seniority, metrics, leadership or an
   AI-specialist identity.
-- Site and CV may use different wording for the same approved facts.
+- Site and CV may use different wording for the same canonical facts.
 - SITE-V1 has no visitor-facing AI, chatbot, alter ego or conversational
   backend.
 
@@ -29,17 +29,31 @@ authoritative than a dated handover summary.
 
 - Treat every commit and the complete history as potentially public, even while
   the remote is private.
-- Accept professional data only through a locally present, approved, versioned
+- Accept professional content only through a locally present, versioned
   `professional-public-projection/v1` artifact.
 - Never copy facts from chats, draft copy, visual references or the private
   source. They may guide design or propose changes, not canonize facts.
-- Do not add private evidence, internal locators, open questions, candidate-only
-  facts, approvals, internal editorial notes, secrets or unnecessary personal
-  data.
+- Do not add private evidence, internal locators, open questions, factual
+  working notes, secrets or unnecessary personal data.
 - Build, test, preview and deploy must be self-contained. They must never read,
   clone, mount, query or fetch `professional-source`.
 - A valid projection does not authorize repository visibility, deployment or
   publication. Repository opening and site deployment are independent.
+
+## Public-content invariant
+
+- `professional-source` maintains the private canonical factual source.
+- The public projection may contain finished editorial content for the site and
+  CV. It must not contain editorial-workflow machinery.
+- The projection is content, not a fact registry or approval workflow. Do not
+  add approval actors, publication permissions, draft/approved states,
+  per-language gates or site/CV symmetry requirements.
+- Presence in the deliberately exported projection is sufficient expression
+  that the content is public. Transfer, repository visibility, deployment and
+  publication remain separate explicit human actions.
+- Astro owns semantic structure, components, layout, styles and behavior. The
+  local projection owns professional copy and necessary public structured data;
+  do not keep duplicate professional copy hardcoded in Astro.
 
 ## Architecture and scope
 
@@ -91,9 +105,8 @@ authoritative than a dated handover summary.
   changed or untracked file, and review Git status and diff diagnostics.
 - Close every increment with: changed files; decisions; tests/results; known
   defects/risks; Git status; next step; proposed commit message.
-- Advance page structure, layout and English draft copy without waiting for
-  fact-by-fact copy approval. Andrés reviews by reading and will say when
-  something is wrong. Draft progress is not a transferred projection,
-  repository opening, deployment or publication.
+- Advance page structure and layout against the repository-local public
+  projection. Andrés reviews by reading and will say when content is wrong.
+  Local content changes are not repository opening, deployment or publication.
 - Tell Andrés the copy and other material decisions as they are made; do not
   wait for a batch review to report them.

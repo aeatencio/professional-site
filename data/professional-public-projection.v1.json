@@ -1,14 +1,87 @@
 {
   "contract": "professional-public-projection/v1",
   "version": 1,
-  "publicId": "synthetic-profile",
-  "values": [],
-  "representations": {
-    "site": [],
-    "cv": []
+  "publicId": "andres-atencio",
+  "shared": {
+    "language": "en",
+    "name": "Andrés Atencio",
+    "professionalIdentity": "Software Developer · IT Teacher"
   },
-  "metadata": {
-    "generatedAt": "2026-01-01T00:00:00.000Z",
-    "language": "es"
-  }
+  "site": {
+    "title": "Andrés Atencio — Software Developer · IT Teacher",
+    "description": "Professional site of Andrés Atencio, Software Developer · IT Teacher.",
+    "sections": {
+      "home": {
+        "paragraphs": [
+          "Software development and IT teaching are one present trajectory. This page introduces the work, what can be inspected, and how to start a conversation."
+        ]
+      },
+      "experience": {
+        "heading": "Experience",
+        "paragraphs": [
+          "Selected work, a reverse chronology of software roles, and current teaching sit in one chapter. Teaching belongs to the same practice; it does not replace development."
+        ],
+        "groups": [
+          {
+            "heading": "Selected work",
+            "paragraphs": [
+              "A contained piece of work the reader can look at closely — the role, the period and what was actually done. Tools stay attached to that work."
+            ]
+          },
+          {
+            "heading": "Software chronology",
+            "paragraphs": [
+              "Roles and periods in reverse order. Historical technologies remain with the jobs they belonged to, not in a separate skills list."
+            ]
+          },
+          {
+            "heading": "Teaching and practice",
+            "paragraphs": [
+              "Current IT teaching and present technical practice, written in context and without inflated claims."
+            ]
+          }
+        ]
+      },
+      "background": {
+        "heading": "Background",
+        "paragraphs": [
+          "Completed qualification, pedagogical training and broader study. Incomplete paths stay incomplete; they are not treated as degrees."
+        ],
+        "groups": [
+          {
+            "heading": "Completed qualification",
+            "paragraphs": [
+              "The finished academic credential that supports the public profile."
+            ]
+          },
+          {
+            "heading": "Pedagogical training",
+            "paragraphs": [
+              "Preparation for teaching, kept distinct from a completed degree."
+            ]
+          },
+          {
+            "heading": "Broader study",
+            "paragraphs": [
+              "Other multidisciplinary study, present as study rather than as an extra qualification."
+            ]
+          }
+        ]
+      },
+      "workingTogether": {
+        "heading": "Working together",
+        "paragraphs": [
+          "Suitable collaboration is described by the shape of the work, not by a sales pitch. A small, well-defined piece of work on an existing system is a natural way in.",
+          "Public availability stays generic: part-time and remote-friendly, without a weekly capacity."
+        ]
+      },
+      "contact": {
+        "heading": "Contact",
+        "paragraphs": [
+          "A direct way to write, public profiles and the Software Development CV belong here. The CV is a utility reached from this page, not a chapter to scroll through."
+        ]
+      }
+    }
+  },
+  "cv": {}
 }

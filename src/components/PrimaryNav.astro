@@ -1,0 +1,19 @@
+---
+const items = [
+  { href: '#home', label: 'Home' },
+  { href: '#experience', label: 'Experience' },
+  { href: '#background', label: 'Background' },
+  { href: '#working-together', label: 'Working together' },
+  { href: '#contact', label: 'Contact' }
+];
+---
+
+<nav class="primary-nav" aria-label="Primary">
+  <ul>
+    {items.map((item) => (
+      <li>
+        <a href={item.href}>{item.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
