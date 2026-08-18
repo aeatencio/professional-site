@@ -153,7 +153,17 @@ body {
 }
 
 .chapter--home {
+  align-items: start;
   padding-top: clamp(3.5rem, min(9vw, 8vh), 6rem);
+}
+
+.hero-art {
+  display: block;
+  grid-column: 2;
+  align-self: start;
+  justify-self: end;
+  width: min(100%, 21rem);
+  height: auto;
 }
 
 h1,
@@ -362,6 +372,13 @@ h4 {
 
   .chapter {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-art {
+    grid-column: 1;
+    justify-self: center;
+    width: min(100%, 20rem);
+    margin-top: 0.5rem;
   }
 
   .chapter--shift .chapter__body {
