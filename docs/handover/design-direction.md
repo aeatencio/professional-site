@@ -3,8 +3,9 @@
 ## Status
 
 The direction is consolidated enough to implement and refine. Do not restart a
-broad style search. Exact typography, final asset production, detailed cable
-physics and mobile geometry remain implementation/prototype decisions.
+broad style search. The current page remains the base. Exact production drawing,
+detailed cable physics and mobile geometry remain implementation/prototype
+decisions.
 
 ## Desired character
 
@@ -24,14 +25,21 @@ physics and mobile geometry remain implementation/prototype decisions.
 - functional sans for body/interface text;
 - open grid, controlled asymmetry and breathing room distributed throughout the
   page;
-- blue line drawings of ordinary work objects and one contained human figure in
-  the home;
+- editorial illustration that looks hand drawn rather than mechanically
+  perfected: loose, lively and slightly imperfect lines;
+- blue as the dominant structural drawing color, with orange reserved for very
+  small physical accents;
+- everyday human figures without advertising poses, recognizable objects and
+  economical compositions with substantial negative space;
 - interior sections share materials and grammar but do not become identical
   templates.
 
 Avoid dark developer themes, neon, fake terminals/code decoration, particles,
-WebGL spectacle, 3D renders, skill bars, logo grids, rigid card systems and
-generic portfolio templates.
+WebGL spectacle, skill bars, logo grids, rigid card systems and generic
+portfolio templates. Illustration must not drift toward SaaS art, stock
+characters, polished corporate vectors, 3D renders or technology infographics.
+Objects support the editorial rhythm; they do not literally explain the
+professional identity.
 
 ## Reference use
 
@@ -48,7 +56,8 @@ pixel-perfect specifications. Preserve:
 - blue structural lines and restrained orange;
 - distinct section gestures within one family.
 
-Do not preserve literal reference copy. Known later decisions differ:
+Do not preserve literal reference copy, navigation, calls to action or invented
+layouts from visual explorations. Known later decisions differ:
 
 - mockup wording remains non-authoritative even though the site is English;
 - Manas public role is `Software Developer`, not Full-stack;
@@ -75,10 +84,18 @@ to content.
 - The professional identity appears once as the H1, not repeated in an eyebrow
   or lower summary.
 - Title, concise paragraph, actions and illustration form one composition.
-- The human figure is contained and ordinary, working at a laptop.
+- The illustration shows the complete scene rather than a close crop: an
+  ordinary person working, relatively small within the available space, with a
+  contained laptop, a small round café/bar table and a visible chair.
+- A mug provides the small orange accent. A notebook or similarly minimal work
+  object may be included only if the composition needs it.
+- Generous negative space keeps the scene subordinate to and compatible with
+  the existing hero. Integrating it must not trigger a Home redesign or changes
+  to current copy, navigation or actions.
 - No footer closes the first viewport.
-- The cable originates physically from the laptop and leaves the hero
-  deliberately open toward the rest of the page.
+- The cable originates physically at a visible laptop port. Its connector and
+  first short segment must read as a plausible cable within the scene before
+  the independent page-wide route leaves the hero.
 
 ## Experience
 
@@ -115,15 +132,21 @@ to content.
   public profile links.
 - The private CV route exists independently; add a Home access point only in a
   later explicitly reviewed integration.
-- The cable approaches/resolves near an ordinary contact object; it does not
-  plug into an AI machine or become a metaphor that carries unique meaning.
+- Contact shows the cable's free end. It does not plug metaphorically into
+  another object, an AI machine or an explanation that carries unique meaning.
 - Contact remains fully functional in interactive, static and off modes.
 
 ## Cable behavior for R2
 
-The cable is a deterministic presentation layer, not the page's state machine.
-The same scroll position and responsive profile produce the same canonical
-state, independent of scroll history or velocity.
+The cable is a physical, narrative object and a presentation layer, not the
+page's state machine, a timeline, a progress bar or a causal map of the content.
+It starts with believable weight and slack at the laptop, continues beyond the
+hero and may gain or lose visible route as the visitor scrolls down or up.
+
+The same scroll position and responsive profile produce the same settled
+canonical state. Direction or velocity may influence only a small,
+scroll-linked wave, slack response or damped transient; it must not create
+continuous screensaver motion or make the final state history-dependent.
 
 | State | Settled anchors | Active region |
 | --- | --- | --- |
@@ -136,6 +159,8 @@ Required qualities:
 
 - three reversible anchors release in reverse order on upward scroll;
 - visible slack, contained inertia and small damped settling;
+- the route runs from the laptop through the notebook, map fold and folder clip
+  before ending free in Contact;
 - only the viewport-near segment needs to feel alive;
 - navigation jumps resolve directly to the canonical destination state;
 - resize/orientation changes converge immediately to the new profile;

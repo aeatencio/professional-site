@@ -27,7 +27,6 @@ Includes:
   experience chapter;
 - visual tokens, typography, layout and layered-asset contract;
 - responsive desktop/tablet/mobile composition;
-- cable origin/anchor markers without relying on motion;
 - accessibility, focus, reduced-motion/static fallback;
 - first reproducible Software Development CV in English, if its projection
   content and R1 scope are ready;
@@ -41,18 +40,56 @@ broken or professional copy does not come from the public projection.
 
 Outcome: the complete page gains one restrained interactive continuity layer.
 
-Includes:
+The following sequence is the current development plan, not an irreversible
+specification. Each step should answer its visual and technical question before
+the next one adds complexity.
 
-- S0–S3 state resolver derived from scroll position and responsive profile;
-- cable origin in laptop;
-- notebook, map-fold and folder-clip anchors;
-- reverse release on upward scroll;
-- contained slack/inertia/settling;
-- direct anchor navigation, reload, history and resize convergence;
-- explicit interactive/static/off behavior;
-- reduced motion and safe mobile simplification;
-- layered SVG/DOM ownership and occlusion contract;
-- focused unit and browser tests for state/geometry/navigation.
+### R2.1 · Static graphic system and hero
+
+- Produce the production hero SVG in the approved hand-drawn editorial
+  language.
+- Preserve the complete scene: a contained person and laptop, small round
+  café/bar table, visible chair, orange mug and generous negative space.
+- Organize the SVG for later manipulation and integrate it statically into the
+  existing hero.
+- Preserve current Home copy, navigation, actions and composition rather than
+  rebuilding the section around the asset.
+- Check desktop and mobile without adding GSAP.
+
+### R2.2 · Static journey objects
+
+- Produce and integrate the notebook, folded map, folder with orange clip and
+  Contact visual closure in the same graphic language.
+- Evaluate the complete illustrated page before adding motion.
+
+### R2.3 · Static cable route
+
+- Build the independent `JourneyCable` route from laptop to notebook, folded
+  map, folder and free end in Contact.
+- Resolve geometry and occlusion against layout and viewport profiles before
+  animation.
+- Keep content, navigation and controls complete with the cable static, hidden
+  or absent.
+
+### R2.4 · Scroll interaction
+
+- Add GSAP and ScrollTrigger only if they remain the best solution after the
+  static route is proven.
+- Progressively reveal the route and implement reversible S0–S3 hooks for
+  downward and upward scroll.
+- Add contained slack, inertia and damped settling, with an optional very small
+  response to scroll velocity or direction.
+- Preserve direct navigation, reload and history convergence; do not animate
+  text or content by default.
+- Keep the page understandable and usable if animation or JavaScript disappears.
+
+### R2.5 · Refinement
+
+- Review desktop, mobile, resize and orientation behavior.
+- Verify performance, accessibility, `prefers-reduced-motion`, no-JavaScript
+  and animation-disabled fallbacks.
+- Refine visual state changes and focused tests for state, geometry and
+  navigation.
 
 R2 does not close if scroll history changes the final state, controls are
 crossed/blocked, fast navigation queues animation, reduced motion loses

@@ -1,4 +1,4 @@
-# Architecture and R1 scope
+# Architecture and release scope
 
 SITE-V1 is a static Astro site: semantic HTML, CSS and strict TypeScript.
 Its main page is one continuous, normally scrolling document that remains
@@ -39,6 +39,56 @@ R1 establishes the static site and private print-ready CV. R2 may add cable
 behavior only when required; R3 finalizes the CV, access points and release.
 Repository visibility, deployment and publication remain separate explicit
 human actions.
+
+## Presentation ownership
+
+Illustrations, SVG structure, cable geometry and scroll interaction belong only
+to `professional-site`. The repository boundaries remain:
+
+- `professional-source` owns canonical professional facts and the editable
+  public editorial content;
+- the public projection owns transferred public professional copy and necessary
+  public structured data;
+- `professional-site` owns presentation, illustrations, SVG assets, behavior
+  and interaction.
+
+The projection is not configuration for the graphic system. Do not add
+illustration types, asset names, cable states, scroll hooks, visual permissions
+or visual-workflow flags to it.
+
+## Illustration asset architecture
+
+Production illustration uses deliberately prepared web SVG rather than treating
+one PNG or WebP as the transformable source. The hero scene should retain
+maintainable semantic groups such as `person`, `chair`, `table`, `laptop`,
+optional `notebook`, `mug` and `cable-origin`.
+
+Grouping preserves the ability to show, hide, fade, translate, scale, transform
+or sequence elements later without requiring every group to animate. An
+automatic vector trace with excessive nodes and arbitrary paths is not an
+acceptable final production asset; the SVG must remain reasonably clean and
+maintainable.
+
+The hero SVG owns only the laptop port or connector and the cable's immediate
+origin. The long page-spanning route is a separate visual component,
+provisionally named `JourneyCable`. This separation lets the site calculate
+geometry for the current layout and viewport, connect objects across sections,
+progressively reveal or hide the route, and revise its shape without editing
+the hero illustration.
+
+## Interaction stack
+
+R2 retains the lightweight site architecture: Astro, semantic HTML, inline SVG,
+CSS and strict TypeScript. It does not introduce React, Vue or another UI
+framework for the interaction.
+
+GSAP and ScrollTrigger are the intended candidates only after the graphic
+system and static `JourneyCable` route are sufficiently resolved and a concrete
+scroll-animation need remains. Do not add them speculatively. Canvas is not the
+base for this interaction; Three.js and Lottie are not central formats. Avoid
+artificial smooth scrolling, scroll-jacking, mandatory scroll snapping and
+unnecessary animation dependencies. Native browser scrolling remains normal,
+and the page remains complete without animation or JavaScript enhancement.
 
 See the [public projection contract](public-projection-contract.md) and
 [ADR 001](decisions/001-private-source-public-projection.md).
