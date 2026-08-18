@@ -1,0 +1,110 @@
+---
+import CvLayout from '../layouts/CvLayout.astro';
+import projection from '../../data/professional-public-projection.v1.json';
+
+const { shared, cv } = projection;
+---
+
+<CvLayout
+  lang={shared.language}
+  title={`${shared.name} — ${cv.title}`}
+  description={cv.profile.text}
+>
+  <main class="cv-page">
+    <header class="cv-header">
+      <div>
+        <p class="cv-document-title">{cv.title}</p>
+        <h1>{shared.name}</h1>
+        <p class="cv-identity">{shared.professionalIdentity}</p>
+      </div>
+      <address class="cv-contact">
+        <span>{shared.location}</span>
+        <a href={`mailto:${shared.email}`}>{shared.email}</a>
+        {shared.links.map((link) => (
+          <a href={link.url} rel="me">{link.label}</a>
+        ))}
+      </address>
+    </header>
+
+    <section class="cv-profile" aria-labelledby="cv-profile-heading">
+      <h2 id="cv-profile-heading">{cv.profile.heading}</h2>
+      <p>{cv.profile.text}</p>
+    </section>
+
+    <div class="cv-columns">
+      <div class="cv-primary">
+        <section aria-labelledby="cv-experience-heading">
+          <h2 id="cv-experience-heading">{cv.softwareExperience.heading}</h2>
+          <div class="cv-roles">
+            {cv.softwareExperience.roles.map((role) => (
+              <article class="cv-role">
+                <header>
+                  <div>
+                    <h3>{role.organization}</h3>
+                    <p class="cv-role-title">{role.role}</p>
+                  </div>
+                  <p class="cv-period">{role.period}</p>
+                </header>
+                <p>{role.summary}</p>
+                <p class="cv-technologies">
+                  <strong>Technologies:</strong> {role.technologies.join(', ')}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="cv-current-development-heading">
+          <h2 id="cv-current-development-heading">{cv.currentDevelopment.heading}</h2>
+          <p>{cv.currentDevelopment.text}</p>
+        </section>
+      </div>
+
+      <aside class="cv-secondary">
+        <section aria-labelledby="cv-teaching-heading">
+          <h2 id="cv-teaching-heading">{cv.teaching.heading}</h2>
+          <p>{cv.teaching.text}</p>
+        </section>
+
+        <section aria-labelledby="cv-education-heading">
+          <h2 id="cv-education-heading">{cv.education.heading}</h2>
+          <div class="cv-education-list">
+            {cv.education.items.map((item) => (
+              <article>
+                <h3>{item.institution}</h3>
+                <p>{item.qualification}</p>
+                <p class="cv-period">
+                  {item.period}{'detail' in item ? ` · ${item.detail}` : ''}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="cv-technical-heading">
+          <h2 id="cv-technical-heading">{cv.technicalBackground.heading}</h2>
+          <div class="cv-technical-group">
+            <h3>{cv.technicalBackground.professionalExperience.heading}</h3>
+            <p>{cv.technicalBackground.professionalExperience.items.join(', ')}.</p>
+          </div>
+          <div class="cv-technical-group">
+            <h3>{cv.technicalBackground.currentPractice.heading}</h3>
+            <p>{cv.technicalBackground.currentPractice.items.join(', ')}.</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="cv-languages-heading">
+          <h2 id="cv-languages-heading">{cv.languages.heading}</h2>
+          <dl class="cv-languages">
+            {cv.languages.items.map((item) => (
+              <div>
+                <dt>{item.language}</dt>
+                <dd>{item.proficiency}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      </aside>
+    </div>
+  </main>
+</CvLayout>

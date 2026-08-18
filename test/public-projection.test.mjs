@@ -77,6 +77,58 @@ const valid = () => ({
   cv: {}
 });
 
+const validCv = () => ({
+  title: 'Synthetic software CV',
+  profile: {
+    heading: 'Profile',
+    text: 'Synthetic profile summary.'
+  },
+  softwareExperience: {
+    heading: 'Software experience',
+    roles: [{
+      organization: 'Synthetic Organization',
+      role: 'Software Developer',
+      period: '2000–2001',
+      summary: 'Synthetic software role.',
+      technologies: ['Synthetic technology']
+    }]
+  },
+  currentDevelopment: {
+    heading: 'Current development',
+    text: 'Synthetic current development.'
+  },
+  teaching: {
+    heading: 'Teaching',
+    text: 'Synthetic teaching experience.'
+  },
+  education: {
+    heading: 'Education',
+    items: [{
+      institution: 'Synthetic University',
+      qualification: 'Synthetic qualification',
+      period: '2000'
+    }]
+  },
+  technicalBackground: {
+    heading: 'Technical background',
+    professionalExperience: {
+      heading: 'Professional experience',
+      items: ['Synthetic technology']
+    },
+    currentPractice: {
+      heading: 'Current practice',
+      items: ['Synthetic current practice']
+    }
+  },
+  languages: {
+    heading: 'Languages',
+    items: [{
+      language: 'Synthetic language',
+      proficiency: 'Synthetic proficiency'
+    }]
+  }
+});
+
 async function temporaryProjection(
   t,
   { schemaValue = schema, projectionValue = valid(), schemaText, projectionText } = {}
@@ -100,6 +152,16 @@ test('accepts public site content without requiring equivalent CV content', () =
   assert.deepEqual(projection.cv, {});
 });
 
+test('accepts a complete independent CV and rejects partial CV content', () => {
+  const complete = valid();
+  complete.cv = validCv();
+  assert.deepEqual(validatePublicProjection(schema, complete), []);
+
+  const partial = valid();
+  partial.cv = { title: 'Incomplete CV' };
+  assert.notDeepEqual(validatePublicProjection(schema, partial), []);
+});
+
 test('productive entry validates and loads the repository-local content', async () => {
   const projection = await loadLocalPublicProjection();
   assert.equal(projection.contract, 'professional-public-projection/v1');
@@ -114,6 +176,11 @@ test('productive entry validates and loads the repository-local content', async 
   assert.deepEqual(
     projection.shared.links.map(({ label }) => label),
     ['GitHub', 'LinkedIn']
+  );
+  assert.equal(projection.cv.title, 'Software Development CV');
+  assert.deepEqual(
+    projection.cv.softwareExperience.roles.map(({ organization }) => organization),
+    ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']
   );
 });
 
@@ -178,6 +245,11 @@ test('closed schema rejects unknown and private fields wherever objects allow co
       assert.notDeepEqual(validatePublicProjection(schema, projection), []);
     }
   }
+
+  const privateCv = valid();
+  privateCv.cv = validCv();
+  privateCv.cv.profile.privateLocators = ['private://source'];
+  assert.notDeepEqual(validatePublicProjection(schema, privateCv), []);
 });
 
 test('productive consumer contains no private-repository dependency', async () => {
@@ -187,7 +259,9 @@ test('productive consumer contains no private-repository dependency', async () =
     '../scripts/validate-public-projection.mjs',
     '../lib/load-public-projection.mjs',
     '../lib/public-projection.mjs',
-    '../src/pages/index.astro'
+    '../src/pages/index.astro',
+    '../src/pages/cv.astro',
+    '../src/layouts/CvLayout.astro'
   ];
 
   for (const file of files) {

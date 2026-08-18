@@ -17,7 +17,9 @@ The projection is organized around the real artifacts:
 - `site`: title, description and content for the five SITE-V1 sections,
   including explicit software roles, current-development examples, teaching
   copy and compact education items;
-- `cv`: independent future CV copy; it may be empty until R3.
+- `cv`: independent Software Development CV content for profile, software
+  experience, current development, teaching, education, technical background
+  and languages. The current private V1 renders it at `/cv/`.
 
 It is not a public fact registry and contains no fact IDs, approvals,
 permissions, editorial states, actors or audit timestamps. Presence in the
@@ -33,9 +35,10 @@ The closed schema is the public allowlist. Unknown fields fail validation, so
 private evidence, locators, factual questions and working notes are
 structurally excluded without a redundant blacklist walker.
 
-R1 establishes the static content and presentation. R2 may add cable behavior
-only when required; R3 consolidates the CV and release. Repository visibility,
-deployment and publication remain separate explicit human actions.
+R1 establishes the static site and private print-ready CV. R2 may add cable
+behavior only when required; R3 finalizes the CV, access points and release.
+Repository visibility, deployment and publication remain separate explicit
+human actions.
 
 See the [public projection contract](public-projection-contract.md) and
 [ADR 001](decisions/001-private-source-public-projection.md).

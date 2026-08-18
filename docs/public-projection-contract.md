@@ -21,7 +21,9 @@ The closed document has six top-level fields:
   public contact email and profile links;
 - `site`: title, description and Home, Experience, Background, Working
   together and Contact content;
-- `cv`: independent CV content, currently allowed to be empty.
+- `cv`: independent profile, software experience, current development,
+  teaching, education, technical background and languages for the Software
+  Development CV.
 
 Home uses the shared professional identity as its H1. Experience contains
 explicit software roles, current-development examples and teaching copy.
@@ -30,6 +32,10 @@ text sections; Contact also renders shared location, email and profile links. Th
 projection contains no public fact ontology, `factId` relations, approval
 actors, permissions, editorial states, audit timestamps or language-selection
 workflow.
+
+The CV object may be empty when no CV artifact exists. A populated CV is
+all-or-nothing: the closed schema requires all eight CV fields, while its
+selection and wording remain independent from the site.
 
 Unknown fields are rejected. That closed shape structurally excludes private
 evidence, locators, factual questions, working notes, traceability and the
@@ -43,8 +49,8 @@ Astro imports the same JSON after `projection:validate` succeeds; it does not
 use a filesystem loader inside the prerender graph.
 
 The projection owns professional copy and public structured data. Astro owns
-HTML structure, components, layout, styling and behavior. Do not hardcode a
-second copy of professional text in Astro.
+HTML structure, components, layout, styling, print behavior and routes,
+including `/cv/`. Do not hardcode a second copy of professional text in Astro.
 
 The generic `loadPublicProjection` helper accepts caller-provided paths only for
 controlled tests and tools. It does not make arbitrary paths production-safe.

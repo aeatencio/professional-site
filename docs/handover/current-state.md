@@ -18,7 +18,8 @@ professional content for SITE-V1. It is organized as:
   contact email and profile links;
 - `site`: title, description and complete five-section private-V1 copy,
   including software roles, current development, teaching and education;
-- `cv`: currently empty and independent.
+- `cv`: complete provisional Software Development CV content, independent from
+  the site narrative.
 
 The local JSON is validated against the closed v1 schema before development,
 check and build. Astro imports that same JSON directly. The previous
@@ -39,6 +40,8 @@ Implemented:
 - complete provisional professional copy sourced from the local projection;
 - structured RVM, Mobile Streams and Manas roles; current development and
   teaching; compact background; collaboration and contact content;
+- a responsive `/cv/` HTML route with A4 print styles, selectable text and real
+  contact/profile links;
 - self-contained validation, tests and static build.
 
 Not yet complete:
@@ -47,7 +50,7 @@ Not yet complete:
 - illustrations and static cable anchor treatment;
 - full responsive/browser accessibility QA;
 - R2 cable behavior;
-- Software Development CV and production release.
+- final CV review, public access points and production release.
 
 ## Boundary
 

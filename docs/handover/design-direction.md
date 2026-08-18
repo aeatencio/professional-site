@@ -63,7 +63,7 @@ scroll. Sections are chapters, not fixed-height slides:
 
 `Home → Experience → Background → Working together → Contact`
 
-The CV remains accessible throughout but is not a stop in the narrative.
+The CV is an independent utility route, not a stop in the site narrative.
 
 Content order, headings, navigation and links remain complete if the cable and
 all illustration disappear. No scroll-jacking, forced scenes or delayed access
@@ -113,7 +113,8 @@ to content.
 
 - Resolve the editorial journey with a direct email action, broad location and
   public profile links.
-- Add CV access only when the independent CV artifact exists.
+- The private CV route exists independently; add a Home access point only in a
+  later explicitly reviewed integration.
 - The cable approaches/resolves near an ordinary contact object; it does not
   plug into an AI machine or become a metaphor that carries unique meaning.
 - Contact remains fully functional in interactive, static and off modes.

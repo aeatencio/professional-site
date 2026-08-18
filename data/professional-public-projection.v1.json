@@ -130,5 +130,119 @@
       }
     }
   },
-  "cv": {}
+  "cv": {
+    "title": "Software Development CV",
+    "profile": {
+      "heading": "Profile",
+      "text": "Software developer with around fifteen years of professional experience building web and mobile software across business systems, digital content and product teams. I currently teach Information Technology while continuing to develop software in educational, institutional and personal contexts. I’m interested in part-time, remote-friendly work with clear responsibilities and largely asynchronous collaboration."
+    },
+    "softwareExperience": {
+      "heading": "Software experience",
+      "roles": [
+        {
+          "organization": "Manas Technology Solutions",
+          "role": "Software Developer",
+          "period": "2018–2023",
+          "summary": "Worked on web and mobile products across surveys, healthcare and online communities with distributed teams working in English.",
+          "technologies": [
+            "JavaScript/TypeScript",
+            "React",
+            "Node.js",
+            "Python",
+            "Ruby on Rails",
+            "PostgreSQL",
+            "Flutter/Dart"
+          ]
+        },
+        {
+          "organization": "Mobile Streams",
+          "role": "Software Developer",
+          "period": "2011–2018",
+          "summary": "Worked on web and mobile systems for subscription, distribution and download of digital content.",
+          "technologies": [
+            "Android/Java",
+            "C#",
+            "ASP.NET",
+            "Angular",
+            "SQL Server"
+          ]
+        },
+        {
+          "organization": "RVM Soluciones",
+          "role": "Software Developer",
+          "period": "2008–2011",
+          "summary": "Developed web and desktop applications, including logistics and distribution systems.",
+          "technologies": [
+            "C#",
+            "ASP.NET",
+            "Visual Basic",
+            "SQL Server"
+          ]
+        }
+      ]
+    },
+    "currentDevelopment": {
+      "heading": "Current development",
+      "text": "Continued software development through educational, institutional and personal projects, including a bulletin-generation tool maintained for vocational training, educational web and software projects, and this professional site."
+    },
+    "teaching": {
+      "heading": "Teaching",
+      "text": "Information Technology teacher in Buenos Aires secondary schools and IT instructor / vocational-training reference at CFP No. 7 since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
+    },
+    "education": {
+      "heading": "Education",
+      "items": [
+        {
+          "institution": "Universidad del Salvador",
+          "qualification": "Systems Information Analyst",
+          "period": "2015–2017"
+        },
+        {
+          "institution": "IES Juan B. Justo",
+          "qualification": "Pedagogical training for professionals and higher-level technicians",
+          "period": "In progress",
+          "detail": "12/15 units completed"
+        }
+      ]
+    },
+    "technicalBackground": {
+      "heading": "Technical background",
+      "professionalExperience": {
+        "heading": "Professional experience",
+        "items": [
+          "JavaScript/TypeScript",
+          "React",
+          "Node.js",
+          "Python",
+          "C#",
+          "ASP.NET",
+          "Android/Java",
+          "SQL Server",
+          "PostgreSQL"
+        ]
+      },
+      "currentPractice": {
+        "heading": "Current educational/web practice",
+        "items": [
+          "HTML",
+          "CSS",
+          "GitHub",
+          "static web development"
+        ]
+      }
+    },
+    "languages": {
+      "heading": "Languages",
+      "items": [
+        {
+          "language": "Spanish",
+          "proficiency": "Native"
+        },
+        {
+          "language": "English",
+          "proficiency": "Professional working proficiency"
+        }
+      ]
+    }
+  }
 }

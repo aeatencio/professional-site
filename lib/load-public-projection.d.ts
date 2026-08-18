@@ -10,6 +10,55 @@ export interface PublicTextSection {
 
 export type PublicContentItem = PublicTextSection;
 
+export interface PublicCvTextSection {
+  heading: string;
+  text: string;
+}
+
+export interface PublicCv {
+  title: string;
+  profile: PublicCvTextSection;
+  softwareExperience: {
+    heading: string;
+    roles: Array<{
+      organization: string;
+      role: string;
+      period: string;
+      summary: string;
+      technologies: string[];
+    }>;
+  };
+  currentDevelopment: PublicCvTextSection;
+  teaching: PublicCvTextSection;
+  education: {
+    heading: string;
+    items: Array<{
+      institution: string;
+      qualification: string;
+      period: string;
+      detail?: string;
+    }>;
+  };
+  technicalBackground: {
+    heading: string;
+    professionalExperience: {
+      heading: string;
+      items: string[];
+    };
+    currentPractice: {
+      heading: string;
+      items: string[];
+    };
+  };
+  languages: {
+    heading: string;
+    items: Array<{
+      language: string;
+      proficiency: string;
+    }>;
+  };
+}
+
 export interface PublicProjection {
   contract: 'professional-public-projection/v1';
   version: 1;
@@ -59,11 +108,7 @@ export interface PublicProjection {
       contact: PublicTextSection;
     };
   };
-  cv: {
-    headline?: string;
-    summary?: string[];
-    sections?: PublicTextSection[];
-  };
+  cv: PublicCv | Record<string, never>;
 }
 
 export function loadPublicProjection(options: {

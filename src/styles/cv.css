@@ -1,0 +1,293 @@
+.cv-document {
+  background: var(--color-ivory);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.cv-page {
+  width: min(calc(100% - 2rem), 210mm);
+  margin: 2rem auto;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  color: var(--color-ink);
+  background: #fffdf8;
+  box-shadow: 0 1rem 3rem rgba(28, 25, 22, 0.12);
+}
+
+.cv-page p {
+  margin: 0;
+}
+
+.cv-page a {
+  color: var(--color-cobalt);
+  text-underline-offset: 0.15em;
+}
+
+.cv-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem 2rem;
+  align-items: end;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid var(--color-cobalt);
+}
+
+.cv-document-title {
+  margin-bottom: 0.35rem !important;
+  color: var(--color-cobalt);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cv-page h1 {
+  margin: 0;
+  font-size: clamp(2.15rem, 5vw, 3rem);
+  line-height: 1;
+}
+
+.cv-identity {
+  margin-top: 0.45rem !important;
+  color: var(--color-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cv-contact {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-style: normal;
+  text-align: right;
+}
+
+.cv-profile {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-block: 1.4rem;
+}
+
+.cv-page h2 {
+  margin: 0 0 0.65rem;
+  color: var(--color-cobalt);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cv-profile h2 {
+  margin-top: 0.15rem;
+}
+
+.cv-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(15rem, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.cv-primary,
+.cv-secondary {
+  display: grid;
+  align-content: start;
+  gap: 1.5rem;
+}
+
+.cv-secondary {
+  padding-left: clamp(1.25rem, 3vw, 2rem);
+  border-left: 1px solid var(--color-line);
+}
+
+.cv-roles {
+  border-top: 1px solid var(--color-cobalt);
+}
+
+.cv-role {
+  padding-block: 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.cv-role header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.cv-page h3 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cv-role-title,
+.cv-period {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+}
+
+.cv-role-title {
+  margin-top: 0.1rem !important;
+}
+
+.cv-period {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.cv-technologies {
+  margin-top: 0.35rem !important;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+}
+
+.cv-education-list,
+.cv-technical-group + .cv-technical-group {
+  margin-top: 0.75rem;
+}
+
+.cv-education-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cv-education-list article > p:first-of-type,
+.cv-technical-group p {
+  margin-top: 0.18rem;
+}
+
+.cv-technical-group h3 {
+  font-size: 0.78rem;
+}
+
+.cv-technical-group p {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+}
+
+.cv-languages {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.cv-languages div {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.cv-languages dt {
+  font-weight: 700;
+}
+
+.cv-languages dd {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+@media (max-width: 50rem) {
+  .cv-page {
+    width: min(calc(100% - 1rem), 42rem);
+    margin-block: 0.5rem;
+  }
+
+  .cv-header,
+  .cv-profile,
+  .cv-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cv-contact {
+    text-align: left;
+  }
+
+  .cv-profile {
+    gap: 0.4rem;
+  }
+
+  .cv-secondary {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 12mm 14mm;
+}
+
+@media print {
+  .cv-document {
+    background: #fff;
+    font-size: 9.4pt;
+    line-height: 1.3;
+  }
+
+  .cv-page {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .cv-header {
+    gap: 5mm;
+    padding-bottom: 4mm;
+  }
+
+  .cv-page h1 {
+    font-size: 25pt;
+  }
+
+  .cv-profile {
+    grid-template-columns: 30mm minmax(0, 1fr);
+    gap: 5mm;
+    margin-block: 4.5mm;
+  }
+
+  .cv-columns {
+    grid-template-columns: minmax(0, 1.7fr) minmax(52mm, 0.9fr);
+    gap: 7mm;
+  }
+
+  .cv-primary,
+  .cv-secondary {
+    gap: 4.5mm;
+  }
+
+  .cv-secondary {
+    padding-left: 5mm;
+  }
+
+  .cv-role {
+    padding-block: 2.7mm;
+  }
+
+  .cv-role,
+  .cv-education-list article,
+  .cv-technical-group,
+  .cv-languages div {
+    break-inside: avoid;
+  }
+
+  .cv-page h2,
+  .cv-page h3 {
+    break-after: avoid;
+  }
+
+  .cv-page,
+  .cv-page * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

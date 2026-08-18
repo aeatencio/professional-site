@@ -16,7 +16,7 @@ not the letter suffix, to determine what remains.
 ## R1 · Complete static editorial experience
 
 Outcome: a credible, navigable, responsive site that works with cable mode
-`off`; CV content remains independent and may be delivered in a later release.
+`off`, plus an independent private-V1 Software Development CV.
 
 Includes:
 
@@ -60,7 +60,8 @@ information or mobile reading width is sacrificed.
 
 ## R3 · Final CV and production release
 
-Outcome: SITE-V1 and the Software Development CV are ready for immediate use.
+Outcome: SITE-V1 and the existing private Software Development CV are finalized
+and ready for immediate use.
 
 Includes:
 

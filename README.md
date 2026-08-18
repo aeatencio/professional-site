@@ -1,6 +1,6 @@
 # SITE-V1 professional site
 
-Static professional site and future reproducible CV for Andrés Atencio,
+Static professional site and reproducible private-V1 Software Development CV for Andrés Atencio,
 `Software Developer · IT Teacher`. The GitHub remote is currently private, but
 the code and complete history are maintained as safe for possible future public
 visibility. Opening the repository would not publish or deploy the site.
@@ -32,6 +32,9 @@ npm run build    # static production build in dist/
 npm run preview  # preview the production build
 npm test         # public-projection boundary tests
 ```
+
+The build produces Home at `/` and the print-ready CV at `/cv/`. The CV route
+is available for private review but is not yet linked from Home.
 
 Astro is installed locally through this project. Do not install project tools
 globally. `check` and `build` first validate the repository-local projection;

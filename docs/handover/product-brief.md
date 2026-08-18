@@ -30,8 +30,9 @@ One continuous document with normal scrolling:
 4. **Working together** — suitable collaboration and generic availability.
 5. **Contact** — direct email action, broad location and public profile links.
 
-The CV will be a utility rather than a narrative chapter when its independent
-content and artifact exist. Do not expose a placeholder link before then.
+The CV is an independent utility route rather than a narrative chapter. Its
+private V1 may be reviewed directly at `/cv/`; add Home/navigation access only
+as part of a later explicit integration decision.
 
 ## Editorial priorities
 
