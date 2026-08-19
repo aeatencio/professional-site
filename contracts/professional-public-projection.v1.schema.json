@@ -156,6 +156,16 @@
     "cv": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "title",
+        "profile",
+        "softwareExperience",
+        "currentDevelopment",
+        "teaching",
+        "education",
+        "technicalBackground",
+        "languages"
+      ],
       "properties": {
         "title": { "type": "string", "minLength": 1 },
         "profile": { "$ref": "#/$defs/cvTextSection" },
@@ -165,11 +175,7 @@
         "education": { "$ref": "#/$defs/cvEducation" },
         "technicalBackground": { "$ref": "#/$defs/cvTechnicalBackground" },
         "languages": { "$ref": "#/$defs/cvLanguages" }
-      },
-      "oneOf": [
-        { "maxProperties": 0 },
-        { "minProperties": 8 }
-      ]
+      }
     },
     "cvTextSection": {
       "type": "object",

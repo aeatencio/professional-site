@@ -13,7 +13,7 @@ Check and report:
 - closed-schema exclusion of private evidence, locators, questions, notes,
   traceability and source internals;
 - absence of approval/workflow machinery and public fact-to-copy relations;
-- independence of site and CV content, including an empty CV;
+- independence of site and CV wording, with a complete required CV;
 - absence of runtime/build/test access to `professional-source`;
 - absence of private-source strings/imports in production code and build output;
 - consistency of the loader/validator error contract;

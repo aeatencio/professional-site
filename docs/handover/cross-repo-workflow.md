@@ -11,7 +11,7 @@ The projection contains deliberate public content:
 
 - shared public name, identity and language;
 - finished SITE-V1 copy;
-- independent CV copy when it exists.
+- independent CV copy.
 
 It contains no approval workflow, permissions, actors, editorial states,
 private evidence, locators, factual questions or working notes.
@@ -25,8 +25,8 @@ private evidence, locators, factual questions or working notes.
 4. Tests and build run without any private-repository access.
 5. Andrés reviews the result and separately decides deployment/publication.
 
-Site and CV do not need equivalent content. The CV branch may remain empty until
-the CV is implemented.
+Site and CV do not need equivalent content. Independence of wording does not
+make `cv` optional; a valid projection always contains a complete CV.
 
 ## Ownership
 

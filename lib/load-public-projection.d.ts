@@ -108,7 +108,7 @@ export interface PublicProjection {
       contact: PublicTextSection;
     };
   };
-  cv: PublicCv | Record<string, never>;
+  cv: PublicCv;
 }
 
 export function loadPublicProjection(options: {

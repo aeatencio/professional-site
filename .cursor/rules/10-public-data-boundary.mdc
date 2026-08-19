@@ -12,8 +12,8 @@ alwaysApply: false
   the closed public schema.
 - Treat the projection as finished public content for the actual site and CV,
   not as a fact registry or editorial workflow.
-- Site and CV content are independent. The CV may be empty while the site is
-  complete.
+- Site and CV content are independent in selection and wording. `cv` is required
+  and must be complete.
 - Do not add approval actors, publication permissions, editorial states,
   fact-to-copy joins or symmetry requirements.
 - Keep professional copy in the projection and presentation concerns in Astro;

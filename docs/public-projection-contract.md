@@ -33,9 +33,9 @@ projection contains no public fact ontology, `factId` relations, approval
 actors, permissions, editorial states, audit timestamps or language-selection
 workflow.
 
-The CV object may be empty when no CV artifact exists. A populated CV is
-all-or-nothing: the closed schema requires all eight CV fields, while its
-selection and wording remain independent from the site.
+The CV object is required and must include all eight fields. Site and CV
+remain independent in selection and wording; that independence does not make
+the CV optional.
 
 Unknown fields are rejected. That closed shape structurally excludes private
 evidence, locators, factual questions, working notes, traceability and the

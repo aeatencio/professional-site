@@ -2,7 +2,7 @@
 
 - Status: Accepted, revised
 - Original date: 2026-08-13
-- Revised: 2026-08-16
+- Revised: 2026-08-19
 - Identifier: `DATA-BOUNDARY-001`
 
 ## Context
@@ -28,7 +28,8 @@ layout, styles and behavior.
 
 The projection contains no fact registry, fact-to-copy relations, approval
 actors, permissions, draft/approved states, per-language gates or audit
-timestamps. Site and CV content are independent; the CV may be empty.
+timestamps. Site and CV content are independent in selection and wording;
+`cv` is required and must be complete.
 
 The local projection is validated against the closed schema before check,
 development and build. Astro imports the same local JSON. The site never reads,

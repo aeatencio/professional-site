@@ -74,7 +74,7 @@ const valid = () => ({
       }
     }
   },
-  cv: {}
+  cv: validCv()
 });
 
 const validCv = () => ({
@@ -144,18 +144,19 @@ async function temporaryProjection(
   return { schemaPath, projectionPath };
 }
 
-test('accepts public site content without requiring equivalent CV content', () => {
-  const projection = valid();
-  assert.deepEqual(validatePublicProjection(schema, projection), []);
-  assert.ok(projection.site.sections.home.paragraphs.length > 0);
-  assert.ok(projection.site.sections.experience.softwareDevelopment.roles.length > 0);
-  assert.deepEqual(projection.cv, {});
-});
-
-test('accepts a complete independent CV and rejects partial CV content', () => {
+test('complete CV is required; missing, empty, and partial CV are rejected', () => {
   const complete = valid();
-  complete.cv = validCv();
   assert.deepEqual(validatePublicProjection(schema, complete), []);
+  assert.ok(complete.site.sections.home.paragraphs.length > 0);
+  assert.ok(complete.cv.softwareExperience.roles.length > 0);
+
+  const missing = valid();
+  delete missing.cv;
+  assert.notDeepEqual(validatePublicProjection(schema, missing), []);
+
+  const empty = valid();
+  empty.cv = {};
+  assert.notDeepEqual(validatePublicProjection(schema, empty), []);
 
   const partial = valid();
   partial.cv = { title: 'Incomplete CV' };
