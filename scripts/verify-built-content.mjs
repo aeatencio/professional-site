@@ -34,7 +34,7 @@ for (const text of expectedSite) {
 
 const expectedCv = [
   projection.shared.name,
-  projection.shared.professionalIdentity,
+  projection.cv.title,
   projection.shared.location,
   projection.shared.email,
   ...collectStrings(projection.shared.links),
@@ -45,7 +45,7 @@ for (const text of expectedCv) {
   assert.ok(cvHtml.includes(text), `Built CV is missing projection content: ${text}`);
 }
 
-assert.equal(siteHtml.includes(projection.cv.title), false, 'CV title leaked into Home');
+assert.equal(siteHtml.includes('Magic Calendar'), false, 'CV selected-work leaked into Home');
 assert.equal(
   cvHtml.includes(projection.site.sections.home.paragraphs[0]),
   false,

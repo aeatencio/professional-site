@@ -1,7 +1,7 @@
 .cv-document {
   background: var(--color-ivory);
   font-size: 0.875rem;
-  line-height: 1.4;
+  line-height: 1.48;
 }
 
 .cv-page {
@@ -66,17 +66,17 @@
   display: grid;
   grid-template-columns: 7.5rem minmax(0, 1fr);
   gap: 1.5rem;
-  margin-block: 1.4rem;
+  margin-block: 1.65rem;
 }
 
 .cv-page h2 {
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.75rem;
   color: var(--color-cobalt);
   font-family: var(--font-sans);
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1.25;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -94,7 +94,7 @@
 .cv-secondary {
   display: grid;
   align-content: start;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .cv-secondary {
@@ -107,7 +107,7 @@
 }
 
 .cv-role {
-  padding-block: 0.9rem;
+  padding-block: 1.05rem;
   border-bottom: 1px solid var(--color-line);
 }
 
@@ -142,10 +142,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-.cv-technologies {
-  margin-top: 0.35rem !important;
-  color: var(--color-muted);
-  font-size: 0.76rem;
+.cv-highlights {
+  margin: 0.4rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.cv-highlights li {
+  margin: 0.18rem 0;
 }
 
 .cv-education-list,
@@ -193,7 +196,7 @@
   color: var(--color-muted);
 }
 
-@media (max-width: 50rem) {
+@media screen and (max-width: 50rem) {
   .cv-page {
     width: min(calc(100% - 1rem), 42rem);
     margin-block: 0.5rem;
@@ -228,7 +231,7 @@
   .cv-document {
     background: #fff;
     font-size: 9.4pt;
-    line-height: 1.3;
+    line-height: 1.52;
   }
 
   .cv-page {
@@ -240,9 +243,19 @@
     box-shadow: none;
   }
 
+  .cv-page h2 {
+    letter-spacing: normal;
+    margin-bottom: 3mm;
+  }
+
   .cv-header {
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 5mm;
-    padding-bottom: 4mm;
+    padding-bottom: 6mm;
+  }
+
+  .cv-contact {
+    text-align: right;
   }
 
   .cv-page h1 {
@@ -252,7 +265,7 @@
   .cv-profile {
     grid-template-columns: 30mm minmax(0, 1fr);
     gap: 5mm;
-    margin-block: 4.5mm;
+    margin-block: 8mm;
   }
 
   .cv-columns {
@@ -262,21 +275,32 @@
 
   .cv-primary,
   .cv-secondary {
-    gap: 4.5mm;
+    gap: 8mm;
   }
 
   .cv-secondary {
     padding-left: 5mm;
+    border-left: 1px solid var(--color-line);
   }
 
   .cv-role {
-    padding-block: 2.7mm;
+    padding-block: 4.5mm;
+  }
+
+  .cv-education-list,
+  .cv-technical-group + .cv-technical-group {
+    margin-top: 4mm;
+  }
+
+  .cv-education-list {
+    gap: 4mm;
   }
 
   .cv-role,
   .cv-education-list article,
   .cv-technical-group,
-  .cv-languages div {
+  .cv-languages div,
+  .cv-highlights li {
     break-inside: avoid;
   }
 

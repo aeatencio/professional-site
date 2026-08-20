@@ -131,10 +131,10 @@
     }
   },
   "cv": {
-    "title": "Software Development CV",
+    "title": "Software Developer",
     "profile": {
       "heading": "Profile",
-      "text": "Software developer with around fifteen years of professional experience building web and mobile software across business systems, digital content and product teams. I currently teach Information Technology while continuing to develop software in educational, institutional and personal contexts. I’m interested in part-time, remote-friendly work with clear responsibilities and largely asynchronous collaboration."
+      "text": "Software developer with around fifteen years of professional experience on existing web and mobile products, including features, bug fixes, APIs, integrations, data work and maintenance. I currently teach Information Technology. Available for remote part-time contract work."
     },
     "softwareExperience": {
       "heading": "Software experience",
@@ -143,22 +143,26 @@
           "organization": "Manas Technology Solutions",
           "role": "Software Developer",
           "period": "2018–2023",
-          "summary": "Worked on web and mobile products across surveys, healthcare and online communities with distributed teams working in English.",
+          "summary": "Worked on existing web and mobile products across surveys, healthcare and online communities, in distributed teams working in English.",
           "technologies": [
-            "JavaScript/TypeScript",
+            "JavaScript",
             "React",
-            "Node.js",
-            "Python",
-            "Ruby on Rails",
             "PostgreSQL",
-            "Flutter/Dart"
+            "Node.js",
+            "TypeScript",
+            "Python"
+          ],
+          "highlights": [
+            "Delivered features, fixes, integrations and data work on products already in use.",
+            "On Surveda, contributed questionnaire export, established a unit-test base, reproduced bugs through tests, and fixed them while keeping coverage.",
+            "On Magic Calendar, an operating-room utilization product, worked mainly on front-end interfaces with some back-end work."
           ]
         },
         {
           "organization": "Mobile Streams",
           "role": "Software Developer",
           "period": "2011–2018",
-          "summary": "Worked on web and mobile systems for subscription, distribution and download of digital content.",
+          "summary": "Worked on web and mobile systems for subscription, distribution and download of digital content, including APIs, integrations and SQL-backed application work.",
           "technologies": [
             "Android/Java",
             "C#",
@@ -183,7 +187,7 @@
     },
     "currentDevelopment": {
       "heading": "Current development",
-      "text": "Continued software development through educational, institutional and personal projects, including a bulletin-generation tool maintained for vocational training, educational web and software projects, and this professional site."
+      "text": "Current work includes a bulletin-generation tool for vocational training, small educational software projects, and a public professional site."
     },
     "teaching": {
       "heading": "Teaching",
@@ -194,7 +198,7 @@
       "items": [
         {
           "institution": "Universidad del Salvador",
-          "qualification": "Systems Information Analyst",
+          "qualification": "Information Systems Analyst",
           "period": "2015–2017"
         },
         {
@@ -206,28 +210,26 @@
       ]
     },
     "technicalBackground": {
-      "heading": "Technical background",
+      "heading": "Technical experience",
       "professionalExperience": {
-        "heading": "Professional experience",
+        "heading": "Core professional experience",
         "items": [
-          "JavaScript/TypeScript",
-          "React",
-          "Node.js",
-          "Python",
-          "C#",
-          "ASP.NET",
-          "Android/Java",
-          "SQL Server",
-          "PostgreSQL"
+          "JavaScript",
+          "SQL",
+          "APIs and integrations",
+          "HTML/CSS",
+          "Git"
         ]
       },
       "currentPractice": {
-        "heading": "Current educational/web practice",
+        "heading": "Additional professional experience",
         "items": [
-          "HTML",
-          "CSS",
-          "GitHub",
-          "static web development"
+          "C# / .NET",
+          "React",
+          "Node.js",
+          "TypeScript",
+          "Python",
+          "AWS"
         ]
       }
     },
@@ -240,7 +242,7 @@
         },
         {
           "language": "English",
-          "proficiency": "Professional working proficiency"
+          "proficiency": "Fluent; professional use"
         }
       ]
     }

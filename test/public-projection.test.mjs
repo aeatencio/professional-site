@@ -178,7 +178,7 @@ test('productive entry validates and loads the repository-local content', async 
     projection.shared.links.map(({ label }) => label),
     ['GitHub', 'LinkedIn']
   );
-  assert.equal(projection.cv.title, 'Software Development CV');
+  assert.equal(projection.cv.title, 'Software Developer');
   assert.deepEqual(
     projection.cv.softwareExperience.roles.map(({ organization }) => organization),
     ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']

@@ -26,6 +26,7 @@ export interface PublicCv {
       period: string;
       summary: string;
       technologies: string[];
+      highlights?: string[];
     }>;
   };
   currentDevelopment: PublicCvTextSection;

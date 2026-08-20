@@ -45,7 +45,7 @@ test('local projection is the authority for current professional copy', async ()
   );
   assert.equal(projection.site.sections.workingTogether.paragraphs.length, 2);
   assert.equal(projection.site.sections.contact.heading, 'Contact');
-  assert.equal(projection.cv.title, 'Software Development CV');
+  assert.equal(projection.cv.title, 'Software Developer');
   assert.deepEqual(
     projection.cv.softwareExperience.roles.map(({ organization }) => organization),
     ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']
@@ -56,20 +56,16 @@ test('local projection is the authority for current professional copy', async ()
   assert.deepEqual(
     projection.cv.technicalBackground.professionalExperience.items,
     [
-      'JavaScript/TypeScript',
-      'React',
-      'Node.js',
-      'Python',
-      'C#',
-      'ASP.NET',
-      'Android/Java',
-      'SQL Server',
-      'PostgreSQL'
+      'JavaScript',
+      'SQL',
+      'APIs and integrations',
+      'HTML/CSS',
+      'Git'
     ]
   );
   assert.deepEqual(
     projection.cv.technicalBackground.currentPractice.items,
-    ['HTML', 'CSS', 'GitHub', 'static web development']
+    ['C# / .NET', 'React', 'Node.js', 'TypeScript', 'Python', 'AWS']
   );
   assert.deepEqual(
     projection.cv.languages.items.map(({ language }) => language),
@@ -102,6 +98,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(cvPage.includes('Manas Technology Solutions'), false);
   assert.equal(cvPage.includes('Software developer with around fifteen years'), false);
   assert.equal(cvPage.includes('aeatencio@gmail.com'), false);
+  assert.equal(cvPage.includes('Software Developer · IT Teacher'), false);
   assert.equal(layout.includes('Andrés Atencio'), false);
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
 });

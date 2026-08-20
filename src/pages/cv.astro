@@ -13,9 +13,8 @@ const { shared, cv } = projection;
   <main class="cv-page">
     <header class="cv-header">
       <div>
-        <p class="cv-document-title">{cv.title}</p>
         <h1>{shared.name}</h1>
-        <p class="cv-identity">{shared.professionalIdentity}</p>
+        <p class="cv-identity">{cv.title}</p>
       </div>
       <address class="cv-contact">
         <span>{shared.location}</span>
@@ -46,8 +45,15 @@ const { shared, cv } = projection;
                   <p class="cv-period">{role.period}</p>
                 </header>
                 <p>{role.summary}</p>
+                {role.highlights ? (
+                  <ul class="cv-highlights">
+                    {role.highlights.map((highlight) => (
+                      <li>{highlight}</li>
+                    ))}
+                  </ul>
+                ) : null}
                 <p class="cv-technologies">
-                  <strong>Technologies:</strong> {role.technologies.join(', ')}
+                  <strong>Context:</strong> {role.technologies.join(', ')}
                 </p>
               </article>
             ))}
