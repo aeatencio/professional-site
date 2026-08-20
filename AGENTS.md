@@ -90,11 +90,11 @@
 - Respect keyboard use, focus, landmarks, contrast and
   `prefers-reduced-motion`. The cable and illustrations are decorative for
   assistive technology unless a later approved requirement says otherwise.
-- The five full visual checkpoints live only in the private sibling repo because
-  their pixels contain superseded/unapproved copy. In an explicitly
-  cross-repository design task, use them as composition references only. Never
-  copy them into this history or treat them as literal copy/pixel-perfect
-  templates.
+- Historical SITE-V1 studio composition checkpoints are preserved in
+  `docs/design/references/studio/`. They document the graphic-direction process.
+  They are not a work precondition, not the current implementation, not a
+  specification and not production assets. Do not treat their copy as facts or
+  their pixels as templates.
 
 ## Working method
 
