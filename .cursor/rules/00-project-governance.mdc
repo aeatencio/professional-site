@@ -4,14 +4,14 @@ alwaysApply: true
 
 # SITE-V1 permanent governance
 
-- Read `AGENTS.md` and `docs/handover/README.md` before substantial work.
-- Treat current code, tests, accepted ADRs and executable contracts as truth;
-  dated handover summaries are orientation.
+- Use the current task, `AGENTS.md`, applicable local rules, accepted ADRs,
+  current contracts and schemas, durable documentation, code and tests as
+  operational authority.
 - Keep every commit safe for public history and preserve the private/public data
   boundary.
 - Never infer factual review or authorization for transfer, commit, visibility,
   deployment or publication.
 - Do not stage, commit, push, change remotes/visibility, deploy or publish unless
   Andrés explicitly authorizes that exact action.
-- Keep increments small, inspect all changes and close with
-  `docs/handover/checkpoint-template.md`.
+- Keep increments small, inspect all changes and close with the increment
+  report required by `AGENTS.md`.

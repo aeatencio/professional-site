@@ -5,8 +5,8 @@ description: Reconcile SITE-V1 repository truth and prepare a bounded implementa
 
 # Start a professional-site increment
 
-1. Read root `AGENTS.md`, `docs/handover/README.md`, relevant accepted ADRs,
-   projection contract, current implementation and tests.
+1. Read root `AGENTS.md`, relevant accepted ADRs, projection contract, current
+   implementation and tests.
 2. Inspect branch, HEAD and `git status --short --branch` once. Do not fetch,
    pull, install or contact remotes.
 3. Preserve the known consumer worktree paths if they are current:

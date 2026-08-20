@@ -1,9 +1,5 @@
 # SITE-V1 repository agreement
 
-Read `docs/handover/README.md` before substantial work. Current code, tests,
-accepted ADRs and the executable public-projection contract remain more
-authoritative than a dated handover summary.
-
 ## Product
 
 - Build Andrés Atencio's public professional site and Software Development CV
