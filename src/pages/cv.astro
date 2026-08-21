@@ -3,6 +3,10 @@ import CvLayout from '../layouts/CvLayout.astro';
 import projection from '../../data/professional-public-projection.v1.json';
 
 const { shared, cv } = projection;
+
+function visibleProfileUrl(url: string) {
+  return url.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '');
+}
 ---
 
 <CvLayout
@@ -12,7 +16,7 @@ const { shared, cv } = projection;
 >
   <main class="cv-page">
     <header class="cv-header">
-      <div>
+      <div class="cv-masthead">
         <h1>{shared.name}</h1>
         <p class="cv-identity">{cv.title}</p>
       </div>
@@ -20,7 +24,7 @@ const { shared, cv } = projection;
         <span>{shared.location}</span>
         <a href={`mailto:${shared.email}`}>{shared.email}</a>
         {shared.links.map((link) => (
-          <a href={link.url} rel="me">{link.label}</a>
+          <a href={link.url} rel="me" aria-label={link.label}>{visibleProfileUrl(link.url)}</a>
         ))}
       </address>
     </header>
@@ -53,20 +57,20 @@ const { shared, cv } = projection;
                   </ul>
                 ) : null}
                 <p class="cv-technologies">
-                  <strong>Context:</strong> {role.technologies.join(', ')}
+                  <span class="cv-context-label">Context:</span> {role.technologies.join(', ')}
                 </p>
               </article>
             ))}
           </div>
         </section>
 
-        <section aria-labelledby="cv-current-development-heading">
+        <section class="cv-current-development" aria-labelledby="cv-current-development-heading">
           <h2 id="cv-current-development-heading">{cv.currentDevelopment.heading}</h2>
           <p>{cv.currentDevelopment.text}</p>
         </section>
       </div>
 
-      <aside class="cv-secondary">
+      <div class="cv-secondary">
         <section aria-labelledby="cv-teaching-heading">
           <h2 id="cv-teaching-heading">{cv.teaching.heading}</h2>
           <p>{cv.teaching.text}</p>
@@ -110,7 +114,7 @@ const { shared, cv } = projection;
             ))}
           </dl>
         </section>
-      </aside>
+      </div>
     </div>
   </main>
 </CvLayout>

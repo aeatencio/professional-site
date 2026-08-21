@@ -98,7 +98,7 @@
           {
             "heading": "Systems",
             "paragraphs": [
-              "I earned the intermediate degree of Systems Information Analyst at Universidad del Salvador, after studying there from 2015 to 2017 while working at Mobile Streams."
+              "I graduated from Universidad del Salvador as an Information Systems Analyst."
             ]
           },
           {
@@ -199,7 +199,13 @@
         {
           "institution": "Universidad del Salvador",
           "qualification": "Information Systems Analyst",
-          "period": "2015–2017"
+          "period": "2017"
+        },
+        {
+          "institution": "Colegio Nacional de Buenos Aires",
+          "qualification": "Bachiller",
+          "period": "1998–2002",
+          "detail": "Five-year pre-university program, Universidad de Buenos Aires"
         },
         {
           "institution": "IES Juan B. Justo",
