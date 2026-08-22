@@ -23,7 +23,6 @@
   --cv-tech-gap: 5mm;
   --cv-heading-gap: 4mm;
   --cv-intro-offset: 4.7mm;
-  --cv-rule-header: 1.15pt;
   --cv-rule-hairline: 0.55pt;
   background: var(--color-ivory);
   color: var(--cv-ink);
@@ -120,17 +119,6 @@
   height: var(--cv-header-h);
   margin: 0;
   padding: 0;
-}
-
-.cv-header::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: linear-gradient(to top, var(--cv-cobalt) 0 1.15pt, transparent 1.15pt);
-  pointer-events: none;
 }
 
 .cv-masthead {

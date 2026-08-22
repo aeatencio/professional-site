@@ -68,9 +68,9 @@ test('CV markup keeps the V2 source order without CSS order', async () => {
   assert.match(cvCss, /--cv-hairline:\s*#c9d0dc/i);
   assert.match(cvCss, /li::marker/);
   assert.match(cvCss, /\.cv-page::before/);
-  assert.match(cvCss, /--cv-rule-header:\s*1\.15pt/);
   assert.match(cvCss, /--cv-rule-hairline:\s*0\.55pt/);
-  assert.match(cvCss, /\.cv-header::after/);
+  assert.equal(cvCss.includes('.cv-header::after'), false);
+  assert.equal(/--cv-rule-header/.test(cvCss), false);
   assert.match(cvCss, /\.cv-role-title \{[\s\S]*?font-size:\s*9pt/);
   assert.match(cvCss, /\.cv-role-title \{[\s\S]*?font-weight:\s*600/);
   assert.match(cvCss, /\.cv-highlights li \{[\s\S]*?font-size:\s*9\.45pt/);
