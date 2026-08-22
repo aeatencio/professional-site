@@ -96,21 +96,21 @@
         "heading": "Background",
         "items": [
           {
+            "heading": "Academic foundation",
+            "paragraphs": [
+              "I studied at Colegio Nacional de Buenos Aires, a five-year pre-university school of the University of Buenos Aires. Its broad and demanding academic program was a major part of my intellectual foundation."
+            ]
+          },
+          {
             "heading": "Systems",
             "paragraphs": [
               "I graduated from Universidad del Salvador as an Information Systems Analyst."
             ]
           },
           {
-            "heading": "Teaching",
+            "heading": "Across disciplines",
             "paragraphs": [
-              "I’m currently completing pedagogical training for professionals and higher-level technicians at IES Juan B. Justo, with 12 of 15 course units completed."
-            ]
-          },
-          {
-            "heading": "Broader study",
-            "paragraphs": [
-              "Before completing my systems qualification, I also studied Veterinary Medicine, Literature and Biology teacher education. Those paths were not completed as degrees, but they remain part of my broader academic background."
+              "My academic path also included the UBA’s Ciclo Básico Común, where I completed ten courses across multiple areas, followed by studies in Veterinary Medicine and Literature, and later teacher training in Biology. I’m currently completing pedagogical training at IES Juan B. Justo, with 12 of 15 course units completed."
             ]
           }
         ]
