@@ -231,7 +231,7 @@ h4 {
 
 .role-list {
   margin-top: 1.5rem;
-  border-top: 1px solid var(--color-cobalt);
+  border-top: 1px solid var(--color-line);
 }
 
 .role {
@@ -276,7 +276,7 @@ h4 {
 
 .content-item {
   padding-top: 1rem;
-  border-top: 1px solid var(--color-cobalt);
+  border-top: 1px solid var(--color-line);
 }
 
 .content-item h3,
