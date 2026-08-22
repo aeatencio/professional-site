@@ -19,7 +19,8 @@ The projection is organized around the real artifacts:
   copy and compact education items;
 - `cv`: independent Software Development CV content for profile, software
   experience, current development, teaching, education, technical background
-  and languages. The current private V1 renders it at `/cv/`.
+  and languages. The current private V2 renders the A4 composition at `/cv/`
+  and the US Letter composition at `/cv/letter/`, from one shared document.
 
 It is not a public fact registry and contains no fact IDs, approvals,
 permissions, editorial states, actors or audit timestamps. Presence in the

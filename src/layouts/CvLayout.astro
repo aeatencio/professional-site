@@ -6,9 +6,11 @@ interface Props {
   title: string;
   description: string;
   lang: string;
+  format?: 'a4' | 'letter';
 }
 
-const { title, description, lang } = Astro.props;
+const { title, description, lang, format = 'a4' } = Astro.props;
+const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
 ---
 
 <!doctype html>
@@ -18,8 +20,9 @@ const { title, description, lang } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <Fragment set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
   </head>
-  <body class="cv-document">
+  <body class="cv-document" data-cv-format={format}>
     <slot />
   </body>
 </html>

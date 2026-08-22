@@ -33,8 +33,9 @@ npm run preview  # preview the production build
 npm test         # public-projection boundary tests
 ```
 
-The build produces Home at `/` and the print-ready CV at `/cv/`. The CV route
-is available for private review but is not yet linked from Home.
+The build produces Home at `/`, the print-ready A4 CV at `/cv/`, and the US
+Letter CV at `/cv/letter/`. The CV routes are available for private review but
+are not yet linked from Home.
 
 Astro is installed locally through this project. Do not install project tools
 globally. `check` and `build` first validate the repository-local projection;

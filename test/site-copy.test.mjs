@@ -75,7 +75,9 @@ test('local projection is the authority for current professional copy', async ()
 
 test('Astro owns structure while site and CV copy stay in the projection', async () => {
   const page = await readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
-  const cvPage = await readFile(new URL('../src/pages/cv.astro', import.meta.url), 'utf8');
+  const cvPage = await readFile(new URL('../src/pages/cv/index.astro', import.meta.url), 'utf8');
+  const cvLetterPage = await readFile(new URL('../src/pages/cv/letter.astro', import.meta.url), 'utf8');
+  const cvDocument = await readFile(new URL('../src/components/CvDocument.astro', import.meta.url), 'utf8');
   const layout = await readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8');
   const cvLayout = await readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8');
 
@@ -84,7 +86,15 @@ test('Astro owns structure while site and CV copy stay in the projection', async
     true
   );
   assert.equal(
-    cvPage.includes("import projection from '../../data/professional-public-projection.v1.json'"),
+    cvPage.includes("import projection from '../../../data/professional-public-projection.v1.json'"),
+    true
+  );
+  assert.equal(
+    cvLetterPage.includes("import projection from '../../../data/professional-public-projection.v1.json'"),
+    true
+  );
+  assert.equal(
+    cvDocument.includes("import projection from '../../data/professional-public-projection.v1.json'"),
     true
   );
   assert.equal(page.includes('I’m a software developer and IT teacher based in Buenos Aires.'), false);
@@ -96,9 +106,16 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('loadLocalPublicProjection'), false);
   assert.equal(page.includes('projection.cv'), false);
   assert.equal(cvPage.includes('Manas Technology Solutions'), false);
+  assert.equal(cvLetterPage.includes('Manas Technology Solutions'), false);
+  assert.equal(cvDocument.includes('Manas Technology Solutions'), false);
   assert.equal(cvPage.includes('Software developer with around fifteen years'), false);
+  assert.equal(cvLetterPage.includes('Software developer with around fifteen years'), false);
+  assert.equal(cvDocument.includes('Software developer with around fifteen years'), false);
   assert.equal(cvPage.includes('aeatencio@gmail.com'), false);
+  assert.equal(cvLetterPage.includes('aeatencio@gmail.com'), false);
+  assert.equal(cvDocument.includes('aeatencio@gmail.com'), false);
   assert.equal(cvPage.includes('Software Developer · IT Teacher'), false);
+  assert.equal(cvLetterPage.includes('Software Developer · IT Teacher'), false);
   assert.equal(layout.includes('Andrés Atencio'), false);
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
 });

@@ -1,0 +1,16 @@
+---
+import CvLayout from '../../layouts/CvLayout.astro';
+import CvDocument from '../../components/CvDocument.astro';
+import projection from '../../../data/professional-public-projection.v1.json';
+
+const { shared, cv } = projection;
+---
+
+<CvLayout
+  format="a4"
+  lang={shared.language}
+  title={`${shared.name} — ${cv.title}`}
+  description={cv.profile.text}
+>
+  <CvDocument />
+</CvLayout>

@@ -261,7 +261,9 @@ test('productive consumer contains no private-repository dependency', async () =
     '../lib/load-public-projection.mjs',
     '../lib/public-projection.mjs',
     '../src/pages/index.astro',
-    '../src/pages/cv.astro',
+    '../src/pages/cv/index.astro',
+    '../src/pages/cv/letter.astro',
+    '../src/components/CvDocument.astro',
     '../src/layouts/CvLayout.astro'
   ];
 

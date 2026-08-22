@@ -5,9 +5,10 @@ const projection = JSON.parse(await readFile(
   new URL('../data/professional-public-projection.v1.json', import.meta.url),
   'utf8'
 ));
-const [siteHtml, cvHtml] = await Promise.all([
+const [siteHtml, cvHtml, cvLetterHtml] = await Promise.all([
   readFile(new URL('../dist/index.html', import.meta.url), 'utf8'),
-  readFile(new URL('../dist/cv/index.html', import.meta.url), 'utf8')
+  readFile(new URL('../dist/cv/index.html', import.meta.url), 'utf8'),
+  readFile(new URL('../dist/cv/letter/index.html', import.meta.url), 'utf8')
 ]);
 
 function collectStrings(value) {
@@ -43,6 +44,7 @@ const expectedCv = [
 
 for (const text of expectedCv) {
   assert.ok(cvHtml.includes(text), `Built CV is missing projection content: ${text}`);
+  assert.ok(cvLetterHtml.includes(text), `Built US Letter CV is missing projection content: ${text}`);
 }
 
 assert.equal(siteHtml.includes('Magic Calendar'), false, 'CV selected-work leaked into Home');
@@ -52,5 +54,8 @@ assert.equal(
   'Home copy leaked into the CV'
 );
 assert.ok(cvHtml.includes(`mailto:${projection.shared.email}`), 'Built CV email is not linked');
+assert.ok(cvLetterHtml.includes(`mailto:${projection.shared.email}`), 'Built US Letter CV email is not linked');
+assert.match(cvHtml, /data-cv-format="a4"/);
+assert.match(cvLetterHtml, /data-cv-format="letter"/);
 
 console.log('Verified built Home and CV contain only their projected content');

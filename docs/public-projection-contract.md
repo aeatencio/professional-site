@@ -50,7 +50,8 @@ use a filesystem loader inside the prerender graph.
 
 The projection owns professional copy and public structured data. Astro owns
 HTML structure, components, layout, styling, print behavior and routes,
-including `/cv/`. Do not hardcode a second copy of professional text in Astro.
+including `/cv/` and `/cv/letter/`. Do not hardcode a second copy of
+professional text in Astro.
 
 The generic `loadPublicProjection` helper accepts caller-provided paths only for
 controlled tests and tools. It does not make arbitrary paths production-safe.
