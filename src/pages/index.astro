@@ -33,11 +33,21 @@ const { sections } = site;
       />
     </section>
 
-    <section id="experience" class="chapter" aria-labelledby="experience-heading">
-      <div class="chapter__body chapter__body--wide">
+    <section id="experience" class="chapter chapter--experience" aria-labelledby="experience-heading">
+      <div class="chapter__body">
         <h2 id="experience-heading">{sections.experience.heading}</h2>
         {sections.experience.paragraphs.map((paragraph) => <p class="section-intro">{paragraph}</p>)}
-
+      </div>
+      <img
+        class="chapter-art chapter-art--notebook"
+        src="/images/experience/experience-notebook-transparent.png"
+        alt=""
+        width="1276"
+        height="789"
+        decoding="async"
+        loading="lazy"
+      />
+      <div class="chapter__continue">
         <div class="experience-block">
           <h3>{sections.experience.softwareDevelopment.heading}</h3>
           <div class="role-list">
@@ -76,7 +86,7 @@ const { sections } = site;
       </div>
     </section>
 
-    <section id="background" class="chapter chapter--shift" aria-labelledby="background-heading">
+    <section id="background" class="chapter chapter--background chapter--shift" aria-labelledby="background-heading">
       <div class="chapter__body chapter__body--wide">
         <h2 id="background-heading">{sections.background.heading}</h2>
         <div class="content-grid content-grid--background">
@@ -86,18 +96,36 @@ const { sections } = site;
               {item.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
             </article>
           ))}
+          <img
+            class="chapter-art chapter-art--map"
+            src="/images/background/background-folded-map-transparent.png"
+            alt=""
+            width="1371"
+            height="696"
+            decoding="async"
+            loading="lazy"
+          />
         </div>
       </div>
     </section>
 
-    <section id="working-together" class="chapter" aria-labelledby="working-together-heading">
+    <section id="working-together" class="chapter chapter--working" aria-labelledby="working-together-heading">
       <div class="chapter__body">
         <h2 id="working-together-heading">{sections.workingTogether.heading}</h2>
         {sections.workingTogether.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       </div>
+      <img
+        class="chapter-art chapter-art--folder"
+        src="/images/working-together/working-together-folder-transparent.png"
+        alt=""
+        width="1130"
+        height="1032"
+        decoding="async"
+        loading="lazy"
+      />
     </section>
 
-    <section id="contact" class="chapter" aria-labelledby="contact-heading">
+    <section id="contact" class="chapter chapter--contact" aria-labelledby="contact-heading">
       <div class="chapter__body">
         <h2 id="contact-heading">{sections.contact.heading}</h2>
         {sections.contact.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
@@ -109,6 +137,15 @@ const { sections } = site;
           ))}
         </ul>
       </div>
+      <img
+        class="chapter-art chapter-art--correspondence"
+        src="/images/contact/contact-correspondence-transparent.png"
+        alt=""
+        width="1077"
+        height="850"
+        decoding="async"
+        loading="lazy"
+      />
     </section>
   </main>
 </BaseLayout>

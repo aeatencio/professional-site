@@ -154,7 +154,8 @@ body {
 
 .chapter--home {
   align-items: start;
-  padding-top: clamp(3.5rem, min(9vw, 8vh), 6rem);
+  padding-top: clamp(2.75rem, min(8vw, 7vh), 5.25rem);
+  padding-bottom: clamp(2.75rem, 6.5vw, 5.25rem);
 }
 
 .hero-art {
@@ -162,8 +163,58 @@ body {
   grid-column: 2;
   align-self: start;
   justify-self: end;
-  width: min(100%, 21rem);
+  width: min(100%, clamp(16rem, 26vw, 23rem));
   height: auto;
+}
+
+.chapter__continue {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: var(--measure-wide);
+}
+
+.chapter-art {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.chapter--experience {
+  align-items: start;
+}
+
+.chapter-art--notebook {
+  grid-column: 2;
+  align-self: start;
+  justify-self: end;
+  width: min(100%, 22rem);
+  margin-top: 0.35rem;
+}
+
+.chapter--experience .chapter__continue > .experience-block:first-child {
+  margin-top: clamp(2rem, 4.5vw, 3.25rem);
+}
+
+.chapter--working {
+  align-items: center;
+}
+
+.chapter-art--folder {
+  grid-column: 2;
+  align-self: center;
+  justify-self: end;
+  width: min(100%, 15.5rem);
+}
+
+.chapter--contact {
+  align-items: end;
+}
+
+.chapter-art--correspondence {
+  grid-column: 2;
+  align-self: end;
+  justify-self: end;
+  width: min(100%, 14.75rem);
 }
 
 h1,
@@ -203,7 +254,8 @@ h4 {
 }
 
 .lede,
-.chapter__body p {
+.chapter__body p,
+.chapter__continue p {
   margin: 0 0 1rem;
 }
 
@@ -290,12 +342,19 @@ h4 {
 
 .content-grid--background {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   margin-top: 2rem;
 }
 
-.content-grid--background .content-item:last-child {
-  grid-column: 1 / -1;
-  max-width: var(--measure);
+.content-grid--background .content-item:last-of-type {
+  grid-column: 1;
+}
+
+.chapter-art--map {
+  grid-column: 2;
+  align-self: end;
+  width: 100%;
+  margin-top: 0.15rem;
 }
 
 .actions {
@@ -357,10 +416,98 @@ h4 {
   scroll-margin-top: 1rem;
 }
 
+@media (max-width: 64rem) {
+  .hero-art {
+    width: min(100%, 18rem);
+  }
+
+  .chapter-art--notebook {
+    width: min(100%, 19.5rem);
+  }
+}
+
 @media (max-width: 58rem) {
   .content-grid {
     grid-template-columns: minmax(0, 1fr);
     max-width: var(--measure);
+  }
+
+  .content-grid--background {
+    max-width: none;
+  }
+
+  .content-grid--background .content-item:last-of-type,
+  .chapter-art--map {
+    grid-column: 1;
+  }
+
+  .chapter-art--map {
+    justify-self: start;
+    width: min(100%, 22rem);
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 54rem) {
+  .chapter {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.85rem;
+  }
+
+  .chapter--home {
+    padding-block: 2.35rem 1.85rem;
+    row-gap: 0.5rem;
+  }
+
+  .hero-art {
+    grid-column: 1;
+    justify-self: end;
+    width: min(42vw, 14.25rem);
+    margin-top: 0.2rem;
+    margin-bottom: -0.25rem;
+  }
+
+  .chapter-art--notebook,
+  .chapter-art--folder,
+  .chapter-art--correspondence {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .chapter-art--notebook {
+    width: min(72%, 20rem);
+    margin-top: 0.15rem;
+  }
+
+  .chapter-art--map {
+    grid-column: 1;
+    justify-self: start;
+    width: min(78%, 22rem);
+    margin-top: 0.35rem;
+  }
+
+  .chapter-art--folder {
+    width: min(38vw, 13rem);
+    margin-top: 0.1rem;
+  }
+
+  .chapter-art--correspondence {
+    width: min(40vw, 13.25rem);
+    align-self: start;
+    margin-top: 0.1rem;
+  }
+
+  .chapter--working,
+  .chapter--contact {
+    align-items: start;
+  }
+
+  .chapter--shift .chapter__body {
+    justify-self: stretch;
+  }
+
+  .chapter__body {
+    max-width: none;
   }
 }
 
@@ -370,23 +517,29 @@ h4 {
     align-items: flex-start;
   }
 
-  .chapter {
-    grid-template-columns: minmax(0, 1fr);
+  .chapter--home {
+    padding-block: 2.15rem 1.5rem;
+    row-gap: 0.4rem;
   }
 
   .hero-art {
-    grid-column: 1;
-    justify-self: center;
-    width: min(100%, 20rem);
-    margin-top: 0.5rem;
+    width: min(58vw, 11.75rem);
   }
 
-  .chapter--shift .chapter__body {
-    justify-self: stretch;
+  .chapter-art--notebook {
+    width: min(68%, 15.5rem);
   }
 
-  .chapter__body {
-    max-width: none;
+  .chapter-art--map {
+    width: min(90%, 18.5rem);
+  }
+
+  .chapter-art--folder {
+    width: min(48vw, 11.75rem);
+  }
+
+  .chapter-art--correspondence {
+    width: min(44vw, 10.75rem);
   }
 
   .role__header {
