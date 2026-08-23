@@ -27,8 +27,8 @@
 
 ## Public data boundary
 
-- Treat every commit and the complete history as potentially public, even while
-  the remote is private.
+- Treat every commit and the complete history as potentially public, regardless
+  of repository visibility.
 - Accept professional content only through a locally present, versioned
   `professional-public-projection/v1` artifact.
 - Never copy facts from chats, draft copy, visual references or the private

@@ -1,9 +1,9 @@
 # SITE-V1 professional site
 
 Static professional site and reproducible private-V1 Software Development CV for Andrés Atencio,
-`Software Developer · IT Teacher`. The GitHub remote is currently private, but
-the code and complete history are maintained as safe for possible future public
-visibility. Opening the repository would not publish or deploy the site.
+`Software Developer · IT Teacher`. This repository is public on GitHub. Its code
+and complete history are maintained as safe for public exposure. Repository
+visibility does not publish or deploy the site.
 
 Professional copy and required public structured data come from the local
 `professional-public-projection/v1` produced in the separate, permanently
