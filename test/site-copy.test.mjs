@@ -99,8 +99,10 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   );
   assert.equal(page.includes('I’m a software developer and IT teacher based in Buenos Aires.'), false);
   assert.equal(page.includes('RVM Soluciones'), false);
-  assert.equal(page.includes('Since moving into teaching as my main activity'), false);
-  assert.equal(page.includes('part-time, remote-friendly software work'), false);
+  assert.equal(page.includes('mostly on existing web and mobile products'), false);
+  assert.equal(page.includes('part-time remote software work on a contract or freelance basis'), false);
+  assert.match(page, /class="action" href="#experience">View experience</);
+  assert.match(page, /href="#contact">Contact me</);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
   assert.equal(page.includes('aeatencio@gmail.com'), false);
   assert.equal(page.includes('loadLocalPublicProjection'), false);

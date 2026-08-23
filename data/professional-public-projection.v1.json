@@ -25,14 +25,14 @@
     "sections": {
       "home": {
         "paragraphs": [
-          "I’m a software developer and IT teacher based in Buenos Aires. I spent around fifteen years working professionally on web and mobile software, and today I teach information technology while continuing to build and maintain software for educational, institutional and personal projects.",
-          "My work has moved across different technologies, products and learning environments, but the underlying practice is much the same: understand a system, make useful changes, solve concrete problems and explain technical ideas clearly."
+          "I’m a software developer and IT teacher based in Buenos Aires. I worked professionally in software for around fifteen years, mostly on existing web and mobile products. Since late 2023, my primary professional work has been teaching Information Technology.",
+          "I continue to develop software through educational, institutional and personal projects. I’m available for part-time remote software work on a contract or freelance basis, with collaboration that can be mostly asynchronous."
         ]
       },
       "experience": {
         "heading": "Experience",
         "paragraphs": [
-          "My professional software career spans roughly fifteen years, from business and logistics systems to mobile content platforms and web and mobile products. Since late 2023, teaching has become my main professional activity, while software development continues through educational, institutional and personal work."
+          "From 2008 to 2023, I worked continuously as a software developer on existing products and systems. The work ranged from logistics and mobile-content platforms to surveys, healthcare and online communities, and included features, bug fixes, APIs, integrations, data work and maintenance."
         ],
         "softwareDevelopment": {
           "heading": "Software development",
@@ -41,44 +41,44 @@
               "organization": "RVM Soluciones",
               "period": "2008–2011",
               "role": "Software Developer",
-              "description": "I worked on web and desktop applications, including logistics and distribution systems. The work was mainly in the Microsoft ecosystem, with C#, ASP.NET, Visual Basic and SQL Server."
+              "description": "I developed web and desktop applications, including logistics and distribution systems. Technologies included C#, ASP.NET, Visual Basic and SQL Server."
             },
             {
               "organization": "Mobile Streams",
               "period": "2011–2018",
               "role": "Software Developer",
-              "description": "I spent almost seven years working on web and mobile systems for subscription, distribution and download of digital content. My work during this period included Android/Java as well as C#, ASP.NET, Angular and SQL Server."
+              "description": "I worked on web and mobile systems for subscription, distribution and download of digital content, including APIs, integrations and SQL-backed application work. Technologies included Android/Java, C#, ASP.NET, Angular and SQL Server."
             },
             {
               "organization": "Manas Technology Solutions",
               "period": "2018–2023",
               "role": "Software Developer",
-              "description": "I worked on web and mobile products across domains including surveys, healthcare and online communities, collaborating with distributed teams in English. Different projects involved technologies such as JavaScript and TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
+              "description": "I worked on existing web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I delivered features, fixes, integrations and data work on products already in use. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
             }
           ]
         },
         "currentDevelopment": {
           "heading": "Current development",
           "paragraphs": [
-            "Since moving into teaching as my main activity, I have continued developing software in educational, institutional and personal contexts."
+            "My current development work spans institutional tools, educational software and this site."
           ],
           "items": [
             {
               "heading": "Institutional tools",
               "paragraphs": [
-                "Small systems built around real institutional needs, including a bulletin-generation tool maintained over time."
+                "Small tools for institutional needs, including a bulletin-generation tool I developed and continue to maintain for vocational training."
               ]
             },
             {
               "heading": "Educational software",
               "paragraphs": [
-                "Software and web projects created for classes and technical training, combining development practice with teaching."
+                "Web and software projects for classes and technical training, combining development work with teaching."
               ]
             },
             {
               "heading": "This site",
               "paragraphs": [
-                "This site is part of my current development work: a versioned static project built with Astro and TypeScript."
+                "This professional site is a versioned static project built with Astro and TypeScript."
               ]
             }
           ]
@@ -86,9 +86,9 @@
         "teaching": {
           "heading": "Teaching and technology education",
           "paragraphs": [
-            "I currently teach Information Technology in secondary schools in Buenos Aires City and work as an IT instructor and vocational-training reference at CFP No. 7.",
-            "I plan and develop my own materials and teach programming, web interfaces, HTML, CSS, GitHub and publication through practical projects.",
-            "From 2019 to 2020, while working in software, I also taught introductory programming, persistence and user interfaces in UNAHUR’s University Programming Technician program."
+            "I teach Information Technology in Buenos Aires City secondary schools and work as an IT instructor with vocational-training coordination responsibilities at CFP No. 7.",
+            "I design my own materials and teach through practical projects in programming, web interfaces, HTML, CSS, GitHub and web publishing.",
+            "From 2019 to 2020, while working professionally in software, I also taught introductory programming, persistence and user interfaces in UNAHUR’s University Programming Technician program."
           ]
         }
       },
@@ -98,7 +98,7 @@
           {
             "heading": "Academic foundation",
             "paragraphs": [
-              "I studied at Colegio Nacional de Buenos Aires, a five-year pre-university school of the University of Buenos Aires. Its broad and demanding academic program was a major part of my intellectual foundation."
+              "I studied at Colegio Nacional de Buenos Aires, a five-year pre-university secondary school of the University of Buenos Aires. Its broad, demanding curriculum remains an important part of my intellectual foundation."
             ]
           },
           {
@@ -110,7 +110,7 @@
           {
             "heading": "Across disciplines",
             "paragraphs": [
-              "My academic path also included the UBA’s Ciclo Básico Común, where I completed ten courses across multiple areas, followed by studies in Veterinary Medicine and Literature, and later teacher training in Biology. I’m currently completing pedagogical training at IES Juan B. Justo, with 12 of 15 course units completed."
+              "My academic path also included the UBA’s Ciclo Básico Común, where I completed ten courses across several disciplines, followed by several years studying Veterinary Medicine, later coursework in Literature, and teacher training in Biology. I’m currently completing pedagogical training at IES Juan B. Justo, with 12 of 15 course units completed."
             ]
           }
         ]
@@ -118,14 +118,14 @@
       "workingTogether": {
         "heading": "Working together",
         "paragraphs": [
-          "I’m interested in part-time, remote-friendly software work, particularly when collaboration can be largely asynchronous and responsibilities are clear.",
-          "A small, well-defined piece of work on an existing system is a natural way to start — understanding a codebase, fixing or extending functionality, working with data or APIs, and debugging concrete problems. I’m open to contractor or freelance arrangements."
+          "I’m available for part-time remote software work with collaboration that can be mostly asynchronous. I’m open to contractor or freelance arrangements.",
+          "I’m comfortable working on an existing system, learning the codebase and taking responsibility for a clearly defined area of work. A focused first piece—such as a feature, bug fix, integration or data task—can be a practical way to start and build from there."
         ]
       },
       "contact": {
         "heading": "Contact",
         "paragraphs": [
-          "If you think my background might fit something you’re working on, feel free to get in touch."
+          "If you’d like to discuss a software role or project, get in touch."
         ]
       }
     }
