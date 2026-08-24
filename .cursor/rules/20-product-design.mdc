@@ -20,8 +20,10 @@ alwaysApply: false
   narrative station.
 - On Home, the professional identity appears once as the H1. Do not repeat it
   as an eyebrow or duplicate the same trajectory summary in a lower hero block.
-- R1 succeeds without moving cable. R2 may add deterministic S0–S3 behavior and
-  three reversible anchors. R3 hardens production and final CV.
+- R1 succeeds without moving cable. R2 may add cable behavior when required. For
+  current Home composition, cable geometry and scroll-activation direction,
+  follow `docs/design/proposal-1-continuous-surface-cable.md`. R3 hardens
+  production and final CV.
 - The cable never carries unique information, blocks controls or consumes mobile
   reading width. Reduced motion keeps full understanding.
 - Protect the editorial visual system and avoid generic developer-portfolio

@@ -77,6 +77,12 @@ geometry for the current layout and viewport, connect objects across sections,
 progressively reveal or hide the route, and revise its shape without editing
 the hero illustration.
 
+Current compositional intent, chapter roles, cable behavior and
+scroll-perception direction live in
+[Proposal 1 — Continuous surface with resting cable](design/proposal-1-continuous-surface-cable.md).
+This architecture document retains technical boundaries, ownership and interaction-stack
+decisions only.
+
 ## Interaction stack
 
 R2 retains the lightweight site architecture: Astro, semantic HTML, inline SVG,
