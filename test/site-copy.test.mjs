@@ -34,6 +34,16 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.experience.teaching.heading,
     'Teaching and technology education'
   );
+  assert.equal(
+    projection.site.sections.experience.teaching.paragraphs[0],
+    'I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training at CFP No. 7.'
+  );
+  assert.equal(
+    projection.site.sections.experience.teaching.paragraphs.some((paragraph) =>
+      paragraph.includes('vocational-training reference')
+    ),
+    false
+  );
   assert.ok(
     projection.site.sections.experience.teaching.paragraphs.some((paragraph) =>
       paragraph.includes('UNAHUR')
@@ -50,9 +60,23 @@ test('local projection is the authority for current professional copy', async ()
     projection.cv.softwareExperience.roles.map(({ organization }) => organization),
     ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']
   );
-  assert.match(projection.cv.currentDevelopment.text, /bulletin-generation tool/);
-  assert.match(projection.cv.teaching.text, /CFP No\. 7/);
+  const institutionalToolsParagraph =
+    projection.site.sections.experience.currentDevelopment.items.find(
+      (item) => item.heading === 'Institutional tools'
+    )?.paragraphs[0];
+  assert.match(institutionalToolsParagraph, /bulletin-generation tool/);
+  assert.match(institutionalToolsParagraph, /CFP No\. 7/);
+  assert.match(
+    projection.cv.currentDevelopment.text,
+    /bulletin-generation tool for CFP No\. 7/
+  );
+  assert.match(
+    projection.cv.teaching.text,
+    /Information Technology teacher in Buenos Aires secondary schools and Head of IT Training at CFP No\. 7 since 2023\./
+  );
   assert.ok(projection.cv.teaching.text.includes('UNAHUR'));
+  assert.equal(projection.cv.teaching.text.includes('vocational-training reference'), false);
+  assert.equal(projection.cv.teaching.text.includes('training reference'), false);
   assert.deepEqual(
     projection.cv.technicalBackground.professionalExperience.items,
     [

@@ -66,7 +66,7 @@
             {
               "heading": "Institutional tools",
               "paragraphs": [
-                "Small tools for institutional needs, including a bulletin-generation tool I developed and continue to maintain for vocational training."
+                "Small tools for institutional needs, including a bulletin-generation tool I developed and continue to maintain for CFP No. 7."
               ]
             },
             {
@@ -86,7 +86,7 @@
         "teaching": {
           "heading": "Teaching and technology education",
           "paragraphs": [
-            "I teach Information Technology in Buenos Aires City secondary schools and work as an IT instructor with vocational-training coordination responsibilities at CFP No. 7.",
+            "I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training at CFP No. 7.",
             "I design my own materials and teach through practical projects in programming, web interfaces, HTML, CSS, GitHub and web publishing.",
             "From 2019 to 2020, while working professionally in software, I also taught introductory programming, persistence and user interfaces in UNAHUR’s University Programming Technician program."
           ]
@@ -187,11 +187,11 @@
     },
     "currentDevelopment": {
       "heading": "Current development",
-      "text": "Current work includes a bulletin-generation tool for vocational training, small educational software projects, and a public professional site."
+      "text": "Current work includes a bulletin-generation tool for CFP No. 7, small educational software projects, and a public professional site."
     },
     "teaching": {
       "heading": "Teaching",
-      "text": "Information Technology teacher in Buenos Aires secondary schools and IT instructor / vocational-training reference at CFP No. 7 since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
+      "text": "Information Technology teacher in Buenos Aires secondary schools and Head of IT Training at CFP No. 7 since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
     },
     "education": {
       "heading": "Education",
