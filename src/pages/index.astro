@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import JourneyCable from '../components/JourneyCable.astro';
+import ExperienceRoleMark from '../components/provisional/ExperienceRoleMark.astro';
 import projection from '../../data/professional-public-projection.v1.json';
 
 const { shared, site } = projection;
 const { sections } = site;
+
+/** Provisional desktop marks in software-role order. Not projection content. */
+const experienceRoleMarks = ['truck', 'phone', 'crystal'] as const;
 ---
 
 <BaseLayout
@@ -12,7 +17,9 @@ const { sections } = site;
   title={site.title}
   description={site.description}
 >
-  <main id="main">
+  <main id="main" class="home-surface is-cable-hidden">
+    <JourneyCable />
+
     <section id="home" class="chapter chapter--home" aria-labelledby="home-heading">
       <div class="chapter__body">
         <h1 id="home-heading">{shared.professionalIdentity}</h1>
@@ -22,50 +29,60 @@ const { sections } = site;
           <a href="#contact">Contact me</a>
         </p>
       </div>
-      <img
-        class="hero-art"
-        src="/images/hero/developer-at-laptop.png"
-        alt=""
-        width="1024"
-        height="1536"
-        decoding="async"
-        fetchpriority="high"
-      />
+      <div class="hero-art-frame">
+        <img
+          class="hero-art"
+          src="/images/hero/developer-at-laptop.png"
+          alt=""
+          width="1024"
+          height="1536"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </section>
 
     <section id="experience" class="chapter chapter--experience" aria-labelledby="experience-heading">
-      <div class="chapter__body">
-        <h2 id="experience-heading">{sections.experience.heading}</h2>
-        {sections.experience.paragraphs.map((paragraph) => <p class="section-intro">{paragraph}</p>)}
-      </div>
-      <img
-        class="chapter-art chapter-art--notebook"
-        src="/images/experience/open-notebook.png"
-        alt=""
-        width="1276"
-        height="789"
-        decoding="async"
-        loading="lazy"
-      />
-      <div class="chapter__continue">
-        <div class="experience-block">
+      <h2 id="experience-heading">{sections.experience.heading}</h2>
+      <div class="experience-stage">
+        <div class="chapter__body">
+          {sections.experience.paragraphs.map((paragraph) => <p class="section-intro">{paragraph}</p>)}
+        </div>
+        <div class="art-anchor art-anchor--notebook">
+          <span class="art-mass art-mass--notebook" aria-hidden="true"></span>
+          <img
+            class="chapter-art chapter-art--notebook"
+            src="/images/experience/open-notebook.png"
+            alt=""
+            width="1276"
+            height="789"
+            decoding="async"
+            loading="lazy"
+          />
+        </div>
+        <div class="experience-block experience-block--software">
           <h3>{sections.experience.softwareDevelopment.heading}</h3>
           <div class="role-list">
-            {sections.experience.softwareDevelopment.roles.map((role) => (
-              <article class="role">
-                <header class="role__header">
-                  <div>
-                    <h4>{role.organization}</h4>
-                    <p class="role__title">{role.role}</p>
-                  </div>
-                  <p class="role__period">{role.period}</p>
-                </header>
-                <p>{role.description}</p>
-              </article>
-            ))}
+            {sections.experience.softwareDevelopment.roles.map((role, index) => {
+              const mark = experienceRoleMarks[index];
+              return (
+                <article class={mark ? `role role--${mark}` : 'role'}>
+                  {mark && <ExperienceRoleMark kind={mark} />}
+                  <header class="role__header">
+                    <div>
+                      <h4>{role.organization}</h4>
+                      <p class="role__title">{role.role}</p>
+                    </div>
+                    <p class="role__period">{role.period}</p>
+                  </header>
+                  <p>{role.description}</p>
+                </article>
+              );
+            })}
           </div>
         </div>
-
+      </div>
+      <div class="chapter__continue">
         <div class="experience-block">
           <h3>{sections.experience.currentDevelopment.heading}</h3>
           {sections.experience.currentDevelopment.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
@@ -86,16 +103,11 @@ const { sections } = site;
       </div>
     </section>
 
-    <section id="background" class="chapter chapter--background chapter--shift" aria-labelledby="background-heading">
-      <div class="chapter__body chapter__body--wide">
+    <section id="background" class="chapter chapter--background" aria-labelledby="background-heading">
+      <div class="background-field">
         <h2 id="background-heading">{sections.background.heading}</h2>
-        <div class="content-grid content-grid--background">
-          {sections.background.items.map((item) => (
-            <article class="content-item">
-              <h3>{item.heading}</h3>
-              {item.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-            </article>
-          ))}
+        <div class="art-anchor art-anchor--map">
+          <span class="art-mass art-mass--map" aria-hidden="true"></span>
           <img
             class="chapter-art chapter-art--map"
             src="/images/background/folded-map.png"
@@ -106,46 +118,61 @@ const { sections } = site;
             loading="lazy"
           />
         </div>
+        {sections.background.items.map((item, index) => (
+          <article class={`content-item background-item background-item--${index + 1}`}>
+            <h3>{item.heading}</h3>
+            {item.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </article>
+        ))}
       </div>
     </section>
 
     <section id="working-together" class="chapter chapter--working" aria-labelledby="working-together-heading">
-      <div class="chapter__body">
-        <h2 id="working-together-heading">{sections.workingTogether.heading}</h2>
-        {sections.workingTogether.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      <div class="working-cluster">
+        <div class="chapter__body">
+          <h2 id="working-together-heading">{sections.workingTogether.heading}</h2>
+          {sections.workingTogether.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <div class="art-anchor art-anchor--folder">
+          <span class="art-mass art-mass--folder" aria-hidden="true"></span>
+          <img
+            class="chapter-art chapter-art--folder"
+            src="/images/working-together/folder.png"
+            alt=""
+            width="1130"
+            height="1032"
+            decoding="async"
+            loading="lazy"
+          />
+        </div>
       </div>
-      <img
-        class="chapter-art chapter-art--folder"
-        src="/images/working-together/folder.png"
-        alt=""
-        width="1130"
-        height="1032"
-        decoding="async"
-        loading="lazy"
-      />
     </section>
 
     <section id="contact" class="chapter chapter--contact" aria-labelledby="contact-heading">
-      <div class="chapter__body">
+      <div class="contact-cluster">
         <h2 id="contact-heading">{sections.contact.heading}</h2>
-        {sections.contact.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-        <p class="contact-location">{shared.location}</p>
-        <ul class="contact-links">
-          <li><a href={`mailto:${shared.email}`}>{shared.email}</a></li>
-          {shared.links.map((link) => (
-            <li><a href={link.url} rel="me">{link.label}</a></li>
-          ))}
-        </ul>
+        <div class="chapter__body">
+          {sections.contact.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          <p class="contact-location">{shared.location}</p>
+          <ul class="contact-links">
+            <li><a href={`mailto:${shared.email}`}>{shared.email}</a></li>
+            {shared.links.map((link) => (
+              <li><a href={link.url} rel="me">{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="art-anchor art-anchor--correspondence">
+          <img
+            class="chapter-art chapter-art--correspondence"
+            src="/images/contact/correspondence.png"
+            alt=""
+            width="1077"
+            height="850"
+            decoding="async"
+            loading="lazy"
+          />
+        </div>
       </div>
-      <img
-        class="chapter-art chapter-art--correspondence"
-        src="/images/contact/correspondence.png"
-        alt=""
-        width="1077"
-        height="850"
-        decoding="async"
-        loading="lazy"
-      />
     </section>
   </main>
 </BaseLayout>

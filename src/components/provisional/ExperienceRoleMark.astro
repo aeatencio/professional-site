@@ -1,0 +1,46 @@
+---
+/**
+ * Provisional desktop composition marks for historical Experience roles.
+ * Schematic placeholders only — discard or replace; not production assets.
+ */
+type MarkKind = 'truck' | 'phone' | 'crystal';
+
+interface Props {
+  kind: MarkKind;
+}
+
+const { kind } = Astro.props;
+---
+
+<span class={`role-mark role-mark--${kind}`} aria-hidden="true">
+  {kind === 'truck' && (
+    <svg viewBox="0 0 96 44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 27 V12.5 h40 V27"></path>
+      <path d="M43 16.5 h16.5 L72 27 v4.5 H43"></path>
+      <path d="M47.5 16.5 V27"></path>
+      <rect x="8" y="15.5" width="12" height="7.5" rx="0.6"></rect>
+      <rect x="24.5" y="15.5" width="12" height="7.5" rx="0.6"></rect>
+      <path d="M3 27 h73"></path>
+      <circle cx="20" cy="32.5" r="5.4"></circle>
+      <circle cx="20" cy="32.5" r="2"></circle>
+      <circle cx="60.5" cy="32.5" r="5.4"></circle>
+      <circle cx="60.5" cy="32.5" r="2"></circle>
+    </svg>
+  )}
+  {kind === 'phone' && (
+    <svg viewBox="0 0 30 52" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="3.5" y="2" width="23" height="48" rx="3.4"></rect>
+      <rect x="7" y="9.5" width="16" height="29" rx="0.8"></rect>
+      <path d="M12 5.6 h6"></path>
+      <circle cx="15" cy="44.6" r="1.45"></circle>
+    </svg>
+  )}
+  {kind === 'crystal' && (
+    <svg viewBox="0 0 46 56" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M23 3.5 41.5 18.5 23 52.5 4.5 18.5 Z"></path>
+      <path d="M23 3.5 14.5 18.5 23 52.5"></path>
+      <path d="M23 3.5 31.5 18.5"></path>
+      <path d="M4.5 18.5 h37"></path>
+    </svg>
+  )}
+</span>
