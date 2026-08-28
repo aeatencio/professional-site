@@ -26,13 +26,14 @@
       "home": {
         "paragraphs": [
           "I’m a software developer and IT teacher based in Buenos Aires. I worked professionally in software for around fifteen years, mostly on existing web and mobile products. Since late 2023, my primary professional work has been teaching Information Technology.",
-          "I continue to develop software through educational, institutional and personal projects. I’m available for part-time remote software work on a contract or freelance basis, with collaboration that can be mostly asynchronous."
+          "I continue to develop software through educational, institutional and personal projects, and I’m now returning to professional software development alongside teaching. I’m available for part-time remote software work on a contract or freelance basis, with collaboration that can be mostly asynchronous."
         ]
       },
       "experience": {
         "heading": "Experience",
         "paragraphs": [
-          "From 2008 to 2023, I worked continuously as a software developer on existing products and systems. The work ranged from logistics and mobile-content platforms to surveys, healthcare and online communities, and included features, bug fixes, APIs, integrations, data work and maintenance."
+          "From 2008 to 2023, I worked continuously as a software developer across web, desktop and mobile systems. Much of my experience was in back-end development, databases, APIs and integrations, while the work became increasingly full-stack over time.",
+          "I mostly worked on existing products and systems, from logistics and mobile-content platforms to surveys, healthcare and online communities. The work included understanding existing behavior, defining technical approaches, implementing and testing changes, working with data and migrations, and following changes into production when needed."
         ],
         "softwareDevelopment": {
           "heading": "Software development",
@@ -53,7 +54,7 @@
               "organization": "Manas Technology Solutions",
               "period": "2018–2023",
               "role": "Software Developer",
-              "description": "I worked on existing web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I delivered features, fixes, integrations and data work on products already in use. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
+              "description": "I worked on web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I joined Manas with a stronger back-end background and gradually worked across more of the stack, including substantial front-end work in later years. On Surveda, where I worked for several years, work often began with a product need rather than a prescribed implementation: clarifying scope, investigating the codebase, defining a technical approach, implementing and testing changes, and following them into production when needed. The work included APIs, integrations, database changes and migrations. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
             }
           ]
         },
@@ -86,7 +87,8 @@
         "teaching": {
           "heading": "Teaching and technology education",
           "paragraphs": [
-            "I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training at CFP No. 7.",
+            "I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training for CFP No. 7’s secondary IT track.",
+            "At CFP No. 7, I coordinate the IT track’s vocational training and its integration with the general secondary curriculum, and teach courses in systems architecture, web interfaces and final projects.",
             "I design my own materials and teach through practical projects in programming, web interfaces, HTML, CSS, GitHub and web publishing.",
             "From 2019 to 2020, while working professionally in software, I also taught introductory programming, persistence and user interfaces in UNAHUR’s University Programming Technician program."
           ]
@@ -119,7 +121,7 @@
         "heading": "Working together",
         "paragraphs": [
           "I’m available for part-time remote software work with collaboration that can be mostly asynchronous. I’m open to contractor or freelance arrangements.",
-          "I’m comfortable working on an existing system, learning the codebase and taking responsibility for a clearly defined area of work. A focused first piece—such as a feature, bug fix, integration or data task—can be a practical way to start and build from there."
+          "I’m comfortable joining an existing system, clarifying the problem with product and technical stakeholders, learning the codebase and taking responsibility for a focused area of work. I tend to work carefully, using tests and other checks to understand existing behavior and reduce the risk of regressions. A focused first piece—such as a feature, bug fix, integration or data task—can be a practical way to start and build from there."
         ]
       },
       "contact": {
@@ -134,7 +136,7 @@
     "title": "Software Developer",
     "profile": {
       "heading": "Profile",
-      "text": "Software developer with around fifteen years of professional experience on existing web and mobile products, including features, bug fixes, APIs, integrations, data work and maintenance. I currently teach Information Technology. Available for remote part-time contract work."
+      "text": "Software developer with around fifteen years of professional experience across existing web, desktop and mobile systems, with a strong background in back-end development, databases, APIs and integrations and broad full-stack experience. My work has also included automated testing, data changes and following changes into production when needed. Since late 2023, my primary professional work has been teaching Information Technology. I’m now returning to professional software development alongside teaching and am available for remote part-time contract or freelance work."
     },
     "softwareExperience": {
       "heading": "Software experience",
@@ -153,9 +155,9 @@
             "Python"
           ],
           "highlights": [
-            "Delivered features, fixes, integrations and data work on products already in use.",
-            "On Surveda, contributed questionnaire export, established a unit-test base, reproduced bugs through tests, and fixed them while keeping coverage.",
-            "On Magic Calendar, an operating-room utilization product, worked mainly on front-end interfaces with some back-end work."
+            "Worked from product needs rather than prescribed implementations, collaborating with product owners on scope and estimates and defining technical approaches within my area of work.",
+            "Used automated testing and TDD extensively to understand existing behavior, reproduce bugs and make changes safely in complex existing codebases.",
+            "Implemented database and data changes, including migrations and SQL, and followed selected changes through deployment and post-change verification."
           ]
         },
         {
@@ -186,12 +188,12 @@
       ]
     },
     "currentDevelopment": {
-      "heading": "Current development",
-      "text": "Current work includes a bulletin-generation tool for CFP No. 7, small educational software projects, and a public professional site."
+      "heading": "Recent development",
+      "text": "Small tools built for teaching and school workflows, along with ongoing work on my professional site."
     },
     "teaching": {
       "heading": "Teaching",
-      "text": "Information Technology teacher in Buenos Aires secondary schools and Head of IT Training at CFP No. 7 since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
+      "text": "Information Technology teacher in Buenos Aires secondary schools and Head of IT Training for CFP No. 7’s secondary IT track since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
     },
     "education": {
       "heading": "Education",
@@ -218,24 +220,26 @@
     "technicalBackground": {
       "heading": "Technical experience",
       "professionalExperience": {
-        "heading": "Core professional experience",
+        "heading": "Development experience",
         "items": [
-          "JavaScript",
-          "SQL",
+          "Full-stack web development",
+          "Back-end and database work",
           "APIs and integrations",
-          "HTML/CSS",
-          "Git"
+          "Automated testing and TDD"
         ]
       },
       "currentPractice": {
-        "heading": "Additional professional experience",
+        "heading": "Selected technologies",
         "items": [
+          "JavaScript / TypeScript",
+          "SQL",
           "C# / .NET",
           "React",
           "Node.js",
-          "TypeScript",
           "Python",
-          "AWS"
+          "HTML/CSS",
+          "AWS",
+          "Git"
         ]
       }
     },
@@ -248,7 +252,7 @@
         },
         {
           "language": "English",
-          "proficiency": "Fluent; professional use"
+          "proficiency": "Fluent, spoken and written; professional use in distributed teams."
         }
       ]
     }

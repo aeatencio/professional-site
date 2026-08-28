@@ -15,14 +15,13 @@
   --cv-primary-col: 113mm;
   --cv-gutter: 8mm;
   --cv-secondary-col: 59mm;
-  --cv-header-h: 31mm;
+  --cv-masthead-gap: 10.6mm;
   --cv-intro-gap: 8.2mm;
   --cv-stack-gap: 9.4mm;
   --cv-role-gap: 8.45mm;
   --cv-edu-gap: 5.8mm;
   --cv-tech-gap: 5mm;
   --cv-heading-gap: 4mm;
-  --cv-intro-offset: 4.7mm;
   --cv-rule-hairline: 0.55pt;
   background: var(--color-ivory);
   color: var(--cv-ink);
@@ -44,14 +43,13 @@
   --cv-primary-col: 117.6mm;
   --cv-gutter: 8.3mm;
   --cv-secondary-col: 61mm;
-  --cv-header-h: 29mm;
+  --cv-masthead-gap: 10.2mm;
   --cv-intro-gap: 6.6mm;
   --cv-stack-gap: 8.6mm;
-  --cv-role-gap: 7.6mm;
+  --cv-role-gap: 6.6mm;
   --cv-edu-gap: 5.2mm;
   --cv-tech-gap: 4.4mm;
   --cv-heading-gap: 3.3mm;
-  --cv-intro-offset: 5.4mm;
 }
 
 .cv-page {
@@ -116,7 +114,8 @@
 }
 
 .cv-header {
-  height: var(--cv-header-h);
+  flex: 0 0 auto;
+  height: auto;
   margin: 0;
   padding: 0;
 }
@@ -175,7 +174,7 @@
     "profile . technical"
     "primary . secondary";
   row-gap: var(--cv-intro-gap);
-  padding-top: var(--cv-intro-offset);
+  padding-top: var(--cv-masthead-gap);
 }
 
 .cv-profile {

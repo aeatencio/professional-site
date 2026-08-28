@@ -36,7 +36,7 @@ test('local projection is the authority for current professional copy', async ()
   );
   assert.equal(
     projection.site.sections.experience.teaching.paragraphs[0],
-    'I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training at CFP No. 7.'
+    'I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training for CFP No. 7’s secondary IT track.'
   );
   assert.equal(
     projection.site.sections.experience.teaching.paragraphs.some((paragraph) =>
@@ -68,11 +68,12 @@ test('local projection is the authority for current professional copy', async ()
   assert.match(institutionalToolsParagraph, /CFP No\. 7/);
   assert.match(
     projection.cv.currentDevelopment.text,
-    /bulletin-generation tool for CFP No\. 7/
+    /teaching and school workflows/
   );
+  assert.match(projection.cv.currentDevelopment.text, /professional site/);
   assert.match(
     projection.cv.teaching.text,
-    /Information Technology teacher in Buenos Aires secondary schools and Head of IT Training at CFP No\. 7 since 2023\./
+    /Information Technology teacher in Buenos Aires secondary schools and Head of IT Training for CFP No\. 7’s secondary IT track since 2023\./
   );
   assert.ok(projection.cv.teaching.text.includes('UNAHUR'));
   assert.equal(projection.cv.teaching.text.includes('vocational-training reference'), false);
@@ -80,16 +81,25 @@ test('local projection is the authority for current professional copy', async ()
   assert.deepEqual(
     projection.cv.technicalBackground.professionalExperience.items,
     [
-      'JavaScript',
-      'SQL',
+      'Full-stack web development',
+      'Back-end and database work',
       'APIs and integrations',
-      'HTML/CSS',
-      'Git'
+      'Automated testing and TDD'
     ]
   );
   assert.deepEqual(
     projection.cv.technicalBackground.currentPractice.items,
-    ['C# / .NET', 'React', 'Node.js', 'TypeScript', 'Python', 'AWS']
+    [
+      'JavaScript / TypeScript',
+      'SQL',
+      'C# / .NET',
+      'React',
+      'Node.js',
+      'Python',
+      'HTML/CSS',
+      'AWS',
+      'Git'
+    ]
   );
   assert.deepEqual(
     projection.cv.languages.items.map(({ language }) => language),
