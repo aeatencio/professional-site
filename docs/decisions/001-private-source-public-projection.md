@@ -2,7 +2,7 @@
 
 - Status: Accepted, revised
 - Original date: 2026-08-13
-- Revised: 2026-08-19
+- Revised: 2026-08-28
 - Identifier: `DATA-BOUNDARY-001`
 
 ## Context
@@ -47,8 +47,9 @@ DATA-BOUNDARY-001 while preserving its privacy boundary.
 5. The site is self-contained.
 6. Public professional copy has one authority: the local projection, not
    duplicate Astro literals.
-7. Transfer, repository visibility, deployment and publication are independent
-   deliberate human actions.
+7. Local transfer of the named projection, repository visibility, deployment
+   and publication are independent. Each may require distinct authority.
+   Local transfer is not visibility, deployment or publication.
 
 ## Consequences
 

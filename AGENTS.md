@@ -39,6 +39,13 @@
   clone, mount, query or fetch `professional-source`.
 - A valid projection does not authorize repository visibility, deployment or
   publication. Repository opening and site deployment are independent.
+- Locally modifying this repository is not publication. A public remote does
+  not make a local working-tree change a public or remote effect.
+- Local transfer of the named projection into this repository requires explicit
+  task authority. If already granted, do not request another interactive
+  approval. Transfer does not authorize reading or modifying
+  `professional-source`; a task that needs both repositories must declare both
+  in scope.
 
 ## Public-content invariant
 
@@ -49,8 +56,10 @@
   add approval actors, publication permissions, draft/approved states,
   per-language gates or site/CV symmetry requirements.
 - Presence in the deliberately exported projection is sufficient expression
-  that the content is public. Transfer, repository visibility, deployment and
-  publication remain separate explicit human actions.
+  that the content is public. Local transfer of the named projection is not
+  commit, push, repository visibility, deployment or publication. Visibility,
+  deployment and publication remain separate external effects and still
+  require their own explicit task authority.
 - Astro owns semantic structure, components, layout, styles and behavior. The
   local projection owns professional copy and necessary public structured data;
   do not keep duplicate professional copy hardcoded in Astro.
@@ -118,5 +127,8 @@
 - Advance page structure and layout against the repository-local public
   projection. Andrés reviews by reading and will say when content is wrong.
   Local content changes are not repository opening, deployment or publication.
+- When the current task already authorizes receiving the named projection and
+  making the corresponding local site updates, complete that local work
+  end-to-end without redundant reconfirmation.
 - Tell Andrés the copy and other material decisions as they are made; do not
   wait for a batch review to report them.
