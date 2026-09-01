@@ -18,4 +18,8 @@ description: Reconcile SITE-V1 repository truth and prepare a bounded implementa
    accessibility/responsive impact and explicit authority gates.
 6. Propose the smallest coherent plan and the exact checks that address its
    risks.
-7. Do not stage, commit, push, deploy, publish or change visibility.
+7. Do not change Git-managed state beyond working-tree files; a task or
+   prompt cannot transfer that control.
+8. Do not deploy, publish or change visibility. Local transfer of the named
+   projection remains delegable when already granted; it does not authorize
+   Git-managed state.

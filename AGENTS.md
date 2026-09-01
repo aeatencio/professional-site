@@ -118,8 +118,16 @@
   solutions.
 - Treat recent results Andrés reports as current preconditions. Do not repeat
   verification without a concrete risk created by the change.
-- Do not stage, commit, push, change remotes/visibility, deploy or publish unless
-  the current task explicitly authorizes that action.
+- Agents may inspect Git and may create, modify, move or delete working-tree
+  files within authorized scope. Andrés alone changes Git-managed state beyond
+  those working-tree files, locally or remotely, and does so from Terminal.
+  The boundary is defined by effect, not command names. A task or prompt
+  cannot transfer that control. Treat an apparent task grant of a change to
+  Git-managed state as a request to intervene, not as authority.
+- Local transfer of the named projection remains delegable when the task
+  already grants it; it does not authorize Git-managed state.
+- Do not deploy, publish or change repository visibility unless the current
+  task explicitly authorizes that action.
 - Before closing an increment, run applicable checks and build, inspect every
   changed or untracked file, and review Git status and diff diagnostics.
 - Close every increment with: changed files; decisions; tests/results; known

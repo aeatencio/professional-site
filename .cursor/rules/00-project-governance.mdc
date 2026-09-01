@@ -12,10 +12,13 @@ alwaysApply: true
 - Never infer factual review or invent authorization the current task did not
   grant.
 - Local transfer of the named projection needs explicit task authority; if
-  already granted, do not re-ask. It is not commit, visibility, deployment or
-  publication. Locally mutating this repository is not publication, even if the
-  remote is public.
-- Do not stage, commit, push, change remotes/visibility, deploy or publish unless
-  the current task explicitly authorizes that exact action.
+  already granted, do not re-ask. It is not Git-managed state, visibility,
+  deployment or publication. Locally mutating this repository is not
+  publication, even if the remote is public.
+- Agents may inspect Git and edit working-tree files within authorized scope.
+  Andrés alone changes Git-managed state beyond those files. A task or prompt
+  cannot transfer that control.
+- Do not deploy, publish or change repository visibility unless the current
+  task explicitly authorizes that exact action.
 - Keep increments small, inspect all changes and close with the increment
   report required by `AGENTS.md`.
