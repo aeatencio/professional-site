@@ -100,7 +100,7 @@
           {
             "heading": "Academic foundation",
             "paragraphs": [
-              "I studied at Colegio Nacional de Buenos Aires, a five-year pre-university secondary school of the University of Buenos Aires. Its broad, demanding curriculum remains an important part of my intellectual foundation."
+              "I studied at Colegio Nacional de Buenos Aires, a pre-university secondary school of the University of Buenos Aires. Its broad, demanding curriculum remains an important part of my intellectual foundation."
             ]
           },
           {
@@ -112,7 +112,7 @@
           {
             "heading": "Across disciplines",
             "paragraphs": [
-              "My academic path also included the UBA’s Ciclo Básico Común, where I completed ten courses across several disciplines, followed by several years studying Veterinary Medicine, later coursework in Literature, and teacher training in Biology. I’m currently completing pedagogical training at IES Juan B. Justo, with 12 of 15 course units completed."
+              "My academic path also included several years of university study at the University of Buenos Aires, mainly Veterinary Medicine and later Literature, and teacher training in Biology. I’m currently completing pedagogical training at IES Juan B. Justo, with 12 of 15 course units completed."
             ]
           }
         ]
@@ -204,16 +204,20 @@
           "period": "2017"
         },
         {
-          "institution": "Colegio Nacional de Buenos Aires",
-          "qualification": "Bachiller",
-          "period": "1998–2002",
-          "detail": "Five-year pre-university program, Universidad de Buenos Aires"
+          "institution": "Universidad de Buenos Aires",
+          "qualification": "Several years of university study",
+          "period": "Veterinary Medicine and Literature"
         },
         {
           "institution": "IES Juan B. Justo",
           "qualification": "Pedagogical training for professionals and higher-level technicians",
           "period": "In progress",
           "detail": "12/15 units completed"
+        },
+        {
+          "institution": "Colegio Nacional de Buenos Aires",
+          "qualification": "Bachiller",
+          "period": "Pre-university secondary school, Universidad de Buenos Aires"
         }
       ]
     },

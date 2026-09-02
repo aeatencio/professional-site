@@ -47,7 +47,7 @@
   --cv-intro-gap: 6.6mm;
   --cv-stack-gap: 8.6mm;
   --cv-role-gap: 6.6mm;
-  --cv-edu-gap: 5.2mm;
+  --cv-edu-gap: 4.5mm;
   --cv-tech-gap: 4.4mm;
   --cv-heading-gap: 3.3mm;
 }
@@ -203,6 +203,20 @@
   align-items: stretch;
   gap: var(--cv-stack-gap);
   min-width: 0;
+}
+
+@supports (anchor-name: --cv-technical) and (position-anchor: --cv-technical) and (top: anchor(bottom)) and (left: anchor(left)) and (width: anchor-size(width)) {
+  .cv-technical {
+    anchor-name: --cv-technical;
+  }
+
+  .cv-secondary {
+    position: absolute;
+    position-anchor: --cv-technical;
+    top: calc(anchor(bottom) + var(--cv-intro-gap));
+    left: anchor(left);
+    width: anchor-size(width);
+  }
 }
 
 .cv-page h2 {
@@ -427,6 +441,12 @@
     column-gap: 0;
     padding-top: 1.25rem;
     row-gap: 1.25rem;
+  }
+
+  .cv-secondary {
+    position: static;
+    inset: auto;
+    width: auto;
   }
 
   .cv-page::before {

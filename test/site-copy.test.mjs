@@ -105,6 +105,44 @@ test('local projection is the authority for current professional copy', async ()
     projection.cv.languages.items.map(({ language }) => language),
     ['Spanish', 'English']
   );
+  assert.deepEqual(
+    projection.cv.education.items.map(({ institution }) => institution),
+    [
+      'Universidad del Salvador',
+      'Universidad de Buenos Aires',
+      'IES Juan B. Justo',
+      'Colegio Nacional de Buenos Aires'
+    ]
+  );
+  assert.equal(projection.cv.education.items[0].qualification, 'Information Systems Analyst');
+  assert.equal(projection.cv.education.items[0].period, '2017');
+  assert.equal(projection.cv.education.items[1].qualification, 'Several years of university study');
+  assert.equal(
+    projection.cv.education.items[1].period,
+    'Veterinary Medicine and Literature'
+  );
+  assert.equal(projection.cv.education.items[3].qualification, 'Bachiller');
+  assert.match(
+    projection.cv.education.items[3].period,
+    /Pre-university secondary school, Universidad de Buenos Aires/
+  );
+  const academicFoundation =
+    projection.site.sections.background.items.find(
+      (item) => item.heading === 'Academic foundation'
+    )?.paragraphs[0];
+  assert.match(academicFoundation, /pre-university secondary school of the University of Buenos Aires/);
+  assert.equal(academicFoundation.includes('five-year'), false);
+  const acrossDisciplines =
+    projection.site.sections.background.items.find(
+      (item) => item.heading === 'Across disciplines'
+    )?.paragraphs[0];
+  assert.match(acrossDisciplines, /several years of university study at the University of Buenos Aires/);
+  assert.equal(acrossDisciplines.includes('ten courses'), false);
+  const educationSerialized = JSON.stringify(projection.cv.education);
+  assert.equal(educationSerialized.includes('1998'), false);
+  assert.equal(educationSerialized.includes('Five-year'), false);
+  assert.equal(educationSerialized.includes('Incomplete'), false);
+  assert.equal(educationSerialized.includes('10 courses'), false);
 });
 
 test('Astro owns structure while site and CV copy stay in the projection', async () => {

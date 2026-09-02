@@ -120,3 +120,23 @@ test('CV print stylesheet targets exact paper boxes without global scaling', asy
   assert.equal(/page-break-before:\s*always/.test(cvCss), false);
   assert.equal(/transform:\s*scale\(/.test(cvCss), false);
 });
+
+test('column-rhythm absolute placement is gated on CSS Anchor Positioning', async () => {
+  const cvCss = await readFile(cvCssUrl, 'utf8');
+  const defaultSecondary = cvCss.match(/^\.cv-secondary \{[\s\S]*?^\}\r?\n/m);
+
+  assert.ok(defaultSecondary, 'Missing default .cv-secondary rule');
+  assert.equal(
+    /position\s*:/.test(defaultSecondary[0]),
+    false,
+    '.cv-secondary must remain in normal flow without Anchor Positioning support'
+  );
+  assert.match(
+    cvCss,
+    /@supports \(anchor-name: --cv-technical\) and \(position-anchor: --cv-technical\) and \(top: anchor\(bottom\)\) and \(left: anchor\(left\)\) and \(width: anchor-size\(width\)\)/
+  );
+  assert.match(
+    cvCss,
+    /@supports \([\s\S]*?width: anchor-size\(width\)\) \{[\s\S]*?\.cv-secondary \{[\s\S]*?position:\s*absolute;[\s\S]*?position-anchor:\s*--cv-technical;[\s\S]*?top:\s*calc\(anchor\(bottom\) \+ var\(--cv-intro-gap\)\);[\s\S]*?left:\s*anchor\(left\);[\s\S]*?width:\s*anchor-size\(width\);/
+  );
+});
