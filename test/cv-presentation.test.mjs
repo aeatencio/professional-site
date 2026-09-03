@@ -18,6 +18,10 @@ test('CV presentation derives visible profile URLs and keeps canonical hrefs', a
   assert.equal(cvPage.includes('{link.label}</a>'), false);
   assert.equal(cvPage.includes('github.com/aeatencio'), false);
   assert.equal(cvPage.includes('linkedin.com/in/aeatencio'), false);
+  assert.match(cvPage, /Astro\.site/);
+  assert.match(cvPage, /aria-label="Website"/);
+  assert.equal(cvPage.includes('professional-site.aeatencio.workers.dev'), false);
+  assert.equal(cvPage.includes('andresatencio.com'), false);
 });
 
 test('CV markup keeps the V2 source order without CSS order', async () => {
@@ -106,6 +110,35 @@ test('A4 and US Letter share one document and declare paper-specific frames', as
   assert.match(cvCss, /--cv-gutter:\s*8\.3mm/);
   assert.match(cvCss, /\[data-cv-format="letter"\]/);
   assert.equal(cvDocument.includes('format='), false);
+});
+
+test('CV chrome is outside the document and hidden in print', async () => {
+  const [cvDocument, layout, chrome, cvCss, nav] = await Promise.all([
+    readFile(cvDocumentUrl, 'utf8'),
+    readFile(cvLayoutUrl, 'utf8'),
+    readFile(new URL('../src/components/CvChrome.astro', import.meta.url), 'utf8'),
+    readFile(cvCssUrl, 'utf8'),
+    readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8')
+  ]);
+
+  assert.match(layout, /<CvChrome format=\{format\} \/>/);
+  assert.match(layout, /href="#cv-main"/);
+  assert.equal(cvDocument.includes('cv-chrome'), false);
+  assert.match(cvDocument, /id="cv-main"/);
+  assert.match(chrome, /href="\/"/);
+  assert.match(chrome, /Back to site/);
+  assert.match(chrome, /CV_PDF\.a4\.route/);
+  assert.match(chrome, /CV_PDF\.letter\.route/);
+  assert.match(chrome, /download=\{pdf\.download\}/);
+  assert.match(chrome, /type="application\/pdf"/);
+  assert.equal(chrome.includes('window.print'), false);
+  assert.equal(chrome.includes('andresatencio.com'), false);
+  assert.equal(nav.includes('/cv/'), false);
+  assert.match(
+    cvCss,
+    /@media print \{[\s\S]*?\.cv-chrome[\s\S]*?display:\s*none/
+  );
+  assert.match(cvCss, /@media screen \{[\s\S]*?\.cv-chrome \{/);
 });
 
 test('CV print stylesheet targets exact paper boxes without global scaling', async () => {

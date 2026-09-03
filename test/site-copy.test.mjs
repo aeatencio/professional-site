@@ -36,7 +36,11 @@ test('local projection is the authority for current professional copy', async ()
   );
   assert.equal(
     projection.site.sections.experience.teaching.paragraphs[0],
-    'I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training for CFP No. 7’s secondary IT track.'
+    'I teach Information Technology in Buenos Aires City high schools and serve as Head of IT Training for CFP No. 7’s high school IT track.'
+  );
+  assert.equal(
+    projection.site.sections.experience.teaching.paragraphs[1],
+    'At CFP No. 7, I coordinate the IT track’s vocational training and its integration with the general high school curriculum, and teach courses in systems architecture, web interfaces and final projects.'
   );
   assert.equal(
     projection.site.sections.experience.teaching.paragraphs.some((paragraph) =>
@@ -73,7 +77,7 @@ test('local projection is the authority for current professional copy', async ()
   assert.match(projection.cv.currentDevelopment.text, /professional site/);
   assert.match(
     projection.cv.teaching.text,
-    /Information Technology teacher in Buenos Aires secondary schools and Head of IT Training for CFP No\. 7’s secondary IT track since 2023\./
+    /Information Technology teacher in Buenos Aires high schools and Head of IT Training for CFP No\. 7’s high school IT track since 2023\./
   );
   assert.ok(projection.cv.teaching.text.includes('UNAHUR'));
   assert.equal(projection.cv.teaching.text.includes('vocational-training reference'), false);
@@ -124,13 +128,13 @@ test('local projection is the authority for current professional copy', async ()
   assert.equal(projection.cv.education.items[3].qualification, 'Bachiller');
   assert.match(
     projection.cv.education.items[3].period,
-    /Pre-university secondary school, Universidad de Buenos Aires/
+    /Pre-university high school, Universidad de Buenos Aires/
   );
   const academicFoundation =
     projection.site.sections.background.items.find(
       (item) => item.heading === 'Academic foundation'
     )?.paragraphs[0];
-  assert.match(academicFoundation, /pre-university secondary school of the University of Buenos Aires/);
+  assert.match(academicFoundation, /pre-university high school of the University of Buenos Aires/);
   assert.equal(academicFoundation.includes('five-year'), false);
   const acrossDisciplines =
     projection.site.sections.background.items.find(
@@ -143,6 +147,11 @@ test('local projection is the authority for current professional copy', async ()
   assert.equal(educationSerialized.includes('Five-year'), false);
   assert.equal(educationSerialized.includes('Incomplete'), false);
   assert.equal(educationSerialized.includes('10 courses'), false);
+  const serialized = JSON.stringify(projection);
+  assert.equal(serialized.includes('secondary school'), false);
+  assert.equal(serialized.includes('secondary IT'), false);
+  assert.equal(serialized.includes('secondary curriculum'), false);
+  assert.match(serialized, /school workflows/);
 });
 
 test('Astro owns structure while site and CV copy stay in the projection', async () => {
@@ -174,7 +183,13 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('mostly on existing web and mobile products'), false);
   assert.equal(page.includes('part-time remote software work on a contract or freelance basis'), false);
   assert.match(page, /class="action" href="#experience">View experience</);
+  assert.match(page, /href="\/cv\/">View CV</);
+  assert.match(page, /href=\{CV_PDF\.a4\.href\}/);
+  assert.match(page, /download=\{CV_PDF\.a4\.download\}/);
+  assert.match(page, />Download CV</);
+  assert.equal(page.includes('Download A4 CV'), false);
   assert.match(page, /href="#contact">Contact me</);
+  assert.equal(page.includes('window.print'), false);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
   assert.equal(page.includes('aeatencio@gmail.com'), false);
   assert.equal(page.includes('loadLocalPublicProjection'), false);
@@ -192,6 +207,11 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(cvLetterPage.includes('Software Developer · IT Teacher'), false);
   assert.equal(layout.includes('Andrés Atencio'), false);
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
+  assert.match(cvLayout, /<CvChrome format=\{format\} \/>/);
+  assert.equal(cvDocument.includes('cv-chrome'), false);
+  assert.equal(cvDocument.includes('window.print'), false);
+  assert.equal(cvLayout.includes('window.print'), false);
+  assert.equal(page.includes('andresatencio.com/cv'), false);
 });
 
 test('public content has no workflow or private-source fields', async () => {

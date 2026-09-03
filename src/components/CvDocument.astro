@@ -2,13 +2,14 @@
 import projection from '../../data/professional-public-projection.v1.json';
 
 const { shared, cv } = projection;
+const siteUrl = Astro.site ? Astro.site.origin : '';
 
 function visibleProfileUrl(url: string) {
   return url.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '');
 }
 ---
 
-<main class="cv-page">
+<main class="cv-page" id="cv-main">
   <header class="cv-header">
     <div class="cv-masthead">
       <h1>{shared.name}</h1>
@@ -17,6 +18,9 @@ function visibleProfileUrl(url: string) {
     <address class="cv-contact">
       <span>{shared.location}</span>
       <a href={`mailto:${shared.email}`}>{shared.email}</a>
+      {siteUrl ? (
+        <a href={siteUrl} rel="me" aria-label="Website">{visibleProfileUrl(siteUrl)}</a>
+      ) : null}
       {shared.links.map((link) => (
         <a href={link.url} rel="me" aria-label={link.label}>{visibleProfileUrl(link.url)}</a>
       ))}

@@ -21,6 +21,18 @@ The projection is organized around the real artifacts:
   experience, current development, teaching, education, technical background
   and languages. The current private V2 renders the A4 composition at `/cv/`
   and the US Letter composition at `/cv/letter/`, from one shared document.
+  Home and the CV pages link those routes and serve matching static PDFs from
+  `public/cv/`, generated from the print stylesheet rather than `window.print()`.
+  The canonical public origin is `https://andresatencio.com`; on-site navigation
+  stays on relative paths. Versioned PDFs are kept in sync by fingerprinting the
+  effective print inputs of the built CV pages: the full HTML for `/cv/` and
+  `/cv/letter/` (head, metadata, `@page`, chrome and `#cv-main`), every local
+  stylesheet those documents load, every local font or image they reference,
+  `Astro.site`, and the `Page.printToPDF` options for each paper size. The
+  fingerprint is conservative: on-screen-only chrome, skip-link markup,
+  screen-only CSS in a shared stylesheet, or other referenced local assets can
+  force a reprint even when print output would not change. That false-positive
+  cost is preferred to a heuristic that lets a stale PDF pass.
 
 It is not a public fact registry and contains no fact IDs, approvals,
 permissions, editorial states, actors or audit timestamps. Presence in the

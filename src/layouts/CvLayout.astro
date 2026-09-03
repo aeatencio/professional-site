@@ -1,4 +1,5 @@
 ---
+import CvChrome from '../components/CvChrome.astro';
 import '../styles/global.css';
 import '../styles/cv.css';
 
@@ -23,6 +24,8 @@ const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
     <Fragment set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
   </head>
   <body class="cv-document" data-cv-format={format}>
+    <a class="skip-link" href="#cv-main">Skip to content</a>
+    <CvChrome format={format} />
     <slot />
   </body>
 </html>

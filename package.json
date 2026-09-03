@@ -12,6 +12,8 @@
     "build": "npm run projection:validate && astro build && node scripts/verify-built-content.mjs",
     "preview": "astro preview",
     "check": "npm run projection:validate && astro check",
+    "cv:pdf": "npm run projection:validate && node scripts/generate-cv-pdfs.mjs",
+    "layout:check": "npm run build && node scripts/verify-home-overflow.mjs",
     "projection:validate": "node scripts/validate-public-projection.mjs",
     "test": "node --test test/*.test.mjs"
   },

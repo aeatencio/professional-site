@@ -1,0 +1,13 @@
+{
+  "printableSha256": "15a8514f9633964d24a0e4c038e56e4725be2cd504704b9ee20190e5960a584b",
+  "files": {
+    "public/cv/andres-atencio-cv-a4.pdf": {
+      "sha256": "753273947c31ab9e4f2af0b06ee600c6fc1107436f2d5248580c7b2b58ca3526",
+      "bytes": 73900
+    },
+    "public/cv/andres-atencio-cv-letter.pdf": {
+      "sha256": "1c18e94081dd2dddca1d0e54099523e28b08cb11cef76882f8b7dc41cecada80",
+      "bytes": 73887
+    }
+  }
+}

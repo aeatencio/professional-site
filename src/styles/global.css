@@ -23,6 +23,18 @@ html {
   color-scheme: light;
 }
 
+.page {
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: minmax(var(--space-page), 1fr) minmax(0, var(--page-max)) minmax(var(--space-page), 1fr);
+}
+
+.page > * {
+  grid-column: 2;
+  min-width: 0;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -59,15 +71,6 @@ body {
 
 .skip-link:focus {
   transform: none;
-}
-
-.page {
-  display: grid;
-  grid-template-columns: minmax(var(--space-page), 1fr) minmax(0, var(--page-max)) minmax(var(--space-page), 1fr);
-}
-
-.page > * {
-  grid-column: 2;
 }
 
 .site-header {
@@ -134,6 +137,7 @@ body {
   column-gap: clamp(1.5rem, 5vw, 5rem);
   padding-block: clamp(3.25rem, 8vw, 6.5rem);
   border-bottom: 1px solid var(--color-line);
+  min-width: 0;
 }
 
 .chapter__body {
@@ -158,9 +162,15 @@ body {
   padding-bottom: clamp(2.75rem, 6.5vw, 5.25rem);
 }
 
+.chapter--home .chapter__body {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .hero-art {
   display: block;
   grid-column: 2;
+  grid-row: 1 / span 2;
   align-self: start;
   justify-self: end;
   width: min(100%, clamp(16rem, 26vw, 23rem));
@@ -230,6 +240,8 @@ h2 {
 h1 {
   font-size: clamp(2.35rem, 6.2vw, 4.4rem);
   color: var(--color-ink);
+  max-width: 100%;
+  overflow-wrap: break-word;
   text-wrap: balance;
 }
 
@@ -363,6 +375,13 @@ h4 {
   gap: 0.85rem 1.4rem;
   margin: 1.75rem 0 0;
   align-items: baseline;
+  max-width: var(--measure);
+}
+
+.chapter--home .actions {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
 }
 
 .actions a {
@@ -456,15 +475,31 @@ h4 {
 
   .chapter--home {
     padding-block: 2.35rem 1.85rem;
-    row-gap: 0.5rem;
+    row-gap: 0.85rem;
+  }
+
+  .chapter--home .chapter__body,
+  .chapter--home .hero-art,
+  .chapter--home .actions {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .hero-art {
-    grid-column: 1;
     justify-self: end;
     width: min(42vw, 14.25rem);
-    margin-top: 0.2rem;
-    margin-bottom: -0.25rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0;
+  }
+
+  .chapter--home .actions {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 0.8rem;
+    max-width: none;
+    margin-top: 0.35rem;
   }
 
   .chapter-art--notebook,
@@ -515,15 +550,29 @@ h4 {
   .site-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.75rem 0;
+  }
+
+  .primary-nav {
+    width: 100%;
+  }
+
+  .primary-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    column-gap: 1.05rem;
+    row-gap: 0.38rem;
+    max-width: 22rem;
   }
 
   .chapter--home {
     padding-block: 2.15rem 1.5rem;
-    row-gap: 0.4rem;
+    row-gap: 0.75rem;
   }
 
   .hero-art {
-    width: min(58vw, 11.75rem);
+    width: min(48vw, 11.75rem);
   }
 
   .chapter-art--notebook {
@@ -544,6 +593,12 @@ h4 {
 
   .role__header {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .hero-art {
+    width: min(52vw, 9.75rem);
   }
 }
 

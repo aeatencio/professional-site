@@ -1,3 +1,70 @@
+.cv-document > .skip-link {
+  z-index: 3;
+}
+
+@media screen {
+.cv-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1rem var(--space-page) 0.9rem;
+  border-bottom: 1px solid var(--color-cobalt);
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+.cv-chrome__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem 1.5rem;
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+.cv-chrome__back {
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cv-chrome__back:hover,
+.cv-chrome__back:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.cv-chrome__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-chrome__actions a {
+  color: var(--color-cobalt);
+  text-decoration: none;
+}
+
+.cv-chrome__actions a:hover,
+.cv-chrome__actions a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.cv-chrome__actions a[aria-current="page"] {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+}
+
 .cv-document {
   --cv-ink: #1e1b19;
   --cv-muted: #5c554e;
@@ -514,6 +581,11 @@
 }
 
 @media print {
+  .cv-chrome,
+  .skip-link {
+    display: none !important;
+  }
+
   .cv-document {
     background: var(--cv-paper);
     background-image: none;

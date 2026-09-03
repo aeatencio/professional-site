@@ -264,7 +264,14 @@ test('productive consumer contains no private-repository dependency', async () =
     '../src/pages/cv/index.astro',
     '../src/pages/cv/letter.astro',
     '../src/components/CvDocument.astro',
-    '../src/layouts/CvLayout.astro'
+    '../src/components/CvChrome.astro',
+    '../src/layouts/CvLayout.astro',
+    '../lib/cv-pdf.mjs',
+    '../lib/printable-cv.mjs',
+    '../lib/headless-chrome.mjs',
+    '../scripts/generate-cv-pdfs.mjs',
+    '../scripts/verify-built-content.mjs',
+    '../scripts/verify-home-overflow.mjs'
   ];
 
   for (const file of files) {

@@ -87,8 +87,8 @@
         "teaching": {
           "heading": "Teaching and technology education",
           "paragraphs": [
-            "I teach Information Technology in Buenos Aires City secondary schools and serve as Head of IT Training for CFP No. 7’s secondary IT track.",
-            "At CFP No. 7, I coordinate the IT track’s vocational training and its integration with the general secondary curriculum, and teach courses in systems architecture, web interfaces and final projects.",
+            "I teach Information Technology in Buenos Aires City high schools and serve as Head of IT Training for CFP No. 7’s high school IT track.",
+            "At CFP No. 7, I coordinate the IT track’s vocational training and its integration with the general high school curriculum, and teach courses in systems architecture, web interfaces and final projects.",
             "I design my own materials and teach through practical projects in programming, web interfaces, HTML, CSS, GitHub and web publishing.",
             "From 2019 to 2020, while working professionally in software, I also taught introductory programming, persistence and user interfaces in UNAHUR’s University Programming Technician program."
           ]
@@ -100,7 +100,7 @@
           {
             "heading": "Academic foundation",
             "paragraphs": [
-              "I studied at Colegio Nacional de Buenos Aires, a pre-university secondary school of the University of Buenos Aires. Its broad, demanding curriculum remains an important part of my intellectual foundation."
+              "I studied at Colegio Nacional de Buenos Aires, a pre-university high school of the University of Buenos Aires. Its broad, demanding curriculum remains an important part of my intellectual foundation."
             ]
           },
           {
@@ -193,7 +193,7 @@
     },
     "teaching": {
       "heading": "Teaching",
-      "text": "Information Technology teacher in Buenos Aires secondary schools and Head of IT Training for CFP No. 7’s secondary IT track since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
+      "text": "Information Technology teacher in Buenos Aires high schools and Head of IT Training for CFP No. 7’s high school IT track since 2023. From 2019 to 2020, taught in UNAHUR’s University Programming Technician program while working professionally in software."
     },
     "education": {
       "heading": "Education",
@@ -217,7 +217,7 @@
         {
           "institution": "Colegio Nacional de Buenos Aires",
           "qualification": "Bachiller",
-          "period": "Pre-university secondary school, Universidad de Buenos Aires"
+          "period": "Pre-university high school, Universidad de Buenos Aires"
         }
       ]
     },

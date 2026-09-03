@@ -28,8 +28,11 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Build
-        run: npm run build
+      - name: Check
+        run: npm run check
+
+      - name: Build and verify Home layout
+        run: npm run layout:check
 
       - name: Deploy to Cloudflare
         run: npx wrangler deploy
