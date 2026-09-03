@@ -138,7 +138,15 @@ test('CV chrome is outside the document and hidden in print', async () => {
     cvCss,
     /@media print \{[\s\S]*?\.cv-chrome[\s\S]*?display:\s*none/
   );
-  assert.match(cvCss, /@media screen \{[\s\S]*?\.cv-chrome \{/);
+  assert.match(
+    cvCss,
+    /@media screen \{\s*\.cv-chrome \{[\s\S]*?\bz-index:\s*2;/
+  );
+  assert.match(cvCss, /\.cv-document > \.skip-link \{\s*z-index:\s*3;/);
+  assert.match(
+    cvCss,
+    /\.cv-header,\s*\.cv-body \{\s*position:\s*relative;\s*z-index:\s*1;/
+  );
 });
 
 test('CV print stylesheet targets exact paper boxes without global scaling', async () => {
