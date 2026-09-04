@@ -184,11 +184,17 @@ html {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
+  font-size: 1.05rem;
+}
+
+.page > .site-footer p {
+  font-weight: 600;
 }
 
 .page > .site-footer a {
   flex: 0 0 auto;
   color: var(--color-cobalt);
+  font-weight: 650;
   text-decoration: none;
   text-underline-offset: 0.2em;
   white-space: nowrap;
