@@ -180,6 +180,11 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /focusInsideClosedDisclosure/);
   assert.match(verifier, /View online/);
   assert.match(verifier, /Download PDF/);
+  assert.match(verifier, /assertCvPageChrome/);
+  assert.match(verifier, /Download A4 PDF/);
+  assert.match(verifier, /Download US Letter PDF/);
+  assert.match(verifier, /outside the mobile CV download/);
+  assert.match(verifier, /inside the mobile CV download/);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);

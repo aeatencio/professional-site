@@ -97,7 +97,22 @@ assert.match(cvHtml, /href="\/">Back to site</);
 assert.match(cvLetterHtml, /href="\/">Back to site</);
 assert.match(cvHtml, /href="\/cv\/letter\/"[^>]*>US Letter</);
 assert.match(cvLetterHtml, /href="\/cv\/"[^>]*>A4</);
+assert.match(cvHtml, /<details class="cv-chrome__download">/);
+assert.match(cvLetterHtml, /<details class="cv-chrome__download">/);
+assert.match(cvHtml, /<summary>Download PDF<\/summary>/);
+assert.match(cvLetterHtml, /<summary>Download PDF<\/summary>/);
+assert.match(cvHtml, /aria-label="Download A4 PDF"[^>]*>A4</);
+assert.match(cvHtml, /aria-label="Download US Letter PDF"[^>]*>US Letter</);
+assert.match(cvLetterHtml, /aria-label="Download A4 PDF"[^>]*>A4</);
+assert.match(cvLetterHtml, /aria-label="Download US Letter PDF"[^>]*>US Letter</);
+assert.equal(cvHtml.includes('>A4 PDF<'), false);
+assert.equal(cvHtml.includes('>US Letter PDF<'), false);
 assert.match(cvHtml, new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"`));
+assert.match(cvHtml, new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"`));
+assert.match(
+  cvLetterHtml,
+  new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"`)
+);
 assert.match(
   cvLetterHtml,
   new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"`)

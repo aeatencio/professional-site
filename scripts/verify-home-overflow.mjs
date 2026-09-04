@@ -61,6 +61,7 @@ await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
     await assertFooter(cdp, homeUrl, width, height, mobile);
   }
   await assertViewOnlineNavigation(cdp, homeUrl);
+  await assertCvPageChrome(cdp, origin);
   await assertFooterNavigation(cdp, homeUrl);
 });
 
@@ -646,6 +647,253 @@ async function assertViewOnlineNavigation(cdp, homeUrl) {
   }
   await cdp.send('Target.closeTarget', { targetId });
   console.log('View online keyboard navigation and CV-specific chrome verified');
+}
+
+async function assertCvPageChrome(cdp, origin) {
+  const a4Url = new URL(CV_PDF.a4.route, origin).href;
+  const letterUrl = new URL(CV_PDF.letter.route, origin).href;
+
+  await assertDesktopCvChrome(cdp, a4Url, 'a4');
+  await assertDesktopCvChrome(cdp, letterUrl, 'letter');
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 320, height: 700 },
+    { width: 667, height: 375 }
+  ]) {
+    await assertMobileCvChrome(cdp, a4Url, viewport, false);
+  }
+
+  await assertMobileCvChrome(cdp, a4Url, { width: 390, height: 844 }, true);
+  await assertMobileCvChromeKeyboard(cdp, a4Url);
+
+  for (const pdf of Object.values(CV_PDF)) {
+    const response = await fetch(new URL(pdf.href, origin));
+    const bytes = new Uint8Array(await response.arrayBuffer()).subarray(0, 5);
+    if (!response.ok || new TextDecoder().decode(bytes) !== '%PDF-') {
+      throw new Error(`${pdf.href} did not resolve to a PDF`);
+    }
+  }
+
+  console.log('CV chrome desktop view selectors and mobile download disclosure verified');
+}
+
+async function assertMobileCvChromeKeyboard(cdp, url) {
+  const { targetId, sessionId } = await openAt(cdp, url, 390, 844, true);
+  await activateByEnter(cdp, sessionId, '.cv-chrome__download > summary');
+  const result = await evaluate(cdp, sessionId, `(() => ({
+    open: document.querySelector('.cv-chrome__download')?.open ?? false
+  }))()`);
+  if (!result.open) {
+    throw new Error('Keyboard activation did not open the mobile CV download disclosure');
+  }
+  await pressKey(cdp, sessionId, 'Tab');
+  const active = await activeLink(cdp, sessionId);
+  if (active.text !== 'A4' || active.href !== CV_PDF.a4.href) {
+    throw new Error(`Keyboard focus did not move into A4 after opening download options: ${JSON.stringify(active)}`);
+  }
+  await pressKey(cdp, sessionId, 'Tab');
+  const letter = await activeLink(cdp, sessionId);
+  if (letter.text !== 'US Letter' || letter.href !== CV_PDF.letter.href) {
+    throw new Error(`Keyboard focus did not reach US Letter: ${JSON.stringify(letter)}`);
+  }
+  await pressKey(cdp, sessionId, 'Escape');
+  const escaped = await evaluate(cdp, sessionId, `(() => {
+    const download = document.querySelector('.cv-chrome__download');
+    const summary = download?.querySelector(':scope > summary');
+    return {
+      open: download?.open ?? null,
+      summaryFocused: document.activeElement === summary,
+      focusVisible: summary?.matches(':focus-visible') ?? false
+    };
+  })()`);
+  if (escaped.open || !escaped.summaryFocused) {
+    throw new Error(`Escape did not close the mobile CV download and return focus: ${JSON.stringify(escaped)}`);
+  }
+  await cdp.send('Target.closeTarget', { targetId });
+}
+
+async function assertDesktopCvChrome(cdp, url, format) {
+  const { targetId, sessionId } = await openAt(cdp, url, 1366, 900, false);
+  const result = await evaluate(cdp, sessionId, `(() => {
+    const actions = document.querySelector('.cv-chrome__actions');
+    const download = document.querySelector('.cv-chrome__download');
+    const links = [...(actions?.querySelectorAll('a') ?? [])].map((link) => ({
+      text: link.textContent?.trim() ?? '',
+      href: link.getAttribute('href') ?? '',
+      current: link.getAttribute('aria-current'),
+      download: link.getAttribute('download'),
+      type: link.getAttribute('type'),
+      visible: link.getBoundingClientRect().height > 0
+    }));
+    return {
+      actionsDisplay: actions ? getComputedStyle(actions).display : 'missing',
+      downloadDisplay: download ? getComputedStyle(download).display : 'missing',
+      downloadOpen: download?.open ?? null,
+      links,
+      ...window.__layoutMetrics()
+    };
+  })()`);
+
+  const expectedDownload = format === 'letter' ? CV_PDF.letter : CV_PDF.a4;
+  if (result.actionsDisplay === 'none' || result.downloadDisplay !== 'none') {
+    throw new Error(`Desktop CV chrome is not using view selectors for ${format}: ${JSON.stringify(result)}`);
+  }
+  if (JSON.stringify(result.links.map(({ text }) => text)) !== JSON.stringify(['A4', 'US Letter', 'Download PDF'])) {
+    throw new Error(`Desktop CV chrome labels are incorrect for ${format}: ${JSON.stringify(result.links)}`);
+  }
+  if (!result.links.every(({ visible }) => visible) || result.downloadOpen) {
+    throw new Error(`Desktop CV chrome visibility is incorrect for ${format}`);
+  }
+  const [a4, letter, download] = result.links;
+  if (a4.href !== CV_PDF.a4.route || letter.href !== CV_PDF.letter.route) {
+    throw new Error(`Desktop CV chrome view routes are incorrect for ${format}`);
+  }
+  if ((format === 'a4' && a4.current !== 'page') || (format === 'letter' && letter.current !== 'page')) {
+    throw new Error(`Desktop CV chrome aria-current is incorrect for ${format}`);
+  }
+  if ((format === 'a4' && letter.current) || (format === 'letter' && a4.current)) {
+    throw new Error(`Desktop CV chrome marks the unselected format for ${format}`);
+  }
+  if (download.href !== expectedDownload.href
+    || download.download !== expectedDownload.download
+    || download.type !== 'application/pdf') {
+    throw new Error(`Desktop Download PDF does not match ${format}`);
+  }
+  assertNoHorizontalOverflow(result, result.clientWidth, `Desktop ${format} CV`);
+  await cdp.send('Target.closeTarget', { targetId });
+}
+
+async function assertMobileCvChrome(cdp, url, viewport, scriptExecutionDisabled) {
+  const label = `${viewport.width}x${viewport.height}${scriptExecutionDisabled ? ' no-js' : ''}`;
+  const { targetId, sessionId } = await openAt(
+    cdp,
+    url,
+    viewport.width,
+    viewport.height,
+    true,
+    scriptExecutionDisabled
+  );
+  const closed = await evaluate(cdp, sessionId, `(() => {
+    const actions = document.querySelector('.cv-chrome__actions');
+    const download = document.querySelector('.cv-chrome__download');
+    const summary = download?.querySelector(':scope > summary');
+    const actionTexts = [...(actions?.querySelectorAll('a') ?? [])].map((link) => link.textContent?.trim() ?? '');
+    return {
+      actionsDisplay: actions ? getComputedStyle(actions).display : 'missing',
+      downloadDisplay: download ? getComputedStyle(download).display : 'missing',
+      downloadOpen: download?.open ?? null,
+      summaryText: summary?.textContent?.trim() ?? '',
+      summaryHeight: summary?.getBoundingClientRect().height ?? 0,
+      actionTexts,
+      actionVisible: [...(actions?.querySelectorAll('a') ?? [])].some((link) => link.getBoundingClientRect().height > 0),
+      ...${scriptExecutionDisabled ? `{
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        bodyScroll: document.body.scrollWidth,
+        overflowing: []
+      }` : 'window.__layoutMetrics()'}
+    };
+  })()`);
+
+  if (closed.actionsDisplay !== 'none' || closed.downloadDisplay === 'none') {
+    throw new Error(`Mobile CV chrome still presents view selectors at ${label}: ${JSON.stringify(closed)}`);
+  }
+  if (closed.actionVisible || closed.summaryText !== 'Download PDF' || closed.downloadOpen) {
+    throw new Error(`Mobile CV chrome closed state is incorrect at ${label}: ${JSON.stringify(closed)}`);
+  }
+  if (closed.summaryHeight < 40) {
+    throw new Error(`Mobile Download PDF touch target is too small at ${label}: ${closed.summaryHeight}`);
+  }
+  assertNoHorizontalOverflow(closed, viewport.width, `Closed mobile CV chrome at ${label}`);
+
+  await clickSelector(cdp, sessionId, '.cv-chrome__download > summary');
+  const open = await evaluate(cdp, sessionId, `(() => {
+    const download = document.querySelector('.cv-chrome__download');
+    const options = [...(download?.querySelectorAll('.cv-chrome__download-options a') ?? [])].map((link) => ({
+      text: link.textContent?.trim() ?? '',
+      href: link.getAttribute('href') ?? '',
+      download: link.getAttribute('download'),
+      type: link.getAttribute('type'),
+      ariaLabel: link.getAttribute('aria-label'),
+      visible: link.getBoundingClientRect().height > 0,
+      height: link.getBoundingClientRect().height
+    }));
+    return {
+      open: download?.open ?? null,
+      options,
+      ...${scriptExecutionDisabled ? `{
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        bodyScroll: document.body.scrollWidth,
+        overflowing: []
+      }` : 'window.__layoutMetrics()'}
+    };
+  })()`);
+
+  if (!open.open || JSON.stringify(open.options.map(({ text }) => text)) !== JSON.stringify(['A4', 'US Letter'])) {
+    throw new Error(`Mobile download options are incorrect at ${label}: ${JSON.stringify(open)}`);
+  }
+  if (!open.options.every(({ visible, height }) => visible && height >= 40)) {
+    throw new Error(`Mobile download options are not usable at ${label}: ${JSON.stringify(open.options)}`);
+  }
+  const [a4, letter] = open.options;
+  if (a4.href !== CV_PDF.a4.href || a4.download !== CV_PDF.a4.download || a4.type !== 'application/pdf'
+    || a4.ariaLabel !== 'Download A4 PDF'
+    || letter.href !== CV_PDF.letter.href || letter.download !== CV_PDF.letter.download || letter.type !== 'application/pdf'
+    || letter.ariaLabel !== 'Download US Letter PDF') {
+    throw new Error(`Mobile download options are not PDF files at ${label}`);
+  }
+  assertNoHorizontalOverflow(open, viewport.width, `Open mobile CV chrome at ${label}`);
+
+  if (scriptExecutionDisabled) {
+    await clickSelector(cdp, sessionId, '.cv-profile p');
+    const afterOutside = await evaluate(cdp, sessionId, `(() => ({
+      open: document.querySelector('.cv-chrome__download')?.open ?? null
+    }))()`);
+    if (!afterOutside.open) {
+      throw new Error(`No-JavaScript mobile CV download closed on outside click at ${label}`);
+    }
+  } else {
+    await preventNextNavigation(cdp, sessionId, '.cv-chrome__download-options a');
+    await clickSelector(cdp, sessionId, '.cv-chrome__download-options a');
+    const afterInside = await evaluate(cdp, sessionId, `(() => ({
+      open: document.querySelector('.cv-chrome__download')?.open ?? null
+    }))()`);
+    if (!afterInside.open) {
+      throw new Error(`Click inside the mobile CV download closed it at ${label}`);
+    }
+
+    await clickSelector(cdp, sessionId, '.cv-profile p');
+    const afterOutside = await evaluate(cdp, sessionId, `(() => ({
+      open: document.querySelector('.cv-chrome__download')?.open ?? null
+    }))()`);
+    if (afterOutside.open) {
+      throw new Error(`Click outside the mobile CV download did not close it at ${label}`);
+    }
+
+    await clickSelector(cdp, sessionId, '.cv-chrome__download > summary');
+    const reopened = await evaluate(cdp, sessionId, `(() => ({
+      open: document.querySelector('.cv-chrome__download')?.open ?? null
+    }))()`);
+    if (!reopened.open) {
+      throw new Error(`Could not reopen the mobile CV download at ${label}`);
+    }
+    await pressKey(cdp, sessionId, 'Escape');
+    const afterEscape = await evaluate(cdp, sessionId, `(() => {
+      const download = document.querySelector('.cv-chrome__download');
+      const summary = download?.querySelector(':scope > summary');
+      return {
+        open: download?.open ?? null,
+        summaryFocused: document.activeElement === summary
+      };
+    })()`);
+    if (afterEscape.open || !afterEscape.summaryFocused) {
+      throw new Error(`Escape did not close the mobile CV download at ${label}: ${JSON.stringify(afterEscape)}`);
+    }
+  }
+
+  await cdp.send('Target.closeTarget', { targetId });
 }
 
 async function assertHomeDocument(origin, url) {

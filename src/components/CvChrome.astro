@@ -28,5 +28,49 @@ const pdf = CV_PDF[format];
         >Download PDF</a>
       </li>
     </ul>
+    <details class="cv-chrome__download">
+      <summary>Download PDF</summary>
+      <ul class="cv-chrome__download-options">
+        <li>
+          <a
+            href={CV_PDF.a4.href}
+            download={CV_PDF.a4.download}
+            type="application/pdf"
+            aria-label="Download A4 PDF"
+          >A4</a>
+        </li>
+        <li>
+          <a
+            href={CV_PDF.letter.href}
+            download={CV_PDF.letter.download}
+            type="application/pdf"
+            aria-label="Download US Letter PDF"
+          >US Letter</a>
+        </li>
+      </ul>
+    </details>
   </nav>
 </header>
+
+<script>
+  const download = document.querySelector<HTMLDetailsElement>('.cv-chrome__download');
+  const summary = download?.querySelector<HTMLElement>(':scope > summary');
+
+  if (download && summary) {
+    download.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !download.open) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      download.open = false;
+      summary.focus();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Node)) return;
+      if (download.open && !download.contains(event.target)) {
+        download.open = false;
+      }
+    });
+  }
+</script>

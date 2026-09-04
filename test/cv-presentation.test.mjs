@@ -131,6 +131,22 @@ test('CV chrome is outside the document and hidden in print', async () => {
   assert.match(chrome, /CV_PDF\.letter\.route/);
   assert.match(chrome, /download=\{pdf\.download\}/);
   assert.match(chrome, /type="application\/pdf"/);
+  assert.match(chrome, /<details class="cv-chrome__download">/);
+  assert.match(chrome, /<summary>Download PDF<\/summary>/);
+  assert.match(chrome, /href=\{CV_PDF\.a4\.href\}/);
+  assert.match(chrome, /href=\{CV_PDF\.letter\.href\}/);
+  assert.match(chrome, /download=\{CV_PDF\.a4\.download\}/);
+  assert.match(chrome, /download=\{CV_PDF\.letter\.download\}/);
+  assert.match(chrome, /aria-label="Download A4 PDF"/);
+  assert.match(chrome, /aria-label="Download US Letter PDF"/);
+  assert.match(chrome, />A4</);
+  assert.match(chrome, />US Letter</);
+  assert.equal(chrome.includes('>A4 PDF<'), false);
+  assert.equal(chrome.includes('>US Letter PDF<'), false);
+  assert.match(chrome, /<script>/);
+  assert.match(chrome, /event\.key !== 'Escape'/);
+  assert.match(chrome, /download\.contains\(event\.target\)/);
+  assert.match(chrome, /summary\.focus\(\)/);
   assert.equal(chrome.includes('window.print'), false);
   assert.equal(chrome.includes('andresatencio.com'), false);
   assert.match(nav, /href="\/cv\/">View online</);
@@ -149,6 +165,13 @@ test('CV chrome is outside the document and hidden in print', async () => {
     cvCss,
     /\.cv-header,\s*\.cv-body \{\s*position:\s*relative;\s*z-index:\s*1;/
   );
+  assert.match(cvCss, /\.cv-chrome__download \{\s*display:\s*none;/);
+  assert.match(
+    cvCss,
+    /@media screen and \(max-width: 50rem\) \{[\s\S]*?\.cv-chrome__actions \{\s*display:\s*none;[\s\S]*?\.cv-chrome__download \{\s*display:\s*block;/
+  );
+  assert.match(cvCss, /\.cv-chrome__download > summary \{[\s\S]*?min-height:\s*2\.75rem/);
+  assert.match(cvCss, /\.cv-chrome__download-options a \{[\s\S]*?min-height:\s*2\.75rem/);
 });
 
 test('CV print stylesheet targets exact paper boxes without global scaling', async () => {

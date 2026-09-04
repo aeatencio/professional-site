@@ -63,6 +63,49 @@
   color: var(--color-ink);
   font-weight: 600;
 }
+
+.cv-chrome__download {
+  display: none;
+  position: relative;
+}
+
+.cv-chrome__download > summary {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--color-cobalt);
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.cv-chrome__download > summary::-webkit-details-marker {
+  display: none;
+}
+
+.cv-chrome__download > summary::after {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-left: 0.4rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-0.12rem);
+}
+
+.cv-chrome__download[open] > summary::after {
+  transform: rotate(225deg) translateY(0.05rem);
+}
+
+.cv-chrome__download > summary:hover,
+.cv-chrome__download > summary:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.cv-chrome__download:not([open]) > .cv-chrome__download-options {
+  display: none;
+}
 }
 
 .cv-document {
@@ -477,6 +520,59 @@
 }
 
 @media screen and (max-width: 50rem) {
+  .cv-chrome__nav {
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+
+  .cv-chrome__back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .cv-chrome__actions {
+    display: none;
+  }
+
+  .cv-chrome__download {
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  .cv-chrome__download[open] > .cv-chrome__download-options {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    z-index: 3;
+    display: flex;
+    width: max-content;
+    min-width: 9.5rem;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgb(26 63 163 / 14%);
+    background: var(--color-ivory);
+    box-shadow: 0 0.65rem 1.1rem rgb(28 25 22 / 9%);
+    list-style: none;
+  }
+
+  .cv-chrome__download-options a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-cobalt);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .cv-chrome__download-options a:hover,
+  .cv-chrome__download-options a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
   .cv-page {
     width: min(calc(100% - 1rem), 42rem);
     min-height: 0;
