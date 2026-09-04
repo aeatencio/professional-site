@@ -36,7 +36,7 @@ npm run check         # Astro and TypeScript diagnostics
 npm run build         # static production build in dist/
 npm run preview       # preview the production build
 npm run cv:pdf        # regenerate public CV PDFs from current HTML
-npm run layout:check  # rebuild, then verify Home identity and overflow at 390px and 320px
+npm run layout:check  # rebuild, then verify Home navigation, anchors and responsive layout
 npm test              # public-projection boundary tests
 ```
 
@@ -59,7 +59,7 @@ The build fingerprints the effective CV print inputs rather than a guessed print
 
 Changes that cannot affect the PDF may still require a reprint; a stale PDF must not pass.
 
-`layout:check` rebuilds first, then confirms the Home document over HTTP and checks horizontal overflow at 390px and 320px. Deployment CI runs tests, `check` and `layout:check`.
+`layout:check` rebuilds first, then verifies the Home document over HTTP, desktop and mobile navigation behavior, sticky anchor offsets, horizontal overflow, and the native mobile fallback with JavaScript disabled before page load. Deployment CI runs tests, `check` and `layout:check`.
 
 ## Architecture and public data boundary
 

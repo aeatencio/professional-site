@@ -133,7 +133,9 @@ test('CV chrome is outside the document and hidden in print', async () => {
   assert.match(chrome, /type="application\/pdf"/);
   assert.equal(chrome.includes('window.print'), false);
   assert.equal(chrome.includes('andresatencio.com'), false);
-  assert.equal(nav.includes('/cv/'), false);
+  assert.match(nav, /href="\/cv\/">View online</);
+  assert.match(nav, /CV_PDF\.a4\.href/);
+  assert.equal(layout.includes('PrimaryNav'), false);
   assert.match(
     cvCss,
     /@media print \{[\s\S]*?\.cv-chrome[\s\S]*?display:\s*none/

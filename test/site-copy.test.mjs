@@ -159,6 +159,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   const cvPage = await readFile(new URL('../src/pages/cv/index.astro', import.meta.url), 'utf8');
   const cvLetterPage = await readFile(new URL('../src/pages/cv/letter.astro', import.meta.url), 'utf8');
   const cvDocument = await readFile(new URL('../src/components/CvDocument.astro', import.meta.url), 'utf8');
+  const primaryNav = await readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8');
   const layout = await readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8');
   const cvLayout = await readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8');
 
@@ -182,13 +183,19 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('RVM Soluciones'), false);
   assert.equal(page.includes('mostly on existing web and mobile products'), false);
   assert.equal(page.includes('part-time remote software work on a contract or freelance basis'), false);
-  assert.match(page, /class="action" href="#experience">View experience</);
-  assert.match(page, /href="\/cv\/">View CV</);
-  assert.match(page, /href=\{CV_PDF\.a4\.href\}/);
-  assert.match(page, /download=\{CV_PDF\.a4\.download\}/);
-  assert.match(page, />Download CV</);
-  assert.equal(page.includes('Download A4 CV'), false);
-  assert.match(page, /href="#contact">Contact me</);
+  assert.equal(page.includes('class="actions"'), false);
+  assert.equal(page.includes('View experience'), false);
+  assert.equal(page.includes('View CV'), false);
+  assert.equal(page.includes('Download CV'), false);
+  assert.equal(page.includes('Contact me'), false);
+  assert.match(primaryNav, /href="\/cv\/">View online</);
+  assert.match(primaryNav, /href=\{CV_PDF\.a4\.href\}/);
+  assert.match(primaryNav, /download=\{CV_PDF\.a4\.download\}/);
+  assert.match(primaryNav, />Download PDF</);
+  assert.equal(primaryNav.includes('>View CV</a>'), false);
+  assert.equal(primaryNav.includes('>Download CV</a>'), false);
+  assert.match(primaryNav, /href="#contact">Contact</);
+  assert.equal(primaryNav.includes('Download A4 CV'), false);
   assert.equal(page.includes('window.print'), false);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
   assert.equal(page.includes('aeatencio@gmail.com'), false);

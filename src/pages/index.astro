@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CV_PDF } from '../../lib/cv-pdf.mjs';
+import '../styles/home.css';
 import projection from '../../data/professional-public-projection.v1.json';
 
 const { shared, site } = projection;
@@ -28,12 +28,6 @@ const { sections } = site;
         decoding="async"
         fetchpriority="high"
       />
-      <p class="actions">
-        <a class="action" href="#experience">View experience</a>
-        <a href="/cv/">View CV</a>
-        <a href={CV_PDF.a4.href} download={CV_PDF.a4.download} type="application/pdf">Download CV</a>
-        <a href="#contact">Contact me</a>
-      </p>
     </section>
 
     <section id="experience" class="chapter chapter--experience" aria-labelledby="experience-heading">

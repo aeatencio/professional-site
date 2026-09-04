@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { CV_PDF, PUBLIC_SITE_ORIGIN, verifyCvPdfs } from '../lib/cv-pdf.mjs';
-import { printableCvFingerprint } from '../lib/printable-cv.mjs';
+import { printableCvFingerprint, stylesheetHrefsFromHtml } from '../lib/printable-cv.mjs';
 
 const projection = JSON.parse(await readFile(
   new URL('../data/professional-public-projection.v1.json', import.meta.url),
@@ -11,6 +11,11 @@ const [siteHtml, cvHtml, cvLetterHtml] = await Promise.all([
   readFile(new URL('../dist/index.html', import.meta.url), 'utf8'),
   readFile(new URL('../dist/cv/index.html', import.meta.url), 'utf8'),
   readFile(new URL('../dist/cv/letter/index.html', import.meta.url), 'utf8')
+]);
+const [siteCss, cvCss, cvLetterCss] = await Promise.all([
+  readEffectiveCss(siteHtml),
+  readEffectiveCss(cvHtml),
+  readEffectiveCss(cvLetterHtml)
 ]);
 
 function collectStrings(value) {
@@ -71,13 +76,19 @@ assert.equal(cvLetterHtml.includes('workers.dev'), false, 'US Letter CV presents
 assert.equal(siteHtml.includes('https://andresatencio.com/cv'), false, 'Home uses an absolute public CV URL');
 assert.equal(siteHtml.includes(`href="${siteUrl}"`), false, 'Home contact should not duplicate the site URL');
 
-assert.match(siteHtml, /href="\/cv\/">View CV</);
+assert.match(siteHtml, /href="\/cv\/">View online</);
 assert.match(
   siteHtml,
   new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"`)
 );
-assert.match(siteHtml, />Download CV</);
+assert.match(siteHtml, />Download PDF</);
+assert.equal(siteHtml.includes('>View CV</a>'), false);
+assert.equal(siteHtml.includes('>Download CV</a>'), false);
 assert.equal(siteHtml.includes('Download A4 CV'), false);
+assert.equal(siteHtml.includes('class="actions"'), false, 'Hero still contains duplicated navigation');
+assert.match(siteCss, /primary-nav__mobile-panel/);
+assert.doesNotMatch(cvCss, /primary-nav__mobile-panel/);
+assert.doesNotMatch(cvLetterCss, /primary-nav__mobile-panel/);
 assert.equal(siteHtml.includes('window.print'), false);
 assert.equal(cvHtml.includes('window.print'), false);
 assert.equal(cvLetterHtml.includes('window.print'), false);
@@ -107,3 +118,14 @@ assert.equal(
 );
 
 console.log('Verified built Home and CV contain only their projected content');
+
+async function readEffectiveCss(html) {
+  const stylesheets = await Promise.all(
+    stylesheetHrefsFromHtml(html).map((href) =>
+      readFile(new URL(`../dist${href}`, import.meta.url), 'utf8')
+    )
+  );
+  const inlineStyles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)]
+    .map((match) => match[1]);
+  return [...stylesheets, ...inlineStyles].join('\n');
+}

@@ -1,19 +1,162 @@
 ---
-const items = [
-  { href: '#home', label: 'Home' },
+import { CV_PDF } from '../../lib/cv-pdf.mjs';
+
+const sectionItems = [
   { href: '#experience', label: 'Experience' },
   { href: '#background', label: 'Background' },
-  { href: '#working-together', label: 'Working together' },
-  { href: '#contact', label: 'Contact' }
+  { href: '#working-together', label: 'Working together' }
 ];
 ---
 
-<nav class="primary-nav" aria-label="Primary">
-  <ul>
-    {items.map((item) => (
+<nav class="primary-nav" aria-label="Primary" data-primary-navigation>
+  <ul class="primary-nav__desktop-list">
+    {sectionItems.map((item) => (
       <li>
         <a href={item.href}>{item.label}</a>
       </li>
     ))}
+    <li>
+      <details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>
+        <summary>CV</summary>
+        <ul class="primary-nav__cv-options">
+          <li><a href="/cv/">View online</a></li>
+          <li>
+            <a
+              href={CV_PDF.a4.href}
+              download={CV_PDF.a4.download}
+              type="application/pdf"
+              data-cv-download
+            >Download PDF</a>
+          </li>
+        </ul>
+      </details>
+    </li>
+    <li class="primary-nav__contact"><a href="#contact">Contact</a></li>
   </ul>
+
+  <details class="primary-nav__mobile" data-mobile-navigation>
+    <summary><span>Menu</span></summary>
+    <div class="primary-nav__mobile-panel">
+      <ul class="primary-nav__mobile-list">
+        {sectionItems.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+        <li>
+          <details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>
+            <summary>CV</summary>
+            <ul class="primary-nav__cv-options">
+              <li><a href="/cv/">View online</a></li>
+              <li>
+                <a
+                  href={CV_PDF.a4.href}
+                  download={CV_PDF.a4.download}
+                  type="application/pdf"
+                  data-cv-download
+                >Download PDF</a>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li class="primary-nav__mobile-contact"><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </details>
 </nav>
+
+<script>
+  const primaryNavigation = document.querySelector<HTMLElement>('[data-primary-navigation]');
+  const mobileNavigation = document.querySelector<HTMLDetailsElement>('[data-mobile-navigation]');
+
+  if (primaryNavigation && mobileNavigation) {
+    const menuSummary = mobileNavigation.querySelector<HTMLElement>(':scope > summary');
+    const cvDisclosures = primaryNavigation.querySelectorAll<HTMLDetailsElement>('[data-cv-disclosure]');
+
+    const closeNestedCv = () => {
+      for (const disclosure of mobileNavigation.querySelectorAll<HTMLDetailsElement>('[data-cv-disclosure]')) {
+        disclosure.open = false;
+      }
+    };
+
+    const closeMobileNavigation = (restoreFocus = false) => {
+      closeNestedCv();
+      mobileNavigation.open = false;
+      if (restoreFocus) menuSummary?.focus();
+    };
+
+    const closeOutsideDisclosure = (disclosure: HTMLDetailsElement) => {
+      const summary = disclosure.querySelector<HTMLElement>(':scope > summary');
+      disclosure.open = false;
+      if (document.activeElement !== summary && disclosure.contains(document.activeElement)) {
+        summary?.focus({ preventScroll: true });
+      }
+    };
+
+    for (const disclosure of cvDisclosures) {
+      const summary = disclosure.querySelector<HTMLElement>(':scope > summary');
+
+      disclosure.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !disclosure.open) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        disclosure.open = false;
+        summary?.focus();
+      });
+
+      disclosure.addEventListener('focusout', (event) => {
+        if (event.relatedTarget instanceof Node && !disclosure.contains(event.relatedTarget)) {
+          disclosure.open = false;
+        }
+      });
+    }
+
+    mobileNavigation.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !mobileNavigation.open) return;
+
+      event.preventDefault();
+      closeMobileNavigation(true);
+    });
+
+    mobileNavigation.addEventListener('toggle', () => {
+      if (!mobileNavigation.open) closeNestedCv();
+    });
+
+    for (const link of mobileNavigation.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
+      link.addEventListener('click', () => {
+        closeMobileNavigation();
+      });
+    }
+
+    document.querySelector<HTMLAnchorElement>('.identity a[href="#home"]')?.addEventListener('click', () => {
+      closeMobileNavigation();
+    });
+
+    for (const link of primaryNavigation.querySelectorAll<HTMLAnchorElement>('[data-cv-download]')) {
+      link.addEventListener('click', () => {
+        const disclosure = link.closest<HTMLDetailsElement>('[data-cv-disclosure]');
+        if (mobileNavigation.contains(link)) {
+          closeMobileNavigation(true);
+        } else {
+          if (disclosure) disclosure.open = false;
+          disclosure?.querySelector<HTMLElement>(':scope > summary')?.focus();
+        }
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Node)) return;
+
+      for (const disclosure of [...cvDisclosures].reverse()) {
+        if (disclosure.open && !disclosure.contains(event.target)) {
+          closeOutsideDisclosure(disclosure);
+        }
+      }
+
+      if (mobileNavigation.open && !mobileNavigation.contains(event.target)) {
+        closeOutsideDisclosure(mobileNavigation);
+      }
+    });
+  }
+</script>
