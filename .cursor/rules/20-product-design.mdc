@@ -7,8 +7,7 @@ alwaysApply: false
 
 - Implement the public projection; never turn visual/reference text into facts.
 - Every repository artifact and public product is English, including site copy
-  and the Software Development CV. Direct interaction with Andrés remains
-  Spanish and does not change this file language.
+  and the Software Development CV.
 - Do not force a selected-work case into SITE-V1. Present current development
   and historical roles directly from the public-content projection.
 - Use generic part-time/remote availability wording; no precise capacity figure

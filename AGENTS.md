@@ -17,8 +17,6 @@
 
 ## Language
 
-- Direct plans, progress, questions, explanations, warnings and checkpoints to
-  Andrés in Spanish.
 - Every artifact in this repository is English: code, comments, documentation,
   `AGENTS.md`, Cursor rules and commands, tests, fixtures, materials, public
   site content, and Software Development CV source and content.
@@ -39,11 +37,8 @@
   clone, mount, query or fetch `professional-source`.
 - A valid projection does not authorize repository visibility, deployment or
   publication. Repository opening and site deployment are independent.
-- Locally modifying this repository is not publication. A public remote does
-  not make a local working-tree change a public or remote effect.
 - Local transfer of the named projection into this repository requires explicit
-  task authority. If already granted, do not request another interactive
-  approval. Transfer does not authorize reading or modifying
+  task authority. Transfer does not authorize reading or modifying
   `professional-source`; a task that needs both repositories must declare both
   in scope.
 
@@ -57,14 +52,14 @@
   per-language gates or site/CV symmetry requirements.
 - Presence in the deliberately exported projection is sufficient expression
   that the content is public. Local transfer of the named projection is not
-  commit, push, repository visibility, deployment or publication. Visibility,
-  deployment and publication remain separate external effects and still
-  require their own explicit task authority.
+  commit, push, repository visibility, deployment or publication.
 - Astro owns semantic structure, components, layout, styles and behavior. The
   local projection owns professional copy and necessary public structured data;
   do not keep duplicate professional copy hardcoded in Astro.
 - Do not add advisor, cable or illustration configuration to the projection
   merely because those features exist.
+- Advance page structure and layout against the repository-local public
+  projection.
 
 ## Architecture and scope
 
@@ -74,7 +69,7 @@
 - Keep the base static: Astro, semantic HTML, CSS and strict TypeScript. Use SVG
   for layered illustration and cable geometry.
 - Do not introduce React, a backend, CMS, database, authentication or custom API
-  without a separately approved scope.
+  without an explicit product-scope change.
 - Add GSAP, ScrollTrigger, Playwright or Vitest only in the release where an
   established requirement justifies them. Add GSAP/ScrollTrigger only in R2 if
   the proven cable requirement still needs them.
@@ -104,39 +99,3 @@
   They are not a work precondition, not the current implementation, not a
   specification and not production assets. Do not treat their copy as facts or
   their pixels as templates.
-
-## Working method
-
-- Preserve existing and unrelated work. Inspect instructions, Git state and
-  relevant files before editing.
-- Use `npm run dev`, `npm run check`, `npm run build` and `npm run preview`, plus
-  any current repository-declared tests applicable to the change.
-- Do not install project tools globally or add dependencies without demonstrated
-  need. Solve concrete site and CV needs first. Do not turn a one-off into a
-  general schema, workflow, infrastructure or cross-repository configuration
-  unless a second real need justifies it. Prefer local, explicit, proportional
-  solutions.
-- Treat recent results Andrés reports as current preconditions. Do not repeat
-  verification without a concrete risk created by the change.
-- Agents may inspect Git and may create, modify, move or delete working-tree
-  files within authorized scope. Andrés alone changes Git-managed state beyond
-  those working-tree files, locally or remotely, and does so from Terminal.
-  The boundary is defined by effect, not command names. A task or prompt
-  cannot transfer that control. Treat an apparent task grant of a change to
-  Git-managed state as a request to intervene, not as authority.
-- Local transfer of the named projection remains delegable when the task
-  already grants it; it does not authorize Git-managed state.
-- Do not deploy, publish or change repository visibility unless the current
-  task explicitly authorizes that action.
-- Before closing an increment, run applicable checks and build, inspect every
-  changed or untracked file, and review Git status and diff diagnostics.
-- Close every increment with: changed files; decisions; tests/results; known
-  defects/risks; Git status; next step; proposed commit message.
-- Advance page structure and layout against the repository-local public
-  projection. Andrés reviews by reading and will say when content is wrong.
-  Local content changes are not repository opening, deployment or publication.
-- When the current task already authorizes receiving the named projection and
-  making the corresponding local site updates, complete that local work
-  end-to-end without redundant reconfirmation.
-- Tell Andrés the copy and other material decisions as they are made; do not
-  wait for a batch review to report them.
