@@ -35,17 +35,8 @@ const { sections } = site;
         <h2 id="experience-heading">{sections.experience.heading}</h2>
         {sections.experience.paragraphs.map((paragraph) => <p class="section-intro">{paragraph}</p>)}
       </div>
-      <img
-        class="chapter-art chapter-art--notebook"
-        src="/images/experience/open-notebook.png"
-        alt=""
-        width="1276"
-        height="789"
-        decoding="async"
-        loading="lazy"
-      />
       <div class="chapter__continue">
-        <div class="experience-block">
+        <div class="experience-block experience-block--software">
           <h3>{sections.experience.softwareDevelopment.heading}</h3>
           <div class="role-list">
             {sections.experience.softwareDevelopment.roles.map((role) => (
@@ -61,6 +52,15 @@ const { sections } = site;
               </article>
             ))}
           </div>
+          <img
+            class="chapter-art chapter-art--notebook"
+            src="/images/experience/open-notebook.png"
+            alt=""
+            width="1276"
+            height="789"
+            decoding="async"
+            loading="lazy"
+          />
         </div>
 
         <div class="experience-block">

@@ -29,6 +29,27 @@ test('Home no longer references the retired Working together folder illustration
   assert.equal(page.includes('chapter-art--folder'), false);
 });
 
+test('Experience notebook follows the complete software role list and recomposes in flow', async () => {
+  const [page, homeCss] = await Promise.all([
+    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8')
+  ]);
+
+  assert.match(
+    page,
+    /class="experience-block experience-block--software"[\s\S]*?class="role-list"[\s\S]*?chapter-art--notebook[\s\S]*?currentDevelopment/
+  );
+  assert.match(homeCss, /\.experience-block--software \{\s*position:\s*relative/);
+  assert.match(
+    homeCss,
+    /\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*0;[\s\S]*?bottom:\s*clamp/
+  );
+  assert.match(
+    homeCss,
+    /@media \(max-width: 54rem\)[\s\S]*?\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?position:\s*static;[\s\S]*?margin-left:\s*auto/
+  );
+});
+
 test('Primary navigation uses native CV disclosures and progressive enhancement', async () => {
   const [nav, layout, homeCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),

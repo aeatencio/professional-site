@@ -135,6 +135,20 @@ html {
   width: min(100%, clamp(15rem, 24vw, 20.5rem));
 }
 
+.experience-block--software {
+  position: relative;
+}
+
+@media (min-width: 54.001rem) {
+  .experience-block--software > .chapter-art--notebook {
+    position: absolute;
+    right: 0;
+    bottom: clamp(1.25rem, 2vw, 1.75rem);
+    width: min(14.75rem, calc(100% - var(--measure) - clamp(1.5rem, 3vw, 2rem)));
+    margin: 0;
+  }
+}
+
 .skip-link {
   z-index: 40;
 }
@@ -272,6 +286,13 @@ html {
     align-self: start;
     width: min(42vw, 11.5rem);
     margin-top: 0;
+  }
+
+  .experience-block--software > .chapter-art--notebook {
+    position: static;
+    width: min(48%, 14rem);
+    margin-top: 1.25rem;
+    margin-left: auto;
   }
 }
 
