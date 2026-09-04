@@ -24,17 +24,135 @@ const { title, description, lang, name } = Astro.props;
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="page">
-      <header class="site-header">
-        <p class="identity">
-          <a href="#home">{name}</a>
-          <span class="identity-mark" aria-hidden="true"></span>
-        </p>
-        <PrimaryNav />
+      <header class="site-header" data-directional-header>
+        <div class="site-header__inner">
+          <p class="identity">
+            <a href="#home">{name}</a>
+            <span class="identity-mark" aria-hidden="true"></span>
+          </p>
+          <PrimaryNav />
+        </div>
       </header>
       <slot />
       <footer class="site-footer">
         <p>{name}</p>
+        <a href="/cv/">CV</a>
       </footer>
     </div>
+    <script>
+      const header = document.querySelector<HTMLElement>('[data-directional-header]');
+
+      if (header) {
+        const TOP_TOLERANCE = 24;
+        const HIDE_DISTANCE = 16;
+        const REVEAL_DISTANCE = 8;
+        let lastScrollY = Math.max(window.scrollY, 0);
+        let directionalDistance = 0;
+        let framePending = false;
+        let pointerActive = false;
+
+        const hasVisibleKeyboardFocus = () => {
+          const active = document.activeElement;
+          return active instanceof HTMLElement
+            && header.contains(active)
+            && active.matches(':focus-visible');
+        };
+
+        const isPinned = () => pointerActive
+          || Boolean(header.querySelector('details[open]'))
+          || hasVisibleKeyboardFocus();
+
+        const showHeader = () => header.classList.remove('site-header--hidden');
+
+        const resetDirection = () => {
+          directionalDistance = 0;
+        };
+
+        const updateHeader = () => {
+          framePending = false;
+          const nextScrollY = Math.max(window.scrollY, 0);
+          const delta = nextScrollY - lastScrollY;
+          lastScrollY = nextScrollY;
+
+          if (nextScrollY <= TOP_TOLERANCE || isPinned()) {
+            showHeader();
+            resetDirection();
+            return;
+          }
+
+          if (delta === 0) return;
+
+          const directionChanged = (delta > 0 && directionalDistance < 0)
+            || (delta < 0 && directionalDistance > 0);
+          if (directionChanged) {
+            directionalDistance = 0;
+          }
+          directionalDistance += delta;
+
+          if (directionalDistance >= HIDE_DISTANCE) {
+            header.classList.add('site-header--hidden');
+            directionalDistance = 0;
+          } else if (directionalDistance <= -REVEAL_DISTANCE) {
+            showHeader();
+            directionalDistance = 0;
+          }
+        };
+
+        const queueUpdate = () => {
+          if (framePending) return;
+          framePending = true;
+          window.requestAnimationFrame(updateHeader);
+        };
+
+        const revealAndReset = () => {
+          showHeader();
+          lastScrollY = Math.max(window.scrollY, 0);
+          resetDirection();
+        };
+
+        const revealImmediately = () => {
+          header.classList.add('site-header--instant');
+          revealAndReset();
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              header.classList.remove('site-header--instant');
+            });
+          });
+        };
+
+        window.addEventListener('scroll', queueUpdate, { passive: true });
+        window.addEventListener('hashchange', () => {
+          window.requestAnimationFrame(revealAndReset);
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Tab' && header.classList.contains('site-header--hidden')) {
+            revealImmediately();
+          }
+        });
+
+        header.addEventListener('focusin', (event) => {
+          if (event.target instanceof HTMLElement && event.target.matches(':focus-visible')) {
+            revealImmediately();
+          }
+        });
+
+        header.addEventListener('pointerdown', () => {
+          pointerActive = true;
+          revealAndReset();
+        });
+
+        const endPointerInteraction = () => {
+          pointerActive = false;
+          lastScrollY = Math.max(window.scrollY, 0);
+          resetDirection();
+        };
+
+        window.addEventListener('pointerup', endPointerInteraction);
+        window.addEventListener('pointercancel', endPointerInteraction);
+
+        header.addEventListener('toggle', revealAndReset, true);
+      }
+    </script>
   </body>
 </html>

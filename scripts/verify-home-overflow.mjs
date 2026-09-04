@@ -17,7 +17,17 @@ const mobileViewports = [
   { width: 320, height: 700 },
   { width: 667, height: 375 }
 ];
+const directionalViewports = [
+  { width: 1366, height: 900, mobile: false },
+  { width: 1025, height: 900, mobile: false },
+  ...mobileViewports.map((viewport) => ({ ...viewport, mobile: true }))
+];
 const noJavaScriptWidths = [390, 320];
+const footerViewports = [
+  { width: 1366, height: 900, mobile: false },
+  { width: 390, height: 844, mobile: true },
+  { width: 320, height: 700, mobile: true }
+];
 const projection = await loadLocalPublicProjection();
 
 await findBrowser();
@@ -42,7 +52,16 @@ await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
     await assertNoJavaScriptNavigation(cdp, homeUrl, width);
   }
 
+  for (const viewport of directionalViewports) {
+    await assertDirectionalHeader(cdp, homeUrl, viewport);
+  }
+
+  await assertReducedMotion(cdp, homeUrl);
+  for (const { width, height, mobile } of footerViewports) {
+    await assertFooter(cdp, homeUrl, width, height, mobile);
+  }
   await assertViewOnlineNavigation(cdp, homeUrl);
+  await assertFooterNavigation(cdp, homeUrl);
 });
 
 async function assertDesktopNavigation(cdp, homeUrl, width) {
@@ -115,7 +134,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--desktop > summary', false, true, `desktop CV open without hover at ${width}px`);
 
   await focusSelector(cdp, sessionId, '.primary-nav__cv--desktop a[href="/cv/"]');
-  await clickSelector(cdp, sessionId, '#home-heading');
+  await clickSelector(cdp, sessionId, '#experience-heading');
   let outsideClosed = await disclosureState(cdp, sessionId, '.primary-nav__cv--desktop');
   if (outsideClosed.open || outsideClosed.focusInsideClosedContent) {
     throw new Error(`Outside pointer did not close desktop CV without hidden focus at ${width}px: ${JSON.stringify(outsideClosed)}`);
@@ -339,6 +358,200 @@ async function assertSkipLink(cdp, sessionId) {
   assertAnchorNearHeader(await anchorMetrics(cdp, sessionId, '#main'), '#main', 'Skip link #main');
 }
 
+async function assertDirectionalHeader(cdp, homeUrl, { width, height, mobile }) {
+  const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, mobile);
+  const label = `${width}x${height}`;
+  const disclosureSelector = mobile
+    ? '[data-mobile-navigation] > summary'
+    : '.primary-nav__cv--desktop > summary';
+
+  assertHeaderVisible(await headerState(cdp, sessionId), `initial header at ${label}`);
+
+  await scrollToY(cdp, sessionId, 20);
+  assertHeaderVisible(await headerState(cdp, sessionId), `near-top header at ${label}`);
+
+  await scrollToY(cdp, sessionId, 420);
+  const hidden = await headerState(cdp, sessionId);
+  assertHeaderHidden(hidden, `downward header at ${label}`);
+  const documentTopBefore = hidden.experienceDocumentTop;
+
+  for (const y of [419, 421, 420, 418, 420]) {
+    await scrollToY(cdp, sessionId, y, 35);
+  }
+  const jittered = await headerState(cdp, sessionId);
+  assertHeaderHidden(jittered, `jittered header at ${label}`);
+  await sleep(250);
+  assertHeaderHidden(await headerState(cdp, sessionId), `stopped header at ${label}`);
+
+  await scrollToY(cdp, sessionId, 410);
+  const revealed = await headerState(cdp, sessionId);
+  assertHeaderVisible(revealed, `upward header at ${label}`);
+  if (Math.abs(revealed.experienceDocumentTop - documentTopBefore) > 0.5) {
+    throw new Error(`Header transform caused layout shift at ${label}`);
+  }
+
+  await scrollToY(cdp, sessionId, 430);
+  assertHeaderHidden(await headerState(cdp, sessionId), `resumed downward header at ${label}`);
+
+  await pressKey(cdp, sessionId, 'Tab');
+  await pressKey(cdp, sessionId, 'Tab');
+  const focused = await headerState(cdp, sessionId);
+  assertHeaderVisible(focused, `keyboard-focused header at ${label}`);
+  if (!focused.focusInside || !focused.focusVisible
+    || focused.activeTop < 0 || focused.activeBottom > height) {
+    throw new Error(`Keyboard focus is not visibly inside the header at ${label}: ${JSON.stringify(focused)}`);
+  }
+
+  await clickSelector(cdp, sessionId, '#experience-heading');
+
+  await scrollToY(cdp, sessionId, 0);
+  const pointer = await pointerDownSelector(cdp, sessionId, '.identity a');
+  await scrollToY(cdp, sessionId, 420);
+  assertHeaderVisible(await headerState(cdp, sessionId), `active-pointer header at ${label}`);
+  await pointerUp(cdp, sessionId, pointer);
+  await scrollToY(cdp, sessionId, 440);
+  assertHeaderHidden(await headerState(cdp, sessionId), `completed-pointer header at ${label}`);
+
+  await scrollToY(cdp, sessionId, 0);
+  await clickSelector(cdp, sessionId, disclosureSelector);
+  await scrollToY(cdp, sessionId, 420);
+  const pinned = await headerState(cdp, sessionId);
+  assertHeaderVisible(pinned, `open-disclosure header at ${label}`);
+  if (!pinned.disclosureOpen) {
+    throw new Error(`Disclosure did not remain open during downward scroll at ${label}`);
+  }
+  if (mobile) {
+    await clickSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
+    await scrollToY(cdp, sessionId, 440);
+    const nestedPinned = await headerState(cdp, sessionId);
+    const nestedOpen = await evaluate(
+      cdp,
+      sessionId,
+      "document.querySelector('.primary-nav__cv--mobile')?.open ?? false"
+    );
+    assertHeaderVisible(nestedPinned, `open-mobile-CV header at ${label}`);
+    if (!nestedOpen) {
+      throw new Error(`Mobile CV did not remain open during downward scroll at ${label}`);
+    }
+  }
+  await pressKey(cdp, sessionId, 'Escape');
+  await clickSelector(cdp, sessionId, '#home-heading');
+
+  await scrollToY(cdp, sessionId, 0);
+  await movePointerToSelector(cdp, sessionId, '.site-header');
+  await scrollToY(cdp, sessionId, 420);
+  assertHeaderHidden(await headerState(cdp, sessionId), `hovered downward header at ${label}`);
+
+  await scrollToY(cdp, sessionId, 0);
+  await dispatchWheel(cdp, sessionId, width / 2, Math.min(height - 20, 400), 420);
+  const wheeled = await headerState(cdp, sessionId);
+  if (wheeled.scrollY < 16) {
+    throw new Error(`Wheel input did not scroll at ${label}`);
+  }
+  assertHeaderHidden(wheeled, `wheel-scrolled header at ${label}`);
+
+  if (mobile) {
+    await scrollToY(cdp, sessionId, 0);
+    await cdp.send('Emulation.setTouchEmulationEnabled', {
+      enabled: true,
+      maxTouchPoints: 5
+    }, sessionId);
+    await dispatchTouchScroll(cdp, sessionId, width / 2, Math.min(height - 20, height * 0.75), 420);
+    const touched = await headerState(cdp, sessionId);
+    if (touched.scrollY < 16) {
+      throw new Error(`Touch gesture did not scroll at ${label}`);
+    }
+    assertHeaderHidden(touched, `touch-scrolled header at ${label}`);
+  }
+
+  await cdp.send('Target.closeTarget', { targetId });
+  console.log(`Directional header, focus, input and stability verified at ${label}`);
+}
+
+async function assertReducedMotion(cdp, homeUrl) {
+  const { targetId, sessionId } = await openAt(cdp, homeUrl, 390, 844, true);
+  await cdp.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }]
+  }, sessionId);
+  const loaded = cdp.waitEvent('Page.loadEventFired');
+  await cdp.send('Page.reload', {}, sessionId);
+  await loaded;
+  await sleep(75);
+
+  const initial = await headerState(cdp, sessionId);
+  if (initial.transitionDuration !== '0s') {
+    throw new Error(`Reduced motion retained a header transition: ${initial.transitionDuration}`);
+  }
+  await scrollToY(cdp, sessionId, 420, 60);
+  assertHeaderHidden(await headerState(cdp, sessionId), 'reduced-motion downward header');
+  await scrollToY(cdp, sessionId, 410, 60);
+  assertHeaderVisible(await headerState(cdp, sessionId), 'reduced-motion upward header');
+
+  await cdp.send('Target.closeTarget', { targetId });
+  console.log('Reduced-motion directional behavior verified without animation');
+}
+
+async function assertFooter(cdp, homeUrl, width, height, mobile) {
+  const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, mobile);
+  await evaluate(cdp, sessionId, 'window.scrollTo(0, document.documentElement.scrollHeight)');
+  await sleep(220);
+  const result = await evaluate(cdp, sessionId, `(() => {
+    const footer = document.querySelector('.site-footer');
+    const footerBox = footer?.getBoundingClientRect();
+    const name = footer?.querySelector('p');
+    const nameBox = name?.getBoundingClientRect();
+    const links = [...(footer?.querySelectorAll('a') ?? [])];
+    const linkBox = links[0]?.getBoundingClientRect();
+    return {
+      text: footer?.textContent?.replace(/\\s+/g, ' ').trim() ?? '',
+      name: name?.textContent?.trim() ?? '',
+      linkCount: links.length,
+      hrefs: links.map((link) => link.getAttribute('href')),
+      labels: links.map((link) => link.textContent?.trim()),
+      forbidden: ['GitHub', 'LinkedIn', 'Download PDF', '@'].filter((value) => footer?.textContent?.includes(value)),
+      footerTop: footerBox?.top ?? -1,
+      footerBottom: footerBox?.bottom ?? -1,
+      rowDelta: Math.abs((nameBox?.top ?? 0) - (linkBox?.top ?? 0)),
+      headerHidden: document.querySelector('.site-header')?.classList.contains('site-header--hidden') ?? false,
+      ...window.__layoutMetrics()
+    };
+  })()`);
+  if (result.name !== projection.shared.name
+    || result.linkCount !== 1
+    || result.hrefs[0] !== '/cv/'
+    || result.labels[0] !== 'CV'
+    || result.forbidden.length) {
+    throw new Error(`Footer content is incorrect at ${width}px: ${JSON.stringify(result)}`);
+  }
+  if (result.footerTop < 0 || result.footerBottom > height + 1 || result.rowDelta > 2) {
+    throw new Error(`Footer is not a single visible row at ${width}px: ${JSON.stringify(result)}`);
+  }
+  if (!result.headerHidden) {
+    throw new Error(`Header is not hidden at the footer at ${width}px`);
+  }
+  assertNoHorizontalOverflow(result, width, `Footer at ${width}px`);
+  await cdp.send('Target.closeTarget', { targetId });
+  console.log(`Footer content, row, hidden header and overflow verified at ${width}px`);
+}
+
+async function assertFooterNavigation(cdp, homeUrl) {
+  const { targetId, sessionId } = await openAt(cdp, homeUrl, 390, 844, true);
+  await evaluate(cdp, sessionId, 'window.scrollTo(0, document.documentElement.scrollHeight)');
+  await sleep(200);
+  await activateByEnter(cdp, sessionId, '.site-footer a[href="/cv/"]');
+  await sleep(150);
+  const result = await evaluate(cdp, sessionId, `(() => ({
+    pathname: location.pathname,
+    hasCvMain: Boolean(document.querySelector('#cv-main')),
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav'))
+  }))()`);
+  if (result.pathname !== '/cv/' || !result.hasCvMain || result.hasPrimaryNav) {
+    throw new Error(`Footer CV link did not reach the isolated CV page: ${JSON.stringify(result)}`);
+  }
+  await cdp.send('Target.closeTarget', { targetId });
+  console.log('Footer CV keyboard navigation and CV isolation verified');
+}
+
 async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
   const height = width === 390 ? 844 : 700;
   const first = await openAt(cdp, homeUrl, width, height, true, true);
@@ -459,6 +672,13 @@ async function assertHomeDocument(origin, url) {
     || html.includes('>View CV<') || html.includes('>Download CV<')) {
     throw new Error('Home document does not contain the corrected CV disclosure labels');
   }
+  const footerHtml = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
+  if (!footerHtml.includes(`<p>${projection.shared.name}</p>`)
+    || !footerHtml.includes('<a href="/cv/">CV</a>')
+    || (footerHtml.match(/<a\b/g) ?? []).length !== 1
+    || /GitHub|LinkedIn|Download PDF|mailto:/.test(footerHtml)) {
+    throw new Error('Home footer is not the minimal name and direct CV colophon');
+  }
   const cvHtml = await cvResponse.text();
   const letterHtml = await letterResponse.text();
   if (!cvResponse.ok || !cvHtml.includes('id="cv-main"') || !cvHtml.includes('class="cv-chrome"')) {
@@ -504,6 +724,139 @@ async function openAt(cdp, url, width, height, mobile, scriptExecutionDisabled =
   return page;
 }
 
+async function scrollToY(cdp, sessionId, y, wait = 220) {
+  await evaluate(cdp, sessionId, `window.scrollTo(0, ${y})`);
+  await sleep(wait);
+}
+
+async function headerState(cdp, sessionId) {
+  return evaluate(cdp, sessionId, `(() => {
+    const header = document.querySelector('.site-header');
+    const box = header?.getBoundingClientRect();
+    const inner = header?.querySelector('.site-header__inner');
+    const innerBox = inner?.getBoundingClientRect();
+    const active = document.activeElement;
+    const activeBox = active instanceof HTMLElement ? active.getBoundingClientRect() : null;
+    const experience = document.querySelector('#experience');
+    const experienceBox = experience?.getBoundingClientRect();
+    const layout = window.__layoutMetrics?.() ?? {
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyScroll: document.body.scrollWidth,
+      overflowing: []
+    };
+    return {
+      hiddenClass: header?.classList.contains('site-header--hidden') ?? false,
+      top: box?.top ?? -1,
+      bottom: box?.bottom ?? -1,
+      left: box?.left ?? -1,
+      right: box?.right ?? -1,
+      innerLeft: innerBox?.left ?? -1,
+      innerRight: innerBox?.right ?? -1,
+      transform: header ? getComputedStyle(header).transform : '',
+      transitionDuration: header ? getComputedStyle(header).transitionDuration : '',
+      backgroundColor: header ? getComputedStyle(header).backgroundColor : '',
+      backgroundImage: header ? getComputedStyle(header).backgroundImage : '',
+      borderBottomWidth: header ? getComputedStyle(header).borderBottomWidth : '',
+      borderBottomStyle: header ? getComputedStyle(header).borderBottomStyle : '',
+      boxShadow: header ? getComputedStyle(header).boxShadow : '',
+      disclosureOpen: Boolean(header?.querySelector('details[open]')),
+      focusInside: Boolean(header && active && header.contains(active)),
+      focusVisible: active instanceof HTMLElement && active.matches(':focus-visible'),
+      activeTop: activeBox?.top ?? -1,
+      activeBottom: activeBox?.bottom ?? -1,
+      scrollY,
+      experienceDocumentTop: (experienceBox?.top ?? 0) + scrollY,
+      ...layout
+    };
+  })()`);
+}
+
+function assertHeaderVisible(state, label) {
+  assertHeaderSurface(state, label);
+  if (state.hiddenClass || state.top < -1 || state.bottom <= 0) {
+    throw new Error(`${label} is not visible: ${JSON.stringify(state)}`);
+  }
+}
+
+function assertHeaderHidden(state, label) {
+  assertHeaderSurface(state, label);
+  if (!state.hiddenClass || state.bottom > -24) {
+    throw new Error(`${label} is not fully above the viewport: ${JSON.stringify(state)}`);
+  }
+}
+
+function assertHeaderSurface(state, label) {
+  if (Math.abs(state.left) > 1 || Math.abs(state.right - state.clientWidth) > 1) {
+    throw new Error(`${label} does not cover the viewport width: ${JSON.stringify(state)}`);
+  }
+  if (state.backgroundColor === 'rgba(0, 0, 0, 0)'
+    || state.backgroundImage !== 'none') {
+    throw new Error(`${label} does not have the opaque smooth surface: ${JSON.stringify(state)}`);
+  }
+  if (state.borderBottomWidth !== '1px' || state.borderBottomStyle !== 'solid'
+    || state.boxShadow === 'none') {
+    throw new Error(`${label} does not have a full-width rule and shadow: ${JSON.stringify(state)}`);
+  }
+  assertNoHorizontalOverflow(state, state.clientWidth, label);
+}
+
+async function dispatchWheel(cdp, sessionId, x, y, deltaY) {
+  await cdp.send('Input.dispatchMouseEvent', {
+    type: 'mouseWheel',
+    x,
+    y,
+    deltaX: 0,
+    deltaY
+  }, sessionId);
+  await sleep(250);
+}
+
+async function pointerDownSelector(cdp, sessionId, selector) {
+  await cdp.send('DOM.enable', {}, sessionId);
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1 }, sessionId);
+  const box = await boxForNode(cdp, sessionId, await queryNode(cdp, sessionId, root.nodeId, selector));
+  const point = { x: (box.left + box.right) / 2, y: (box.top + box.bottom) / 2 };
+  await cdp.send('Input.dispatchMouseEvent', {
+    type: 'mousePressed',
+    ...point,
+    button: 'left',
+    clickCount: 1
+  }, sessionId);
+  await sleep(50);
+  return point;
+}
+
+async function pointerUp(cdp, sessionId, point) {
+  await cdp.send('Input.dispatchMouseEvent', {
+    type: 'mouseReleased',
+    ...point,
+    button: 'left',
+    clickCount: 1
+  }, sessionId);
+  await sleep(50);
+}
+
+async function dispatchTouchScroll(cdp, sessionId, x, y, yDistance) {
+  const point = (pointY) => ({ x, y: pointY, radiusX: 1, radiusY: 1, force: 1 });
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [point(y)]
+  }, sessionId);
+  for (let step = 1; step <= 8; step += 1) {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [point(y - ((yDistance * step) / 8))]
+    }, sessionId);
+    await sleep(16);
+  }
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchEnd',
+    touchPoints: []
+  }, sessionId);
+  await sleep(250);
+}
+
 async function assertCvOptions(cdp, sessionId, selector, label) {
   const result = await evaluate(cdp, sessionId, `(() => {
     const disclosure = document.querySelector('${selector}');
@@ -535,18 +888,41 @@ async function assertMobilePanel(cdp, sessionId, width, height, label) {
   const result = await evaluate(cdp, sessionId, `(() => {
     const panel = document.querySelector('.primary-nav__mobile-panel');
     const box = panel?.getBoundingClientRect();
+    const inner = document.querySelector('.site-header__inner');
+    const innerBox = inner?.getBoundingClientRect();
+    const header = document.querySelector('.site-header');
+    const headerBox = header?.getBoundingClientRect();
+    const options = [...(panel?.querySelectorAll('.primary-nav__mobile-list > li > a, .primary-nav__cv--mobile > summary, .primary-nav__cv-options a') ?? [])];
     return {
       position: panel ? getComputedStyle(panel).position : '',
       left: box?.left ?? -1,
       right: box?.right ?? -1,
       top: box?.top ?? -1,
       bottom: box?.bottom ?? -1,
+      innerLeft: innerBox?.left ?? -1,
+      innerRight: innerBox?.right ?? -1,
+      headerBottom: headerBox?.bottom ?? -1,
+      rootFontSize: Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+      optionsRightAligned: options.every((option) => getComputedStyle(option).justifyContent === 'flex-end'),
+      optionsTallEnough: options.every((option) => option.getBoundingClientRect().height >= 36),
       ...window.__layoutMetrics()
     };
   })()`);
   if (result.position !== 'absolute' || result.left < -1 || result.right > width + 1
     || result.top < -1 || result.bottom > height + 1) {
     throw new Error(`Enhanced mobile panel is outside the ${label} viewport: ${JSON.stringify(result)}`);
+  }
+  const panelWidth = result.right - result.left;
+  const innerWidth = result.innerRight - result.innerLeft;
+  if (Math.abs(result.right - result.innerRight) > 1
+    || Math.abs(result.top - result.headerBottom) > 1
+    || panelWidth > (13.5 * result.rootFontSize) + 1
+    || panelWidth > innerWidth + 1
+    || innerWidth - panelWidth < 32) {
+    throw new Error(`Enhanced mobile panel is not a compact right-aligned dropdown at ${label}: ${JSON.stringify(result)}`);
+  }
+  if (!result.optionsRightAligned || !result.optionsTallEnough) {
+    throw new Error(`Enhanced mobile panel alignment or touch targets are incorrect at ${label}: ${JSON.stringify(result)}`);
   }
   assertNoHorizontalOverflow(result, width, `Open mobile Home at ${label}`);
 }
