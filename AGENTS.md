@@ -56,7 +56,7 @@
 - Astro owns semantic structure, components, layout, styles and behavior. The
   local projection owns professional copy and necessary public structured data;
   do not keep duplicate professional copy hardcoded in Astro.
-- Do not add advisor, cable or illustration configuration to the projection
+- Do not add advisor or illustration configuration to the projection
   merely because those features exist.
 - Advance page structure and layout against the repository-local public
   projection.
@@ -67,22 +67,21 @@
   interaction, animations, hosting, deployment, operational limits, analytics,
   and any later site-specific AI, including its prompts, models and providers.
 - Keep the base static: Astro, semantic HTML, CSS and strict TypeScript. Use SVG
-  for layered illustration and cable geometry.
+  for layered illustration.
 - Do not introduce React, a backend, CMS, database, authentication or custom API
   without an explicit product-scope change.
-- Add GSAP, ScrollTrigger, Playwright or Vitest only in the release where an
-  established requirement justifies them. Add GSAP/ScrollTrigger only in R2 if
-  the proven cable requirement still needs them.
-- R1, R2 and R3 are cumulative. Later work must preserve earlier content,
-  accessibility, fallback and data-boundary guarantees.
+- Do not add speculative dependencies. Add Playwright, Vitest or similar
+  tooling only when an established requirement justifies them.
+- Later work must preserve earlier content, accessibility, fallback and
+  data-boundary guarantees.
 - Do not edit generated `dist/` output or a PDF as source.
 
 ## Experience and design
 
 - The primary document is one continuous, normally scrolling page. Never
   scroll-jack or turn sections into mandatory cinematic scenes.
-- Content and navigation must remain complete with the cable hidden, static,
-  disabled or unavailable.
+- Content and navigation must remain complete without JavaScript or animation.
+  Decorative illustration must not carry unique information.
 - Preserve the selected editorial direction: subtle ivory paper texture,
   cobalt structure, extremely limited orange accent, expressive large serif,
   functional sans, open asymmetric grid and ordinary-work line illustrations.
@@ -90,12 +89,12 @@
   percentages, logo grids, dashboard/cards as a default system and artificial
   portfolio projects.
 - Mobile recomposes; it does not squeeze desktop. Do not sacrifice reading
-  width to keep the cable visible.
+  width.
 - Respect keyboard use, focus, landmarks, contrast and
-  `prefers-reduced-motion`. The cable and illustrations are decorative for
-  assistive technology unless a later approved requirement says otherwise.
-- Historical SITE-V1 studio composition checkpoints are preserved in
-  `docs/design/references/studio/`. They document the graphic-direction process.
-  They are not a work precondition, not the current implementation, not a
-  specification and not production assets. Do not treat their copy as facts or
-  their pixels as templates.
+  `prefers-reduced-motion`. Illustrations are decorative for assistive
+  technology unless a later approved requirement says otherwise.
+- Historical SITE-V1 studio composition checkpoints and the continuous-surface
+  cable proposal are preserved in `docs/design/references/studio/`. They
+  document the graphic-direction process. They are not a work precondition,
+  not the current implementation, not a specification and not production
+  assets. Do not treat their copy as facts or their pixels as templates.

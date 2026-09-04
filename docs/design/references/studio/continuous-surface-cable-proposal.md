@@ -1,19 +1,18 @@
 # Proposal 1 — Continuous surface with resting cable
 
-**Status.** Accepted direction for the first Home composition prototype. This
-document is normative for compositional intent: spatial fiction, chapter roles,
-cable behavior and scroll-perception direction. Exact geometry, tuning values and
-implementation details remain provisional and will be resolved through browser
-prototyping and visual review. This is not a final immutable design.
+**Status.** Historical design-process exploration. This document is no longer
+normative and does not define the current product roadmap. The cable, its
+chapter states, scroll activation, geometry and technical stack remain
+hypotheses that may be revisited only through a new explicit product decision.
+Compositional ideas that influenced the current site may survive independently
+of the cable.
 
 This specification covers visual composition, illustrations, cable path, scroll
 activation and responsive behavior. It does not modify professional facts or
 canonical copy.
 
-See also [architecture](../architecture.md) for technical ownership of
-illustrations, `JourneyCable` and the interaction stack. Historical studio
-checkpoints in [references/studio](references/studio/README.md) are non-normative
-visual inspiration only.
+Kept with the studio visual checkpoints in this folder. Current technical
+boundaries live in [architecture](../../../architecture.md).
 
 ## Spatial fiction
 
