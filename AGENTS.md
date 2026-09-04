@@ -18,8 +18,8 @@
 ## Language
 
 - Every artifact in this repository is English: code, comments, documentation,
-  `AGENTS.md`, Cursor rules and commands, tests, fixtures, materials, public
-  site content, and Software Development CV source and content.
+  `AGENTS.md`, tests, fixtures, materials, public site content, and Software
+  Development CV source and content.
 - This English-artifact rule replaces any earlier instruction that the first
   site is in Spanish.
 
