@@ -22,6 +22,13 @@ test('Home keeps shrinking safeguards while its new styles stay page-local', asy
   assert.match(homeCss, /\.page \.chapter--home \.hero-art \{[\s\S]*?width:\s*min/);
 });
 
+test('Home no longer references the retired Working together folder illustration', async () => {
+  const page = await readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
+
+  assert.equal(page.includes('/images/working-together/folder.png'), false);
+  assert.equal(page.includes('chapter-art--folder'), false);
+});
+
 test('Primary navigation uses native CV disclosures and progressive enhancement', async () => {
   const [nav, layout, homeCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
