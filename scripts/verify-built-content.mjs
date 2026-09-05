@@ -99,24 +99,23 @@ assert.match(cvHtml, /class="primary-nav"/);
 assert.match(cvLetterHtml, /class="primary-nav"/);
 assert.match(cvHtml, /<footer class="site-footer">/);
 assert.match(cvLetterHtml, /<footer class="site-footer">/);
-assert.match(cvHtml, /aria-label="Back to site"/);
-assert.match(cvLetterHtml, /aria-label="Back to site"/);
-assert.match(cvHtml, /class="cv-chrome__back"[^>]*href="\/"/);
-assert.match(cvLetterHtml, /class="cv-chrome__back"[^>]*href="\/"/);
-assert.equal(cvHtml.includes('>Back to site<'), false);
-assert.equal(cvLetterHtml.includes('>Back to site<'), false);
-assert.match(cvHtml, /href="\/cv\/letter\/"[^>]*>US Letter</);
-assert.match(cvLetterHtml, /href="\/cv\/"[^>]*>A4</);
-assert.match(cvHtml, /<details class="cv-chrome__download">/);
-assert.match(cvLetterHtml, /<details class="cv-chrome__download">/);
-assert.match(cvHtml, /<summary>Download PDF<\/summary>/);
-assert.match(cvLetterHtml, /<summary>Download PDF<\/summary>/);
-assert.match(cvHtml, /aria-label="Download A4 PDF"[^>]*>A4</);
-assert.match(cvHtml, /aria-label="Download US Letter PDF"[^>]*>US Letter</);
-assert.match(cvLetterHtml, /aria-label="Download A4 PDF"[^>]*>A4</);
-assert.match(cvLetterHtml, /aria-label="Download US Letter PDF"[^>]*>US Letter</);
-assert.equal(cvHtml.includes('>A4 PDF<'), false);
-assert.equal(cvHtml.includes('>US Letter PDF<'), false);
+assert.match(cvHtml, /aria-current="page">CV</);
+assert.match(cvLetterHtml, /aria-current="page">CV</);
+assert.equal(cvHtml.includes('>View online<'), false);
+assert.equal(cvLetterHtml.includes('>View online<'), false);
+assert.equal(cvHtml.includes('class="cv-chrome"'), false);
+assert.equal(cvLetterHtml.includes('class="cv-chrome"'), false);
+assert.equal(cvHtml.includes('Back to site'), false);
+assert.equal(cvLetterHtml.includes('Back to site'), false);
+assert.equal(cvHtml.includes('href="/cv/letter/"'), false);
+assert.match(cvLetterHtml, /rel="canonical" href="https:\/\/andresatencio\.com\/cv\/"/);
+assert.equal(cvHtml.includes('rel="canonical"'), false);
+assert.match(cvHtml, /class="cv-actions"/);
+assert.match(cvLetterHtml, /class="cv-actions"/);
+assert.match(cvHtml, />A4 PDF</);
+assert.match(cvHtml, />US Letter PDF</);
+assert.match(cvLetterHtml, />A4 PDF</);
+assert.match(cvLetterHtml, />US Letter PDF</);
 assert.match(cvHtml, new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"`));
 assert.match(cvHtml, new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"`));
 assert.match(
@@ -127,8 +126,6 @@ assert.match(
   cvLetterHtml,
   new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"`)
 );
-assert.ok(cvHtml.includes('class="cv-chrome"'), 'A4 CV is missing on-screen chrome');
-assert.ok(cvLetterHtml.includes('class="cv-chrome"'), 'US Letter CV is missing on-screen chrome');
 
 await verifyCvPdfs({ dist: true });
 

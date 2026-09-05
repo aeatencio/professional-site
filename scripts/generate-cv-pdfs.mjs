@@ -112,7 +112,7 @@ async function assertLoadedCv(cdp, sessionId, pdf, publicProjection) {
     statusGone: document.body.textContent.includes('Not found'),
     hasMain: Boolean(document.querySelector('#cv-main')),
     mainClass: document.querySelector('#cv-main')?.className ?? '',
-    format: document.body.dataset.cvFormat ?? '',
+    format: document.querySelector('[data-cv-format]')?.getAttribute('data-cv-format') ?? '',
     name: document.querySelector('#cv-main h1')?.textContent ?? '',
     siteHref: document.querySelector('#cv-main a[rel="me"][aria-label="Website"]')?.getAttribute('href') ?? '',
     workersDev: document.querySelector('#cv-main')?.innerHTML.includes('workers.dev') ?? true
@@ -145,8 +145,8 @@ async function assertLoadedCv(cdp, sessionId, pdf, publicProjection) {
 
 async function assertPrintChromeHidden(cdp, sessionId) {
   const print = await evaluate(cdp, sessionId, `({
-    chrome: document.querySelector('.cv-chrome')
-      ? getComputedStyle(document.querySelector('.cv-chrome')).display
+    actions: document.querySelector('.cv-actions')
+      ? getComputedStyle(document.querySelector('.cv-actions')).display
       : 'missing',
     header: document.querySelector('.site-header')
       ? getComputedStyle(document.querySelector('.site-header')).display
@@ -162,8 +162,8 @@ async function assertPrintChromeHidden(cdp, sessionId) {
       : 'missing'
   })`);
 
-  if (print.chrome !== 'none') {
-    throw new Error(`CV chrome is visible in print (display: ${print.chrome})`);
+  if (print.actions !== 'none') {
+    throw new Error(`CV actions are visible in print (display: ${print.actions})`);
   }
   if (print.header !== 'none') {
     throw new Error(`Site header is visible in print (display: ${print.header})`);

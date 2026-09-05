@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import CvChrome from '../components/CvChrome.astro';
 import '../styles/cv.css';
+import { PUBLIC_SITE_ORIGIN } from '../../lib/cv-pdf.mjs';
 
 interface Props {
   title: string;
@@ -13,6 +13,10 @@ interface Props {
 
 const { title, description, lang, name, format = 'a4' } = Astro.props;
 const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
+const canonicalHref = `${PUBLIC_SITE_ORIGIN}/cv/`;
+const headMarkup = format === 'letter'
+  ? `<link rel="canonical" href="${canonicalHref}" /><style>@page { size: ${pageSize}; margin: 0; }</style>`
+  : `<style>@page { size: ${pageSize}; margin: 0; }</style>`;
 ---
 
 <BaseLayout
@@ -21,10 +25,9 @@ const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
   lang={lang}
   name={name}
   skipHref="#cv-main"
-  bodyClass="cv-document"
-  cvFormat={format}
 >
-  <Fragment slot="head" set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
-  <CvChrome slot="contextual" format={format} />
-  <slot />
+  <Fragment slot="head" set:html={headMarkup} />
+  <div class="cv-document" data-cv-format={format}>
+    <slot />
+  </div>
 </BaseLayout>

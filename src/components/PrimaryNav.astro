@@ -1,7 +1,9 @@
 ---
 import { CV_PDF } from '../../lib/cv-pdf.mjs';
 
-const isHome = Astro.url.pathname === '/';
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = pathname === '/';
+const isCvPage = pathname === '/cv' || pathname === '/cv/letter';
 const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 const sectionItems = [
   { href: sectionHref('#experience'), label: 'Experience' },
@@ -19,20 +21,24 @@ const contactHref = sectionHref('#contact');
       </li>
     ))}
     <li>
-      <details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>
-        <summary>CV</summary>
-        <ul class="primary-nav__cv-options">
-          <li><a href="/cv/">View online</a></li>
-          <li>
-            <a
-              href={CV_PDF.a4.href}
-              download={CV_PDF.a4.download}
-              type="application/pdf"
-              data-cv-download
-            >Download PDF</a>
-          </li>
-        </ul>
-      </details>
+      {isCvPage ? (
+        <a href="/cv/" aria-current="page">CV</a>
+      ) : (
+        <details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>
+          <summary>CV</summary>
+          <ul class="primary-nav__cv-options">
+            <li><a href="/cv/">View online</a></li>
+            <li>
+              <a
+                href={CV_PDF.a4.href}
+                download={CV_PDF.a4.download}
+                type="application/pdf"
+                data-cv-download
+              >Download PDF</a>
+            </li>
+          </ul>
+        </details>
+      )}
     </li>
     <li class="primary-nav__contact"><a href={contactHref}>Contact</a></li>
   </ul>
@@ -47,20 +53,24 @@ const contactHref = sectionHref('#contact');
           </li>
         ))}
         <li>
-          <details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>
-            <summary>CV</summary>
-            <ul class="primary-nav__cv-options">
-              <li><a href="/cv/">View online</a></li>
-              <li>
-                <a
-                  href={CV_PDF.a4.href}
-                  download={CV_PDF.a4.download}
-                  type="application/pdf"
-                  data-cv-download
-                >Download PDF</a>
-              </li>
-            </ul>
-          </details>
+          {isCvPage ? (
+            <a href="/cv/" aria-current="page">CV</a>
+          ) : (
+            <details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>
+              <summary>CV</summary>
+              <ul class="primary-nav__cv-options">
+                <li><a href="/cv/">View online</a></li>
+                <li>
+                  <a
+                    href={CV_PDF.a4.href}
+                    download={CV_PDF.a4.download}
+                    type="application/pdf"
+                    data-cv-download
+                  >Download PDF</a>
+                </li>
+              </ul>
+            </details>
+          )}
         </li>
         <li class="primary-nav__mobile-contact"><a href={contactHref}>Contact</a></li>
       </ul>

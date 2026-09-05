@@ -1,5 +1,6 @@
 ---
 import projection from '../../data/professional-public-projection.v1.json';
+import CvActions from './CvActions.astro';
 
 const { shared, cv } = projection;
 const siteUrl = Astro.site ? Astro.site.origin : '';
@@ -14,6 +15,7 @@ function visibleProfileUrl(url: string) {
     <div class="cv-masthead">
       <h1>{shared.name}</h1>
       <p class="cv-identity">{cv.title}</p>
+      <CvActions />
     </div>
     <address class="cv-contact">
       <span>{shared.location}</span>

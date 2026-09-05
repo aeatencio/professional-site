@@ -99,7 +99,8 @@ test('A4 and US Letter share one document and declare paper-specific frames', as
   assert.match(letterPage, /format="letter"/);
   assert.match(a4Page, /<CvDocument/);
   assert.match(letterPage, /<CvDocument/);
-  assert.match(layout, /cvFormat=\{format\}/);
+  assert.match(layout, /data-cv-format=\{format\}/);
+  assert.match(layout, /class="cv-document"/);
   assert.match(layout, /210mm 297mm/);
   assert.match(layout, /215.9mm 279.4mm/);
   assert.match(cvCss, /--cv-primary-col:\s*113mm/);
@@ -112,79 +113,82 @@ test('A4 and US Letter share one document and declare paper-specific frames', as
   assert.equal(cvDocument.includes('format='), false);
 });
 
-test('CV chrome is outside the document and hidden in print', async () => {
-  const [cvDocument, layout, chrome, cvCss, nav, baseLayout] = await Promise.all([
+test('CV actions sit in the document flow and are hidden in print', async () => {
+  const [cvDocument, layout, actions, cvCss, nav, baseLayout] = await Promise.all([
     readFile(cvDocumentUrl, 'utf8'),
     readFile(cvLayoutUrl, 'utf8'),
-    readFile(new URL('../src/components/CvChrome.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/CvActions.astro', import.meta.url), 'utf8'),
     readFile(cvCssUrl, 'utf8'),
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8')
   ]);
 
   assert.match(layout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
-  assert.match(layout, /<CvChrome slot="contextual" format=\{format\} \/>/);
   assert.match(layout, /skipHref="#cv-main"/);
-  assert.match(layout, /bodyClass="cv-document"/);
+  assert.match(layout, /class="cv-document"/);
+  assert.match(layout, /data-cv-format=\{format\}/);
+  assert.match(layout, /rel="canonical"/);
+  assert.equal(layout.includes('bodyClass="cv-document"'), false);
+  assert.equal(layout.includes('cvFormat'), false);
+  assert.equal(layout.includes('CvChrome'), false);
+  assert.equal(layout.includes('slot="contextual"'), false);
   assert.equal(layout.includes('<header class="site-header"'), false);
   assert.equal(layout.includes('class="site-footer"'), false);
   assert.equal(layout.includes('PrimaryNav'), false);
-  assert.equal(cvDocument.includes('cv-chrome'), false);
+  assert.match(cvDocument, /<CvActions \/>/);
   assert.match(cvDocument, /id="cv-main"/);
-  assert.match(chrome, /href="\/"/);
-  assert.match(chrome, /aria-label="Back to site"/);
-  assert.match(chrome, /class="cv-chrome__back-icon"/);
-  assert.equal(chrome.includes('>Back to site<'), false);
-  assert.equal(chrome.includes('history.back'), false);
-  assert.equal(chrome.includes('<header'), false);
-  assert.match(chrome, /CV_PDF\.a4\.route/);
-  assert.match(chrome, /CV_PDF\.letter\.route/);
-  assert.match(chrome, /download=\{pdf\.download\}/);
-  assert.match(chrome, /type="application\/pdf"/);
-  assert.match(chrome, /<details class="cv-chrome__download">/);
-  assert.match(chrome, /<summary>Download PDF<\/summary>/);
-  assert.match(chrome, /href=\{CV_PDF\.a4\.href\}/);
-  assert.match(chrome, /href=\{CV_PDF\.letter\.href\}/);
-  assert.match(chrome, /download=\{CV_PDF\.a4\.download\}/);
-  assert.match(chrome, /download=\{CV_PDF\.letter\.download\}/);
-  assert.match(chrome, /aria-label="Download A4 PDF"/);
-  assert.match(chrome, /aria-label="Download US Letter PDF"/);
-  assert.match(chrome, />A4</);
-  assert.match(chrome, />US Letter</);
-  assert.equal(chrome.includes('>A4 PDF<'), false);
-  assert.equal(chrome.includes('>US Letter PDF<'), false);
-  assert.match(chrome, /<script>/);
-  assert.match(chrome, /event\.key !== 'Escape'/);
-  assert.match(chrome, /download\.contains\(event\.target\)/);
-  assert.match(chrome, /summary\.focus\(\)/);
-  assert.equal(chrome.includes('window.print'), false);
-  assert.equal(chrome.includes('andresatencio.com'), false);
+  assert.equal(cvDocument.includes('cv-chrome'), false);
+  assert.equal(actions.includes('Back to site'), false);
+  assert.equal(actions.includes('cv-chrome'), false);
+  assert.equal(actions.includes('history.back'), false);
+  assert.equal(actions.includes('<details'), false);
+  assert.equal(actions.includes('CV_PDF.a4.route'), false);
+  assert.equal(actions.includes('CV_PDF.letter.route'), false);
+  assert.match(actions, /href=\{CV_PDF\.a4\.href\}/);
+  assert.match(actions, /href=\{CV_PDF\.letter\.href\}/);
+  assert.match(actions, /download=\{CV_PDF\.a4\.download\}/);
+  assert.match(actions, /download=\{CV_PDF\.letter\.download\}/);
+  assert.match(actions, /type="application\/pdf"/);
+  assert.match(actions, />A4 PDF</);
+  assert.match(actions, />US Letter PDF</);
+  assert.equal(actions.includes('window.print'), false);
+  assert.equal(actions.includes('andresatencio.com'), false);
+  assert.match(nav, /isCvPage/);
+  assert.match(nav, /aria-current="page">CV</);
   assert.match(nav, /href="\/cv\/">View online</);
   assert.match(nav, /CV_PDF\.a4\.href/);
   assert.match(baseLayout, /<PrimaryNav \/>/);
   assert.match(baseLayout, /class="site-footer"/);
+  assert.match(baseLayout, /import '\.\.\/styles\/site-shell\.css'/);
+  assert.equal(baseLayout.includes("import '../styles/home.css'"), false);
+  assert.equal(baseLayout.includes('cvFormat'), false);
+  assert.equal(baseLayout.includes('slot name="contextual"'), false);
   assert.match(
     cvCss,
     /@media print \{[\s\S]*?\.site-header[\s\S]*?\.site-footer[\s\S]*?display:\s*none/
   );
   assert.match(
     cvCss,
-    /@media print \{[\s\S]*?\.cv-chrome[\s\S]*?display:\s*none/
+    /@media print \{[\s\S]*?\.cv-actions[\s\S]*?display:\s*none/
   );
-  assert.match(cvCss, /\.page > \.site-header > \.cv-chrome \{/);
-  assert.match(cvCss, /\.cv-chrome__back \{[\s\S]*?width:\s*2\.75rem[\s\S]*?height:\s*2\.75rem/);
+  assert.equal(cvCss.includes('.cv-chrome'), false);
   assert.equal(/position:\s*sticky/.test(cvCss), false);
   assert.match(
     cvCss,
     /\.cv-header,\s*\.cv-body \{\s*position:\s*relative;\s*z-index:\s*1;/
   );
-  assert.match(cvCss, /\.cv-chrome__download \{\s*display:\s*none;/);
+  assert.match(cvCss, /@media screen \{[\s\S]*?\.cv-page \{[\s\S]*?width:\s*100%/);
+  assert.match(cvCss, /@media screen \{[\s\S]*?min-height:\s*0/);
+  assert.match(cvCss, /@media screen \{[\s\S]*?background:\s*transparent/);
   assert.match(
     cvCss,
-    /@media screen and \(max-width: 50rem\) \{[\s\S]*?\.cv-chrome__actions \{\s*display:\s*none;[\s\S]*?\.cv-chrome__download \{\s*display:\s*block;/
+    /@media screen \{[\s\S]*?grid-template-areas:[\s\S]*?"profile technical"[\s\S]*?"primary secondary"/
   );
-  assert.match(cvCss, /\.cv-chrome__download > summary \{[\s\S]*?min-height:\s*2\.75rem/);
-  assert.match(cvCss, /\.cv-chrome__download-options a \{[\s\S]*?min-height:\s*2\.75rem/);
+  assert.match(
+    cvCss,
+    /@media screen and \(max-width: 54rem\) \{[\s\S]*?grid-template-areas:[\s\S]*?"profile"[\s\S]*?"technical"[\s\S]*?"primary"[\s\S]*?"secondary"/
+  );
+  assert.equal(/\border\s*:/.test(cvCss.replace(/@media screen[\s\S]*$/, '')), false);
 });
 
 test('CV print stylesheet targets exact paper boxes without global scaling', async () => {

@@ -53,16 +53,19 @@ test('Experience notebook follows the complete software role list and recomposes
 });
 
 test('Primary navigation uses native CV disclosures and progressive enhancement', async () => {
-  const [nav, layout, homeCss] = await Promise.all([
+  const [nav, layout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
-    readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8')
+    readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
+    readFile(new URL('../src/styles/site-shell.css', import.meta.url), 'utf8')
   ]);
 
   assert.match(layout, /class="identity"[\s\S]*?href=\{homeHref\}/);
   assert.match(layout, /isHome \? '#home' : '\/'/);
-  assert.match(layout, /slot name="contextual"/);
-  assert.match(layout, /import '\.\.\/styles\/home\.css'/);
+  assert.equal(layout.includes('slot name="contextual"'), false);
+  assert.equal(layout.includes('cvFormat'), false);
+  assert.match(layout, /import '\.\.\/styles\/site-shell\.css'/);
+  assert.equal(layout.includes("import '../styles/home.css'"), false);
   assert.match(layout, /class="site-header" data-directional-header/);
   assert.match(layout, /class="site-header__inner">[\s\S]*?class="identity"[\s\S]*?<PrimaryNav \/>/);
   assert.match(layout, /const TOP_TOLERANCE = 24/);
@@ -89,6 +92,8 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
   assert.match(nav, /href=\{contactHref\}>Contact</);
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
+  assert.match(nav, /isCvPage/);
+  assert.match(nav, /aria-current="page">CV</);
   assert.match(nav, /<details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>[\s\S]*?<summary>CV<\/summary>/);
   assert.match(nav, /<details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>[\s\S]*?<summary>CV<\/summary>/);
   assert.equal((nav.match(/>View online<\/a>/g) ?? []).length, 2);
@@ -116,41 +121,43 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
   assert.match(nav, /a\[href\^="#"\]/);
   assert.match(layout, /document\.documentElement\.classList\.add\('js'\)/);
 
-  assert.match(homeCss, /\.page > \.site-header \{[\s\S]*?position:\s*sticky;[\s\S]*?z-index:\s*20/);
-  assert.match(homeCss, /\.page > \.site-header \{[\s\S]*?display:\s*grid;[\s\S]*?grid-column:\s*1 \/ -1;[\s\S]*?grid-template-columns:/);
-  assert.match(homeCss, /\.page > \.site-header \{[\s\S]*?background-color:\s*var\(--color-ivory\);[\s\S]*?border-bottom:\s*1px solid var\(--color-cobalt\)/);
-  assert.equal(/\.page > \.site-header \{[\s\S]*?\}/.exec(homeCss)?.[0]?.includes('background-image'), false);
-  assert.match(homeCss, /\.page > \.site-header \{[\s\S]*?border-bottom:\s*1px solid var\(--color-cobalt\)/);
-  assert.match(homeCss, /\.site-header \.site-header__inner \{[\s\S]*?position:\s*relative;[\s\S]*?display:\s*flex;[\s\S]*?grid-column:\s*2/);
-  assert.match(homeCss, /\.page > \.site-header \{[\s\S]*?transform:\s*translateY\(0\);[\s\S]*?transition:\s*transform 160ms ease-out/);
-  assert.match(homeCss, /\.site-header\.site-header--hidden \{\s*transform:\s*translateY\(calc\(-100% - 2rem\)\)/);
-  assert.match(homeCss, /\.site-header\.site-header--instant \{\s*transition:\s*none/);
-  assert.match(homeCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.page > \.site-header \{\s*transition:\s*none/);
-  assert.equal(homeCss.includes('will-change'), false);
-  assert.match(homeCss, /\.page > \.site-footer \{[\s\S]*?display:\s*flex;[\s\S]*?flex-wrap:\s*nowrap;[\s\S]*?justify-content:\s*space-between/);
-  assert.match(homeCss, /\.page > \.site-footer a \{[\s\S]*?color:\s*var\(--color-cobalt\);[\s\S]*?white-space:\s*nowrap/);
-  assert.match(homeCss, /\.page > \.site-footer a:hover,[\s\S]*?\.page > \.site-footer a:focus-visible \{\s*text-decoration:\s*underline/);
-  assert.match(homeCss, /html \{\s*scroll-padding-top:\s*var\(--home-header-offset\)/);
+  assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?position:\s*sticky;[\s\S]*?z-index:\s*20/);
+  assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?display:\s*grid;[\s\S]*?grid-column:\s*1 \/ -1;[\s\S]*?grid-template-columns:/);
+  assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?background-color:\s*var\(--color-ivory\);[\s\S]*?border-bottom:\s*1px solid var\(--color-cobalt\)/);
+  assert.equal(/\.page > \.site-header \{[\s\S]*?\}/.exec(shellCss)?.[0]?.includes('background-image'), false);
+  assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?border-bottom:\s*1px solid var\(--color-cobalt\)/);
+  assert.match(shellCss, /\.site-header \.site-header__inner \{[\s\S]*?position:\s*relative;[\s\S]*?display:\s*flex;[\s\S]*?grid-column:\s*2/);
+  assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?transform:\s*translateY\(0\);[\s\S]*?transition:\s*transform 160ms ease-out/);
+  assert.match(shellCss, /\.site-header\.site-header--hidden \{\s*transform:\s*translateY\(calc\(-100% - 2rem\)\)/);
+  assert.match(shellCss, /\.site-header\.site-header--instant \{\s*transition:\s*none/);
+  assert.match(shellCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.page > \.site-header \{\s*transition:\s*none/);
+  assert.equal(shellCss.includes('will-change'), false);
+  assert.match(shellCss, /\.page > \.site-footer \{[\s\S]*?display:\s*flex;[\s\S]*?flex-wrap:\s*nowrap;[\s\S]*?justify-content:\s*space-between/);
+  assert.match(shellCss, /\.page > \.site-footer a \{[\s\S]*?color:\s*var\(--color-cobalt\);[\s\S]*?white-space:\s*nowrap/);
+  assert.match(shellCss, /\.page > \.site-footer a:hover,[\s\S]*?\.page > \.site-footer a:focus-visible \{\s*text-decoration:\s*underline/);
+  assert.match(shellCss, /html \{\s*scroll-padding-top:\s*var\(--site-header-offset\)/);
   assert.match(homeCss, /\.page main#main,[\s\S]*?scroll-margin-top:\s*0/);
-  assert.match(homeCss, /@media \(max-width: 64rem\)/);
-  assert.match(homeCss, /\.page \.primary-nav__desktop-list \{\s*display:\s*none/);
-  assert.match(homeCss, /\.primary-nav__mobile \{\s*display:\s*block/);
-  assert.match(homeCss, /\.primary-nav__mobile-panel \{[\s\S]*?position:\s*static;[\s\S]*?max-height:\s*none;[\s\S]*?overflow:\s*visible/);
-  assert.match(homeCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?position:\s*absolute;[\s\S]*?overflow-y:\s*auto/);
-  assert.match(homeCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?right:\s*0;[\s\S]*?left:\s*auto;[\s\S]*?width:\s*max-content;[\s\S]*?max-width:\s*min\(13\.5rem, 100%\)/);
-  assert.match(homeCss, /\.primary-nav__mobile-list > li > a,[\s\S]*?\.primary-nav__cv--mobile > summary \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
-  assert.match(homeCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options \{[\s\S]*?font-size:\s*0\.9rem/);
-  assert.match(homeCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options a \{[\s\S]*?min-height:\s*2\.25rem;[\s\S]*?justify-content:\s*flex-end/);
-  assert.match(homeCss, /\.js \.page > \.site-header \{[\s\S]*?position:\s*sticky/);
-  assert.equal(homeCss.includes('border-inline'), false);
-  assert.equal(homeCss.includes('primary-nav__group-label'), false);
-  assert.equal(homeCss.includes('primary-nav__cv-actions'), false);
-  assert.equal(homeCss.includes('summary::after'), false);
-  assert.equal(homeCss.includes('content: "+"'), false);
-  assert.equal(homeCss.includes('content: "−"'), false);
-  assert.match(homeCss, /\.page \.primary-nav a,[\s\S]*?\.primary-nav__cv > summary,[\s\S]*?\.primary-nav__mobile > summary \{\s*text-underline-offset:\s*0\.2em/);
-  assert.match(homeCss, /\.primary-nav__cv > summary:hover,[\s\S]*?\.primary-nav__cv > summary:focus-visible,[\s\S]*?\.primary-nav__mobile > summary:hover,[\s\S]*?\.primary-nav__mobile > summary:focus-visible \{\s*text-decoration:\s*underline/);
-  assert.equal(homeCss.includes('[open] > summary {\n  text-decoration: underline'), false);
+  assert.match(shellCss, /@media \(max-width: 64rem\)/);
+  assert.match(shellCss, /\.page \.primary-nav__desktop-list \{\s*display:\s*none/);
+  assert.match(shellCss, /\.primary-nav__mobile \{\s*display:\s*block/);
+  assert.match(shellCss, /\.primary-nav__mobile-panel \{[\s\S]*?position:\s*static;[\s\S]*?max-height:\s*none;[\s\S]*?overflow:\s*visible/);
+  assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?position:\s*absolute;[\s\S]*?overflow-y:\s*auto/);
+  assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?right:\s*0;[\s\S]*?left:\s*auto;[\s\S]*?width:\s*max-content;[\s\S]*?max-width:\s*min\(13\.5rem, 100%\)/);
+  assert.match(shellCss, /\.primary-nav__mobile-list > li > a,[\s\S]*?\.primary-nav__cv--mobile > summary \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
+  assert.match(shellCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options \{[\s\S]*?font-size:\s*0\.9rem/);
+  assert.match(shellCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options a \{[\s\S]*?min-height:\s*2\.25rem;[\s\S]*?justify-content:\s*flex-end/);
+  assert.match(shellCss, /\.js \.page > \.site-header \{[\s\S]*?position:\s*sticky/);
+  assert.equal(shellCss.includes('border-inline'), false);
+  assert.equal(shellCss.includes('primary-nav__group-label'), false);
+  assert.equal(shellCss.includes('primary-nav__cv-actions'), false);
+  assert.equal(shellCss.includes('summary::after'), false);
+  assert.equal(shellCss.includes('content: "+"'), false);
+  assert.equal(shellCss.includes('content: "−"'), false);
+  assert.match(shellCss, /\.page \.primary-nav a,[\s\S]*?\.primary-nav__cv > summary,[\s\S]*?\.primary-nav__mobile > summary \{\s*text-underline-offset:\s*0\.2em/);
+  assert.match(shellCss, /\.primary-nav__cv > summary:hover,[\s\S]*?\.primary-nav__cv > summary:focus-visible,[\s\S]*?\.primary-nav__mobile > summary:hover,[\s\S]*?\.primary-nav__mobile > summary:focus-visible \{\s*text-decoration:\s*underline/);
+  assert.equal(shellCss.includes('[open] > summary {\n  text-decoration: underline'), false);
+  assert.equal(homeCss.includes('.page > .site-header'), false);
+  assert.equal(homeCss.includes('.primary-nav__mobile'), false);
 });
 
 test('Layout verification covers responsive navigation and deployment runs it', async () => {
@@ -187,13 +194,15 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /focusInsideClosedDisclosure/);
   assert.match(verifier, /View online/);
   assert.match(verifier, /Download PDF/);
-  assert.match(verifier, /assertCvPageChrome/);
-  assert.match(verifier, /Download A4 PDF/);
-  assert.match(verifier, /Download US Letter PDF/);
-  assert.match(verifier, /aria-label="Back to site"/);
+  assert.match(verifier, /assertCvSitePages/);
+  assert.match(verifier, /A4 PDF/);
+  assert.match(verifier, /US Letter PDF/);
+  assert.match(verifier, /cv-actions/);
   assert.match(verifier, /shared site shell/);
-  assert.match(verifier, /outside the mobile CV download/);
-  assert.match(verifier, /inside the mobile CV download/);
+  assert.match(verifier, /does not mix CV actions/);
+  assert.match(verifier, /screen presentation/);
+  assert.equal(verifier.includes('aria-label="Back to site"'), false);
+  assert.equal(verifier.includes('assertDesktopCvChrome'), false);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);

@@ -72,7 +72,7 @@ test('print input digest treats full HTML and unfiltered CSS as inputs', () => {
   const baseline = digestCvPrintInputs(sampleInputs());
 
   const chromeChange = sampleInputs({
-    htmlExtra: '<header class="cv-chrome">Back to site</header>'
+    htmlExtra: '<p class="cv-actions">A4 PDF</p>'
   });
   assert.notEqual(digestCvPrintInputs(chromeChange), baseline);
 

@@ -10,7 +10,7 @@ Built with Astro and TypeScript. This repository contains the public site, its p
 
 The site is static, versioned and reproducible. Its public origin is `https://andresatencio.com`.
 
-Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. `/cv/` and `/cv/letter/` are first-class site pages: they use the global header and footer, keep the CV’s own editorial document layout, and treat `CvChrome` as secondary contextual navigation. Print and PDF output exclude that shell and contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
+Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. `/cv/` is the canonical web view of the Software Development CV: a first-class, responsive page of `andresatencio.com` that uses the global header and footer. `/cv/letter/` remains a functional route for US Letter print and PDF generation; its screen presentation matches `/cv/`. A4 and US Letter are download and print formats, not alternate web layouts. Print and PDF output exclude the site shell and on-page download actions; they contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
 
 This repository is public on GitHub. Its code and complete history are maintained as safe for public exposure.
 
@@ -59,7 +59,7 @@ The build fingerprints the effective CV print inputs rather than a guessed print
 
 Changes that cannot affect the PDF may still require a reprint; a stale PDF must not pass.
 
-`layout:check` rebuilds first, then verifies the Home document over HTTP, desktop and mobile navigation behavior, sticky anchor offsets, horizontal overflow, and the native mobile fallback with JavaScript disabled before page load. Deployment CI runs tests, `check` and `layout:check`.
+`layout:check` rebuilds first, then verifies Home navigation, CV site-page composition, sticky anchor offsets, horizontal overflow, and the native mobile fallback with JavaScript disabled before page load. Deployment CI runs tests, `check` and `layout:check`.
 
 ## Architecture and public data boundary
 
