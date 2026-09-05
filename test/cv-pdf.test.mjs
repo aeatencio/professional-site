@@ -58,6 +58,8 @@ test('PDF generator validates the live CV before printing', async () => {
   assert.match(generator, /data-cv-format/);
   assert.match(generator, /PUBLIC_SITE_ORIGIN/);
   assert.match(generator, /getComputedStyle\(document\.querySelector\('\.cv-chrome'\)\)/);
+  assert.match(generator, /getComputedStyle\(document\.querySelector\('\.site-header'\)\)/);
+  assert.match(generator, /getComputedStyle\(document\.querySelector\('\.site-footer'\)\)/);
   assert.equal(generator.includes('toString(\'latin1\')'), false);
 });
 

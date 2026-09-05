@@ -1,11 +1,14 @@
 ---
 import { CV_PDF } from '../../lib/cv-pdf.mjs';
 
+const isHome = Astro.url.pathname === '/';
+const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 const sectionItems = [
-  { href: '#experience', label: 'Experience' },
-  { href: '#background', label: 'Background' },
-  { href: '#working-together', label: 'Working together' }
+  { href: sectionHref('#experience'), label: 'Experience' },
+  { href: sectionHref('#background'), label: 'Background' },
+  { href: sectionHref('#working-together'), label: 'Working together' }
 ];
+const contactHref = sectionHref('#contact');
 ---
 
 <nav class="primary-nav" aria-label="Primary" data-primary-navigation>
@@ -31,7 +34,7 @@ const sectionItems = [
         </ul>
       </details>
     </li>
-    <li class="primary-nav__contact"><a href="#contact">Contact</a></li>
+    <li class="primary-nav__contact"><a href={contactHref}>Contact</a></li>
   </ul>
 
   <details class="primary-nav__mobile" data-mobile-navigation>
@@ -59,7 +62,7 @@ const sectionItems = [
             </ul>
           </details>
         </li>
-        <li class="primary-nav__mobile-contact"><a href="#contact">Contact</a></li>
+        <li class="primary-nav__mobile-contact"><a href={contactHref}>Contact</a></li>
       </ul>
     </div>
   </details>

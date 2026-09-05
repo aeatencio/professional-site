@@ -544,13 +544,15 @@ async function assertFooterNavigation(cdp, homeUrl) {
   const result = await evaluate(cdp, sessionId, `(() => ({
     pathname: location.pathname,
     hasCvMain: Boolean(document.querySelector('#cv-main')),
-    hasPrimaryNav: Boolean(document.querySelector('.primary-nav'))
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasSiteHeader: Boolean(document.querySelector('.site-header')),
+    hasSiteFooter: Boolean(document.querySelector('.site-footer'))
   }))()`);
-  if (result.pathname !== '/cv/' || !result.hasCvMain || result.hasPrimaryNav) {
-    throw new Error(`Footer CV link did not reach the isolated CV page: ${JSON.stringify(result)}`);
+  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasPrimaryNav || !result.hasSiteHeader || !result.hasSiteFooter) {
+    throw new Error(`Footer CV link did not reach the CV page in the site shell: ${JSON.stringify(result)}`);
   }
   await cdp.send('Target.closeTarget', { targetId });
-  console.log('Footer CV keyboard navigation and CV isolation verified');
+  console.log('Footer CV keyboard navigation and shared site shell verified');
 }
 
 async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
@@ -640,13 +642,15 @@ async function assertViewOnlineNavigation(cdp, homeUrl) {
     pathname: location.pathname,
     hasCvMain: Boolean(document.querySelector('#cv-main')),
     hasCvChrome: Boolean(document.querySelector('.cv-chrome')),
-    hasPrimaryNav: Boolean(document.querySelector('.primary-nav'))
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasSiteHeader: Boolean(document.querySelector('.site-header')),
+    hasSiteFooter: Boolean(document.querySelector('.site-footer'))
   }))()`);
-  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasCvChrome || result.hasPrimaryNav) {
-    throw new Error(`View online did not reach the isolated A4 CV page: ${JSON.stringify(result)}`);
+  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasCvChrome || !result.hasPrimaryNav || !result.hasSiteHeader || !result.hasSiteFooter) {
+    throw new Error(`View online did not reach the A4 CV page in the site shell: ${JSON.stringify(result)}`);
   }
   await cdp.send('Target.closeTarget', { targetId });
-  console.log('View online keyboard navigation and CV-specific chrome verified');
+  console.log('View online keyboard navigation and shared CV site shell verified');
 }
 
 async function assertCvPageChrome(cdp, origin) {
@@ -718,6 +722,11 @@ async function assertDesktopCvChrome(cdp, url, format) {
   const result = await evaluate(cdp, sessionId, `(() => {
     const actions = document.querySelector('.cv-chrome__actions');
     const download = document.querySelector('.cv-chrome__download');
+    const back = document.querySelector('.cv-chrome__back');
+    const headerInner = document.querySelector('.site-header__inner');
+    const chrome = document.querySelector('.cv-chrome');
+    const main = document.querySelector('#cv-main');
+    const footer = document.querySelector('.site-footer');
     const links = [...(actions?.querySelectorAll('a') ?? [])].map((link) => ({
       text: link.textContent?.trim() ?? '',
       href: link.getAttribute('href') ?? '',
@@ -726,16 +735,54 @@ async function assertDesktopCvChrome(cdp, url, format) {
       type: link.getAttribute('type'),
       visible: link.getBoundingClientRect().height > 0
     }));
+    const innerBox = headerInner?.getBoundingClientRect();
+    const chromeBox = chrome?.getBoundingClientRect();
+    const mainBox = main?.getBoundingClientRect();
+    const footerBox = footer?.getBoundingClientRect();
+    const backBox = back?.getBoundingClientRect();
     return {
       actionsDisplay: actions ? getComputedStyle(actions).display : 'missing',
       downloadDisplay: download ? getComputedStyle(download).display : 'missing',
       downloadOpen: download?.open ?? null,
+      hasSiteHeader: Boolean(document.querySelector('.site-header')),
+      hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+      hasSiteFooter: Boolean(footer),
+      backHref: back?.getAttribute('href') ?? '',
+      backLabel: back?.getAttribute('aria-label') ?? '',
+      backText: back?.textContent?.replace(/\\s+/g, ' ').trim() ?? '',
+      backWidth: backBox?.width ?? 0,
+      backHeight: backBox?.height ?? 0,
+      innerBottom: innerBox?.bottom ?? -1,
+      chromeTop: chromeBox?.top ?? -1,
+      chromeBottom: chromeBox?.bottom ?? -1,
+      mainTop: mainBox?.top ?? -1,
+      mainBottom: mainBox?.bottom ?? -1,
+      footerTop: footerBox?.top ?? -1,
       links,
       ...window.__layoutMetrics()
     };
   })()`);
 
   const expectedDownload = format === 'letter' ? CV_PDF.letter : CV_PDF.a4;
+  if (!result.hasSiteHeader || !result.hasPrimaryNav || !result.hasSiteFooter) {
+    throw new Error(`Desktop ${format} CV is missing the shared site shell: ${JSON.stringify(result)}`);
+  }
+  if (result.backHref !== '/' || result.backLabel !== 'Back to site' || result.backText) {
+    throw new Error(`Desktop ${format} CV back control is incorrect: ${JSON.stringify({
+      href: result.backHref,
+      label: result.backLabel,
+      text: result.backText
+    })}`);
+  }
+  if (result.backWidth < 44 || result.backHeight < 44) {
+    throw new Error(`Desktop ${format} CV back control touch target is too small`);
+  }
+  if (result.innerBottom > result.chromeTop + 1 || result.chromeBottom > result.mainTop + 1) {
+    throw new Error(`Desktop ${format} CV header and chrome overlap the document: ${JSON.stringify(result)}`);
+  }
+  if (result.footerTop + 1 < result.mainBottom) {
+    throw new Error(`Desktop ${format} CV footer is not after the document`);
+  }
   if (result.actionsDisplay === 'none' || result.downloadDisplay !== 'none') {
     throw new Error(`Desktop CV chrome is not using view selectors for ${format}: ${JSON.stringify(result)}`);
   }
@@ -761,6 +808,27 @@ async function assertDesktopCvChrome(cdp, url, format) {
     throw new Error(`Desktop Download PDF does not match ${format}`);
   }
   assertNoHorizontalOverflow(result, result.clientWidth, `Desktop ${format} CV`);
+
+  await scrollToY(cdp, sessionId, 720);
+  const scrolled = await evaluate(cdp, sessionId, `(() => {
+    const header = document.querySelector('.site-header');
+    const chrome = document.querySelector('.cv-chrome');
+    const headerBox = header?.getBoundingClientRect();
+    const chromeBox = chrome?.getBoundingClientRect();
+    return {
+      hidden: header?.classList.contains('site-header--hidden') ?? false,
+      headerTop: headerBox?.top ?? 0,
+      chromeBottom: chromeBox?.bottom ?? 0,
+      ...window.__layoutMetrics()
+    };
+  })()`);
+  if (!scrolled.hidden) {
+    throw new Error(`Desktop ${format} CV header did not hide on scroll`);
+  }
+  if (scrolled.chromeBottom > 1) {
+    throw new Error(`Desktop ${format} CV chrome remained visible after the header hid: ${JSON.stringify(scrolled)}`);
+  }
+  assertNoHorizontalOverflow(scrolled, scrolled.clientWidth, `Scrolled desktop ${format} CV`);
   await cdp.send('Target.closeTarget', { targetId });
 }
 
@@ -779,6 +847,16 @@ async function assertMobileCvChrome(cdp, url, viewport, scriptExecutionDisabled)
     const download = document.querySelector('.cv-chrome__download');
     const summary = download?.querySelector(':scope > summary');
     const actionTexts = [...(actions?.querySelectorAll('a') ?? [])].map((link) => link.textContent?.trim() ?? '');
+    const back = document.querySelector('.cv-chrome__back');
+    const headerInner = document.querySelector('.site-header__inner');
+    const chrome = document.querySelector('.cv-chrome');
+    const main = document.querySelector('#cv-main');
+    const footer = document.querySelector('.site-footer');
+    const innerBox = headerInner?.getBoundingClientRect();
+    const chromeBox = chrome?.getBoundingClientRect();
+    const mainBox = main?.getBoundingClientRect();
+    const footerBox = footer?.getBoundingClientRect();
+    const backBox = back?.getBoundingClientRect();
     return {
       actionsDisplay: actions ? getComputedStyle(actions).display : 'missing',
       downloadDisplay: download ? getComputedStyle(download).display : 'missing',
@@ -787,6 +865,20 @@ async function assertMobileCvChrome(cdp, url, viewport, scriptExecutionDisabled)
       summaryHeight: summary?.getBoundingClientRect().height ?? 0,
       actionTexts,
       actionVisible: [...(actions?.querySelectorAll('a') ?? [])].some((link) => link.getBoundingClientRect().height > 0),
+      hasSiteHeader: Boolean(document.querySelector('.site-header')),
+      hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+      hasSiteFooter: Boolean(footer),
+      backHref: back?.getAttribute('href') ?? '',
+      backLabel: back?.getAttribute('aria-label') ?? '',
+      backText: back?.textContent?.replace(/\\s+/g, ' ').trim() ?? '',
+      backWidth: backBox?.width ?? 0,
+      backHeight: backBox?.height ?? 0,
+      innerBottom: innerBox?.bottom ?? -1,
+      chromeTop: chromeBox?.top ?? -1,
+      chromeBottom: chromeBox?.bottom ?? -1,
+      mainTop: mainBox?.top ?? -1,
+      mainBottom: mainBox?.bottom ?? -1,
+      footerTop: footerBox?.top ?? -1,
       ...${scriptExecutionDisabled ? `{
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
@@ -795,6 +887,22 @@ async function assertMobileCvChrome(cdp, url, viewport, scriptExecutionDisabled)
       }` : 'window.__layoutMetrics()'}
     };
   })()`);
+
+  if (!closed.hasSiteHeader || !closed.hasPrimaryNav || !closed.hasSiteFooter) {
+    throw new Error(`Mobile CV is missing the shared site shell at ${label}: ${JSON.stringify(closed)}`);
+  }
+  if (closed.backHref !== '/' || closed.backLabel !== 'Back to site' || closed.backText) {
+    throw new Error(`Mobile CV back control is incorrect at ${label}: ${JSON.stringify(closed)}`);
+  }
+  if (closed.backWidth < 44 || closed.backHeight < 44) {
+    throw new Error(`Mobile CV back control touch target is too small at ${label}: ${closed.backWidth}x${closed.backHeight}`);
+  }
+  if (closed.innerBottom > closed.chromeTop + 1 || closed.chromeBottom > closed.mainTop + 1) {
+    throw new Error(`Mobile CV header and chrome overlap the document at ${label}: ${JSON.stringify(closed)}`);
+  }
+  if (closed.footerTop + 1 < closed.mainBottom) {
+    throw new Error(`Mobile CV footer is not after the document at ${label}`);
+  }
 
   if (closed.actionsDisplay !== 'none' || closed.downloadDisplay === 'none') {
     throw new Error(`Mobile CV chrome still presents view selectors at ${label}: ${JSON.stringify(closed)}`);
@@ -930,13 +1038,19 @@ async function assertHomeDocument(origin, url) {
   const cvHtml = await cvResponse.text();
   const letterHtml = await letterResponse.text();
   if (!cvResponse.ok || !cvHtml.includes('id="cv-main"') || !cvHtml.includes('class="cv-chrome"')) {
-    throw new Error('View online does not resolve to the built A4 CV page with its own chrome');
+    throw new Error('View online does not resolve to the built A4 CV page with contextual chrome');
   }
   if (!letterResponse.ok || !letterHtml.includes('id="cv-main"') || !letterHtml.includes('class="cv-chrome"')) {
-    throw new Error('US Letter CV does not retain its own chrome');
+    throw new Error('US Letter CV does not retain its contextual chrome');
   }
-  if (cvHtml.includes('primary-nav__mobile-panel') || letterHtml.includes('primary-nav__mobile-panel')) {
-    throw new Error('Home navigation leaked into a CV page');
+  if (!cvHtml.includes('class="site-header"') || !letterHtml.includes('class="site-header"')
+    || !cvHtml.includes('class="primary-nav"') || !letterHtml.includes('class="primary-nav"')
+    || !cvHtml.includes('class="site-footer"') || !letterHtml.includes('class="site-footer"')) {
+    throw new Error('CV routes are missing the shared site header or footer');
+  }
+  if (!cvHtml.includes('aria-label="Back to site"') || cvHtml.includes('>Back to site<')
+    || !letterHtml.includes('aria-label="Back to site"') || letterHtml.includes('>Back to site<')) {
+    throw new Error('CV back control is missing its accessible name or still shows visible text');
   }
   const pdfBytes = new Uint8Array(await pdfResponse.arrayBuffer()).subarray(0, 5);
   if (!pdfResponse.ok || new TextDecoder().decode(pdfBytes) !== '%PDF-') {

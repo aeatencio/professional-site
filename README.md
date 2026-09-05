@@ -10,7 +10,7 @@ Built with Astro and TypeScript. This repository contains the public site, its p
 
 The site is static, versioned and reproducible. Its public origin is `https://andresatencio.com`.
 
-Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. The CV itself prints the public site origin so a downloaded copy still points back to the site.
+Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. `/cv/` and `/cv/letter/` are first-class site pages: they use the global header and footer, keep the CV’s own editorial document layout, and treat `CvChrome` as secondary contextual navigation. Print and PDF output exclude that shell and contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
 
 This repository is public on GitHub. Its code and complete history are maintained as safe for public exposure.
 

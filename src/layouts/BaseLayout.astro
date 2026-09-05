@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/home.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
 
 interface Props {
@@ -7,9 +8,22 @@ interface Props {
   description: string;
   lang: string;
   name: string;
+  skipHref?: string;
+  bodyClass?: string;
+  cvFormat?: 'a4' | 'letter';
 }
 
-const { title, description, lang, name } = Astro.props;
+const {
+  title,
+  description,
+  lang,
+  name,
+  skipHref = '#main',
+  bodyClass,
+  cvFormat
+} = Astro.props;
+const isHome = Astro.url.pathname === '/';
+const homeHref = isHome ? '#home' : '/';
 ---
 
 <!doctype html>
@@ -20,18 +34,20 @@ const { title, description, lang, name } = Astro.props;
     <meta name="description" content={description} />
     <title>{title}</title>
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <slot name="head" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body class={bodyClass} data-cv-format={cvFormat}>
+    <a class="skip-link" href={skipHref}>Skip to content</a>
     <div class="page">
       <header class="site-header" data-directional-header>
         <div class="site-header__inner">
           <p class="identity">
-            <a href="#home">{name}</a>
+            <a href={homeHref}>{name}</a>
             <span class="identity-mark" aria-hidden="true"></span>
           </p>
           <PrimaryNav />
         </div>
+        <slot name="contextual" />
       </header>
       <slot />
       <footer class="site-footer">

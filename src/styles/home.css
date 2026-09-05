@@ -162,6 +162,11 @@ html {
 
 .experience-block--software {
   position: relative;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.experience-block--software .role:last-child {
+  border-bottom: none;
 }
 
 @media (min-width: 54.001rem) {

@@ -194,7 +194,8 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.match(primaryNav, />Download PDF</);
   assert.equal(primaryNav.includes('>View CV</a>'), false);
   assert.equal(primaryNav.includes('>Download CV</a>'), false);
-  assert.match(primaryNav, /href="#contact">Contact</);
+  assert.match(primaryNav, /sectionHref\('#contact'\)/);
+  assert.match(primaryNav, /href=\{contactHref\}>Contact</);
   assert.equal(primaryNav.includes('Download A4 CV'), false);
   assert.equal(page.includes('window.print'), false);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
@@ -214,7 +215,10 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(cvLetterPage.includes('Software Developer · IT Teacher'), false);
   assert.equal(layout.includes('Andrés Atencio'), false);
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
-  assert.match(cvLayout, /<CvChrome format=\{format\} \/>/);
+  assert.match(cvLayout, /<CvChrome slot="contextual" format=\{format\} \/>/);
+  assert.match(cvLayout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
+  assert.equal(cvLayout.includes('<header class="site-header"'), false);
+  assert.equal(cvLayout.includes('class="site-footer"'), false);
   assert.equal(cvDocument.includes('cv-chrome'), false);
   assert.equal(cvDocument.includes('window.print'), false);
   assert.equal(cvLayout.includes('window.print'), false);

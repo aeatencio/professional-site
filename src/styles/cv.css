@@ -1,17 +1,24 @@
-.cv-document > .skip-link {
-  z-index: 3;
+@media screen {
+.page > .cv-page {
+  grid-column: 1 / -1;
 }
 
-@media screen {
-.cv-chrome {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 1rem var(--space-page) 0.9rem;
+.page > .site-header:has(.cv-chrome) .site-header__inner {
   border-bottom: 1px solid var(--color-cobalt);
-  background: var(--color-ivory);
+}
+
+.page > .site-header > .cv-chrome {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(var(--space-page), 1fr) minmax(0, var(--page-max)) minmax(var(--space-page), 1fr);
+  width: 100%;
+  padding: 0;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.cv-chrome {
+  box-sizing: border-box;
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 0.95rem;
@@ -19,24 +26,39 @@
 
 .cv-chrome__nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 0.75rem 1.5rem;
-  max-width: var(--page-max);
-  margin: 0 auto;
+  grid-column: 2;
+  max-width: none;
+  margin: 0;
+  min-height: 2.75rem;
 }
 
 .cv-chrome__back {
-  color: var(--color-ink);
-  font-weight: 600;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-left: -0.55rem;
+  color: var(--color-cobalt);
+  border-radius: 999px;
   text-decoration: none;
+}
+
+.cv-chrome__back-icon {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
 }
 
 .cv-chrome__back:hover,
 .cv-chrome__back:focus-visible {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+  color: var(--color-orange);
+  background: color-mix(in srgb, var(--color-cobalt) 8%, transparent);
 }
 
 .cv-chrome__actions {
@@ -525,12 +547,6 @@
     gap: 0.75rem 1rem;
   }
 
-  .cv-chrome__back {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-  }
-
   .cv-chrome__actions {
     display: none;
   }
@@ -678,14 +694,28 @@
 
 @media print {
   .cv-chrome,
-  .skip-link {
+  .skip-link,
+  .site-header,
+  .site-footer {
     display: none !important;
   }
 
-  .cv-document {
+  .cv-document,
+  .cv-document .page {
+    display: block;
+    width: auto;
+    max-width: none;
+    min-height: 0;
     background: var(--cv-paper);
     background-image: none;
-    min-height: 0;
+    grid-template-columns: none;
+  }
+
+  .cv-document .page > * {
+    grid-column: auto;
+  }
+
+  .cv-document {
     font-size: 9.7pt;
     line-height: 14.5pt;
   }

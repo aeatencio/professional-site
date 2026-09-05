@@ -1,31 +1,30 @@
 ---
+import BaseLayout from './BaseLayout.astro';
 import CvChrome from '../components/CvChrome.astro';
-import '../styles/global.css';
 import '../styles/cv.css';
 
 interface Props {
   title: string;
   description: string;
   lang: string;
+  name: string;
   format?: 'a4' | 'letter';
 }
 
-const { title, description, lang, format = 'a4' } = Astro.props;
+const { title, description, lang, name, format = 'a4' } = Astro.props;
 const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
 ---
 
-<!doctype html>
-<html lang={lang}>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
-    <Fragment set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
-  </head>
-  <body class="cv-document" data-cv-format={format}>
-    <a class="skip-link" href="#cv-main">Skip to content</a>
-    <CvChrome format={format} />
-    <slot />
-  </body>
-</html>
+<BaseLayout
+  title={title}
+  description={description}
+  lang={lang}
+  name={name}
+  skipHref="#cv-main"
+  bodyClass="cv-document"
+  cvFormat={format}
+>
+  <Fragment slot="head" set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
+  <CvChrome slot="contextual" format={format} />
+  <slot />
+</BaseLayout>

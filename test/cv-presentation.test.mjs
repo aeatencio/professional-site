@@ -99,7 +99,7 @@ test('A4 and US Letter share one document and declare paper-specific frames', as
   assert.match(letterPage, /format="letter"/);
   assert.match(a4Page, /<CvDocument/);
   assert.match(letterPage, /<CvDocument/);
-  assert.match(layout, /data-cv-format=\{format\}/);
+  assert.match(layout, /cvFormat=\{format\}/);
   assert.match(layout, /210mm 297mm/);
   assert.match(layout, /215.9mm 279.4mm/);
   assert.match(cvCss, /--cv-primary-col:\s*113mm/);
@@ -113,20 +113,30 @@ test('A4 and US Letter share one document and declare paper-specific frames', as
 });
 
 test('CV chrome is outside the document and hidden in print', async () => {
-  const [cvDocument, layout, chrome, cvCss, nav] = await Promise.all([
+  const [cvDocument, layout, chrome, cvCss, nav, baseLayout] = await Promise.all([
     readFile(cvDocumentUrl, 'utf8'),
     readFile(cvLayoutUrl, 'utf8'),
     readFile(new URL('../src/components/CvChrome.astro', import.meta.url), 'utf8'),
     readFile(cvCssUrl, 'utf8'),
-    readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8')
+    readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8')
   ]);
 
-  assert.match(layout, /<CvChrome format=\{format\} \/>/);
-  assert.match(layout, /href="#cv-main"/);
+  assert.match(layout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
+  assert.match(layout, /<CvChrome slot="contextual" format=\{format\} \/>/);
+  assert.match(layout, /skipHref="#cv-main"/);
+  assert.match(layout, /bodyClass="cv-document"/);
+  assert.equal(layout.includes('<header class="site-header"'), false);
+  assert.equal(layout.includes('class="site-footer"'), false);
+  assert.equal(layout.includes('PrimaryNav'), false);
   assert.equal(cvDocument.includes('cv-chrome'), false);
   assert.match(cvDocument, /id="cv-main"/);
   assert.match(chrome, /href="\/"/);
-  assert.match(chrome, /Back to site/);
+  assert.match(chrome, /aria-label="Back to site"/);
+  assert.match(chrome, /class="cv-chrome__back-icon"/);
+  assert.equal(chrome.includes('>Back to site<'), false);
+  assert.equal(chrome.includes('history.back'), false);
+  assert.equal(chrome.includes('<header'), false);
   assert.match(chrome, /CV_PDF\.a4\.route/);
   assert.match(chrome, /CV_PDF\.letter\.route/);
   assert.match(chrome, /download=\{pdf\.download\}/);
@@ -151,16 +161,19 @@ test('CV chrome is outside the document and hidden in print', async () => {
   assert.equal(chrome.includes('andresatencio.com'), false);
   assert.match(nav, /href="\/cv\/">View online</);
   assert.match(nav, /CV_PDF\.a4\.href/);
-  assert.equal(layout.includes('PrimaryNav'), false);
+  assert.match(baseLayout, /<PrimaryNav \/>/);
+  assert.match(baseLayout, /class="site-footer"/);
+  assert.match(
+    cvCss,
+    /@media print \{[\s\S]*?\.site-header[\s\S]*?\.site-footer[\s\S]*?display:\s*none/
+  );
   assert.match(
     cvCss,
     /@media print \{[\s\S]*?\.cv-chrome[\s\S]*?display:\s*none/
   );
-  assert.match(
-    cvCss,
-    /@media screen \{\s*\.cv-chrome \{[\s\S]*?\bz-index:\s*2;/
-  );
-  assert.match(cvCss, /\.cv-document > \.skip-link \{\s*z-index:\s*3;/);
+  assert.match(cvCss, /\.page > \.site-header > \.cv-chrome \{/);
+  assert.match(cvCss, /\.cv-chrome__back \{[\s\S]*?width:\s*2\.75rem[\s\S]*?height:\s*2\.75rem/);
+  assert.equal(/position:\s*sticky/.test(cvCss), false);
   assert.match(
     cvCss,
     /\.cv-header,\s*\.cv-body \{\s*position:\s*relative;\s*z-index:\s*1;/

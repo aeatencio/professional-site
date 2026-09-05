@@ -9,9 +9,13 @@ const { format } = Astro.props;
 const pdf = CV_PDF[format];
 ---
 
-<header class="cv-chrome">
+<div class="cv-chrome">
   <nav class="cv-chrome__nav" aria-label="CV">
-    <a class="cv-chrome__back" href="/">Back to site</a>
+    <a class="cv-chrome__back" href="/" aria-label="Back to site">
+      <svg class="cv-chrome__back-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
     <ul class="cv-chrome__actions">
       <li>
         <a href={CV_PDF.a4.route} aria-current={format === 'a4' ? 'page' : undefined}>A4</a>
@@ -50,7 +54,7 @@ const pdf = CV_PDF[format];
       </ul>
     </details>
   </nav>
-</header>
+</div>
 
 <script>
   const download = document.querySelector<HTMLDetailsElement>('.cv-chrome__download');

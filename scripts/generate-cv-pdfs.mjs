@@ -148,6 +148,12 @@ async function assertPrintChromeHidden(cdp, sessionId) {
     chrome: document.querySelector('.cv-chrome')
       ? getComputedStyle(document.querySelector('.cv-chrome')).display
       : 'missing',
+    header: document.querySelector('.site-header')
+      ? getComputedStyle(document.querySelector('.site-header')).display
+      : 'missing',
+    footer: document.querySelector('.site-footer')
+      ? getComputedStyle(document.querySelector('.site-footer')).display
+      : 'missing',
     skip: document.querySelector('.skip-link')
       ? getComputedStyle(document.querySelector('.skip-link')).display
       : 'missing',
@@ -158,6 +164,12 @@ async function assertPrintChromeHidden(cdp, sessionId) {
 
   if (print.chrome !== 'none') {
     throw new Error(`CV chrome is visible in print (display: ${print.chrome})`);
+  }
+  if (print.header !== 'none') {
+    throw new Error(`Site header is visible in print (display: ${print.header})`);
+  }
+  if (print.footer !== 'none') {
+    throw new Error(`Site footer is visible in print (display: ${print.footer})`);
   }
   if (print.skip !== 'none') {
     throw new Error(`Skip link is visible in print (display: ${print.skip})`);

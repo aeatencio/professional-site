@@ -20,12 +20,18 @@ The projection is organized around the real artifacts:
   experience, current development, teaching, education, technical background
   and languages. The current private V2 renders the A4 composition at `/cv/`
   and the US Letter composition at `/cv/letter/`, from one shared document.
-  Home and the CV pages link those routes and serve matching static PDFs from
-  `public/cv/`, generated from the print stylesheet rather than `window.print()`.
-  The canonical public origin is `https://andresatencio.com`; on-site navigation
-  stays on relative paths. Versioned PDFs are kept in sync by fingerprinting the
-  effective print inputs of the built CV pages: the full HTML for `/cv/` and
-  `/cv/letter/` (head, metadata, `@page`, chrome and `#cv-main`), every local
+  Those routes are first-class pages of `andresatencio.com`: they reuse the
+  site’s global header and footer. The CV keeps its own editorial document
+  layout inside that shell. `CvChrome` is secondary contextual navigation for
+  paper size and PDF download, subordinate to the global header. Home and the
+  CV pages link those routes and serve matching static PDFs from `public/cv/`,
+  generated from the print stylesheet rather than `window.print()`. Print and
+  PDF output exclude the global header, global footer, contextual chrome and
+  any web-view background; they contain only the document. The canonical public
+  origin is `https://andresatencio.com`; on-site navigation stays on relative
+  paths. Versioned PDFs are kept in sync by fingerprinting the effective print
+  inputs of the built CV pages: the full HTML for `/cv/` and `/cv/letter/`
+  (head, metadata, `@page`, on-screen chrome and `#cv-main`), every local
   stylesheet those documents load, every local font or image they reference,
   `Astro.site`, and the `Page.printToPDF` options for each paper size. The
   fingerprint is conservative: on-screen-only chrome, skip-link markup,
