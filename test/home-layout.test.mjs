@@ -40,6 +40,8 @@ test('Experience notebook follows the complete software role list and recomposes
     /class="experience-block experience-block--software"[\s\S]*?class="role-list"[\s\S]*?chapter-art--notebook[\s\S]*?currentDevelopment/
   );
   assert.match(homeCss, /\.experience-block--software \{\s*position:\s*relative/);
+  assert.match(homeCss, /\.experience-block--software \{\s*position:\s*relative;[\s\S]*?border-bottom:\s*1px solid var\(--color-line\)/);
+  assert.match(homeCss, /\.experience-block--software \.role:last-child \{\s*border-bottom:\s*none/);
   assert.match(
     homeCss,
     /\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*0;[\s\S]*?bottom:\s*clamp/
@@ -57,7 +59,10 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8')
   ]);
 
-  assert.match(layout, /class="identity"[\s\S]*?href="#home"/);
+  assert.match(layout, /class="identity"[\s\S]*?href=\{homeHref\}/);
+  assert.match(layout, /isHome \? '#home' : '\/'/);
+  assert.match(layout, /slot name="contextual"/);
+  assert.match(layout, /import '\.\.\/styles\/home\.css'/);
   assert.match(layout, /class="site-header" data-directional-header/);
   assert.match(layout, /class="site-header__inner">[\s\S]*?class="identity"[\s\S]*?<PrimaryNav \/>/);
   assert.match(layout, /const TOP_TOLERANCE = 24/);
@@ -80,6 +85,8 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
   assert.match(layout, /<footer class="site-footer">[\s\S]*?<p>\{name\}<\/p>[\s\S]*?<a href="\/cv\/">CV<\/a>/);
   assert.equal(nav.includes("{ href: '#home', label: 'Home' }"), false);
   assert.match(nav, /<nav class="primary-nav" aria-label="Primary" data-primary-navigation>/);
+  assert.match(nav, /sectionHref\('#experience'\)/);
+  assert.match(nav, /href=\{contactHref\}>Contact</);
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
   assert.match(nav, /<details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>[\s\S]*?<summary>CV<\/summary>/);
@@ -183,6 +190,8 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /assertCvPageChrome/);
   assert.match(verifier, /Download A4 PDF/);
   assert.match(verifier, /Download US Letter PDF/);
+  assert.match(verifier, /aria-label="Back to site"/);
+  assert.match(verifier, /shared site shell/);
   assert.match(verifier, /outside the mobile CV download/);
   assert.match(verifier, /inside the mobile CV download/);
   assert.match(verifier, /assertAnchorNearHeader/);
