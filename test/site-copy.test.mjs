@@ -217,6 +217,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
   assert.match(cvLayout, /class="cv-document"/);
   assert.match(cvLayout, /data-cv-format=\{format\}/);
+  assert.match(cvLayout, /canonicalPath=\{CV_PATH\}/);
   assert.match(cvLayout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
   assert.equal(cvLayout.includes('<header class="site-header"'), false);
   assert.equal(cvLayout.includes('class="site-footer"'), false);

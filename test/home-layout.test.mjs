@@ -15,6 +15,10 @@ test('Home keeps shrinking safeguards while its new styles stay page-local', asy
   assert.match(globalCss, /\.chapter \{[\s\S]*?min-width:\s*0/);
   assert.match(globalCss, /\.actions \{/);
   assert.match(page, /import '\.\.\/styles\/home\.css'/);
+  assert.match(page, /class="home-identity"/);
+  assert.match(page, /aria-labelledby="site-identity home-heading"/);
+  assert.equal(page.includes('<h1 id="home-heading">'), false);
+  assert.match(homeCss, /\.page \.chapter--home \.home-identity \{[\s\S]*?font-family:\s*var\(--font-serif\)/);
   assert.equal(page.includes('class="actions"'), false);
   assert.equal(page.includes('View experience'), false);
   assert.equal(page.includes('Contact me'), false);
@@ -60,6 +64,7 @@ test('Primary navigation uses a direct CV link and progressive enhancement', asy
     readFile(new URL('../src/styles/site-shell.css', import.meta.url), 'utf8')
   ]);
 
+  assert.match(layout, /IdentityTag = isHome \? 'h1' : 'p'/);
   assert.match(layout, /class="identity"[\s\S]*?href=\{homeHref\}/);
   assert.match(layout, /isHome \? '#home' : '\/'/);
   assert.equal(layout.includes('slot name="contextual"'), false);
@@ -116,6 +121,8 @@ test('Primary navigation uses a direct CV link and progressive enhancement', asy
   assert.match(nav, /summary\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(nav, /a\[href\^="#"\]/);
   assert.match(layout, /document\.documentElement\.classList\.add\('js'\)/);
+  assert.match(layout, /rel="canonical"/);
+  assert.match(layout, /property="og:url"/);
 
   assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?position:\s*sticky;[\s\S]*?z-index:\s*20/);
   assert.match(shellCss, /\.page > \.site-header \{[\s\S]*?display:\s*grid;[\s\S]*?grid-column:\s*1 \/ -1;[\s\S]*?grid-template-columns:/);

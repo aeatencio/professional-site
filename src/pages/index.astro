@@ -2,9 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/home.css';
 import projection from '../../data/professional-public-projection.v1.json';
+import { HOME_PATH, homeIdentityGraph } from '../../lib/site-identity.mjs';
 
 const { shared, site } = projection;
 const { sections } = site;
+if (!Astro.site) {
+  throw new Error('A site URL is required to emit Home identity structured data');
+}
+const jsonLd = homeIdentityGraph({
+  shared,
+  title: site.title,
+  site: Astro.site
+});
 ---
 
 <BaseLayout
@@ -12,11 +21,14 @@ const { sections } = site;
   name={shared.name}
   title={site.title}
   description={site.description}
+  canonicalPath={HOME_PATH}
+  ogType="profile"
+  jsonLd={jsonLd}
 >
   <main id="main">
-    <section id="home" class="chapter chapter--home" aria-labelledby="home-heading">
+    <section id="home" class="chapter chapter--home" aria-labelledby="site-identity home-heading">
       <div class="chapter__body">
-        <h1 id="home-heading">{shared.professionalIdentity}</h1>
+        <p id="home-heading" class="home-identity">{shared.professionalIdentity}</p>
         {sections.home.paragraphs.map((paragraph) => <p class="lede">{paragraph}</p>)}
       </div>
       <img

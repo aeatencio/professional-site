@@ -127,7 +127,8 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.match(layout, /skipHref="#cv-main"/);
   assert.match(layout, /class="cv-document"/);
   assert.match(layout, /data-cv-format=\{format\}/);
-  assert.match(layout, /rel="canonical"/);
+  assert.match(layout, /canonicalPath=\{CV_PATH\}/);
+  assert.match(baseLayout, /rel="canonical"/);
   assert.equal(layout.includes('bodyClass="cv-document"'), false);
   assert.equal(layout.includes('cvFormat'), false);
   assert.equal(layout.includes('CvChrome'), false);

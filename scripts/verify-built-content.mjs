@@ -73,9 +73,6 @@ assert.ok(cvHtml.includes(visibleSiteUrl), 'Built A4 CV is missing the visible s
 assert.ok(cvLetterHtml.includes(visibleSiteUrl), 'Built US Letter CV is missing the visible site URL');
 assert.equal(cvHtml.includes('workers.dev'), false, 'A4 CV presents workers.dev as public identity');
 assert.equal(cvLetterHtml.includes('workers.dev'), false, 'US Letter CV presents workers.dev as public identity');
-assert.equal(siteHtml.includes('https://andresatencio.com/cv'), false, 'Home uses an absolute public CV URL');
-assert.equal(siteHtml.includes(`href="${siteUrl}"`), false, 'Home contact should not duplicate the site URL');
-
 assert.match(siteHtml, /href="\/cv\/">CV</);
 assert.equal(siteHtml.includes('>View online<'), false);
 assert.equal(siteHtml.includes('>Download PDF<'), false);
@@ -106,8 +103,65 @@ assert.equal(cvLetterHtml.includes('class="cv-chrome"'), false);
 assert.equal(cvHtml.includes('Back to site'), false);
 assert.equal(cvLetterHtml.includes('Back to site'), false);
 assert.equal(cvHtml.includes('href="/cv/letter/"'), false);
+assert.match(cvHtml, /rel="canonical" href="https:\/\/andresatencio\.com\/cv\/"/);
 assert.match(cvLetterHtml, /rel="canonical" href="https:\/\/andresatencio\.com\/cv\/"/);
-assert.equal(cvHtml.includes('rel="canonical"'), false);
+assert.match(siteHtml, /rel="canonical" href="https:\/\/andresatencio\.com\/"/);
+assert.equal(siteHtml.includes('<a href="https://andresatencio.com"'), false, 'Home contact should not duplicate the site URL');
+assert.equal(siteHtml.includes('https://andresatencio.com/cv'), false, 'Home uses an absolute public CV URL');
+assert.equal(/noindex/i.test(siteHtml), false, 'Home is marked noindex');
+assert.equal(/noindex/i.test(cvHtml), false, 'CV is marked noindex');
+assert.equal(/noindex/i.test(cvLetterHtml), false, 'US Letter CV is marked noindex');
+assert.match(
+  siteHtml,
+  new RegExp(`property="og:title" content="${projection.site.title}"`)
+);
+assert.match(siteHtml, /property="og:url" content="https:\/\/andresatencio\.com\/"/);
+assert.match(siteHtml, /property="og:type" content="profile"/);
+assert.match(cvHtml, /property="og:url" content="https:\/\/andresatencio\.com\/cv\/"/);
+assert.match(cvLetterHtml, /property="og:url" content="https:\/\/andresatencio\.com\/cv\/"/);
+assert.match(siteHtml, /<h1 class="identity" id="site-identity">/);
+assert.match(
+  siteHtml,
+  new RegExp(`<p id="home-heading" class="home-identity">${projection.shared.professionalIdentity}</p>`)
+);
+assert.equal(cvHtml.includes('id="site-identity"'), false);
+assert.equal(cvLetterHtml.includes('id="site-identity"'), false);
+assert.equal(cvHtml.includes('application/ld+json'), false);
+assert.equal(cvLetterHtml.includes('application/ld+json'), false);
+
+const jsonLdMatch = siteHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+assert.ok(jsonLdMatch, 'Home is missing JSON-LD');
+const jsonLd = JSON.parse(jsonLdMatch[1]);
+const jsonLdNodes = jsonLd['@graph'];
+assert.ok(Array.isArray(jsonLdNodes), 'Home JSON-LD is missing @graph');
+const person = jsonLdNodes.find((node) => node['@type'] === 'Person');
+const profilePage = jsonLdNodes.find((node) => node['@type'] === 'ProfilePage');
+const website = jsonLdNodes.find((node) => node['@type'] === 'WebSite');
+assert.equal(person?.name, projection.shared.name);
+assert.equal(person?.jobTitle, projection.shared.professionalIdentity);
+assert.equal(person?.url, `${PUBLIC_SITE_ORIGIN}/`);
+assert.equal(profilePage?.url, `${PUBLIC_SITE_ORIGIN}/`);
+assert.equal(profilePage?.mainEntity?.['@id'], person?.['@id']);
+assert.equal(website?.publisher?.['@id'], person?.['@id']);
+assert.deepEqual(
+  person?.sameAs,
+  projection.shared.links.map((link) => link.url)
+);
+
+const [robotsTxt, sitemapIndex, sitemapUrlset] = await Promise.all([
+  readFile(new URL('../dist/robots.txt', import.meta.url), 'utf8'),
+  readFile(new URL('../dist/sitemap-index.xml', import.meta.url), 'utf8'),
+  readFile(new URL('../dist/sitemap-0.xml', import.meta.url), 'utf8')
+]);
+assert.match(robotsTxt, /^User-agent: \*\r?\nAllow: \/\r?\n\r?\nSitemap: https:\/\/andresatencio\.com\/sitemap-index\.xml\r?\n$/);
+assert.equal(robotsTxt.includes('Disallow'), false);
+assert.match(sitemapIndex, /sitemap-0\.xml/);
+assert.match(sitemapUrlset, /<loc>https:\/\/andresatencio\.com\/<\/loc>/);
+assert.match(sitemapUrlset, /<loc>https:\/\/andresatencio\.com\/cv\/<\/loc>/);
+assert.equal(sitemapUrlset.includes('/cv/letter'), false);
+assert.equal(sitemapUrlset.includes('.pdf'), false);
+assert.equal((sitemapUrlset.match(/<loc>/g) ?? []).length, 2);
+
 assert.match(cvHtml, /class="cv-actions"/);
 assert.match(cvLetterHtml, /class="cv-actions"/);
 assert.match(cvHtml, />A4 PDF</);

@@ -18,6 +18,19 @@
   width: min(100%, clamp(15rem, 24vw, 20.5rem));
 }
 
+.page .chapter--home .home-identity {
+  margin: 0 0 1rem;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.35rem, 6.2vw, 4.4rem);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
 .experience-block--software {
   position: relative;
   border-bottom: 1px solid var(--color-line);

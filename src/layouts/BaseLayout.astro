@@ -2,14 +2,18 @@
 import '../styles/global.css';
 import '../styles/site-shell.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
+import { absoluteUrl } from '../../lib/site-identity.mjs';
 
 interface Props {
   title: string;
   description: string;
   lang: string;
   name: string;
+  canonicalPath: string;
   skipHref?: string;
   bodyClass?: string;
+  ogType?: 'website' | 'profile';
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
@@ -17,11 +21,20 @@ const {
   description,
   lang,
   name,
+  canonicalPath,
   skipHref = '#main',
-  bodyClass
+  bodyClass,
+  ogType = 'website',
+  jsonLd
 } = Astro.props;
 const isHome = (Astro.url.pathname.replace(/\/$/, '') || '/') === '/';
 const homeHref = isHome ? '#home' : '/';
+const IdentityTag = isHome ? 'h1' : 'p';
+if (!Astro.site) {
+  throw new Error('A site URL is required to emit canonical metadata');
+}
+const canonicalUrl = absoluteUrl(canonicalPath, Astro.site);
+const sitemapUrl = absoluteUrl('/sitemap-index.xml', Astro.site);
 ---
 
 <!doctype html>
@@ -31,6 +44,18 @@ const homeHref = isHome ? '#home' : '/';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" href={sitemapUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {jsonLd ? (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    ) : null}
     <script is:inline>document.documentElement.classList.add('js');</script>
     <slot name="head" />
   </head>
@@ -39,10 +64,10 @@ const homeHref = isHome ? '#home' : '/';
     <div class="page">
       <header class="site-header" data-directional-header>
         <div class="site-header__inner">
-          <p class="identity">
+          <IdentityTag class="identity" id={isHome ? 'site-identity' : undefined}>
             <a href={homeHref}>{name}</a>
             <span class="identity-mark" aria-hidden="true"></span>
-          </p>
+          </IdentityTag>
           <PrimaryNav />
         </div>
       </header>

@@ -782,8 +782,8 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
   if (result.pathname === '/cv/letter/' && result.canonical !== 'https://andresatencio.com/cv/') {
     throw new Error(`${label} is missing the canonical /cv/ link`);
   }
-  if (result.pathname === '/cv/' && result.canonical) {
-    throw new Error(`${label} should not declare a canonical URL`);
+  if (result.pathname === '/cv/' && result.canonical !== 'https://andresatencio.com/cv/') {
+    throw new Error(`${label} is missing the self-canonical /cv/ link`);
   }
   if (result.innerBottom > result.mainTop + 1) {
     throw new Error(`${label} header overlaps the CV document: ${JSON.stringify(result)}`);

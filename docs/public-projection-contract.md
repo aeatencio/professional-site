@@ -25,7 +25,8 @@ The closed document has six top-level fields:
   teaching, education, technical background and languages for the Software
   Development CV.
 
-Home uses the shared professional identity as its H1. Experience contains
+Home uses the shared public name as the document heading and keeps the shared
+professional identity as the visible opening title. Experience contains
 explicit software roles, current-development examples and teaching copy.
 Background contains compact education items. Working together and Contact are
 text sections; Contact also renders shared location, email and profile links. The
