@@ -24,8 +24,8 @@ The projection is organized around the real artifacts:
   site’s global header and footer. `/cv/` is the canonical responsive web
   view. `/cv/letter/` exists so US Letter print and PDF generation keep a
   stable route; on screen it matches `/cv/`. A4 and US Letter are paper
-  formats for print and download, not web layout variants. Home keeps a CV
-  disclosure (`View online` / `Download PDF`). On the CV routes, `CV` is the
+  formats for print and download, not web layout variants. `CV` in the header
+  and footer is a direct link to `/cv/`. On the CV routes, `CV` is the
   current section and download actions sit in the document flow. Print and
   PDF output exclude the global header, global footer, skip link and web
   download actions; they contain only the document. The canonical public

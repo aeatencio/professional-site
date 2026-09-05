@@ -155,8 +155,9 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.equal(actions.includes('andresatencio.com'), false);
   assert.match(nav, /isCvPage/);
   assert.match(nav, /aria-current="page">CV</);
-  assert.match(nav, /href="\/cv\/">View online</);
-  assert.match(nav, /CV_PDF\.a4\.href/);
+  assert.match(nav, /href="\/cv\/">CV</);
+  assert.equal(nav.includes('View online'), false);
+  assert.equal(nav.includes('CV_PDF'), false);
   assert.match(baseLayout, /<PrimaryNav \/>/);
   assert.match(baseLayout, /class="site-footer"/);
   assert.match(baseLayout, /import '\.\.\/styles\/site-shell\.css'/);

@@ -188,10 +188,10 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('View CV'), false);
   assert.equal(page.includes('Download CV'), false);
   assert.equal(page.includes('Contact me'), false);
-  assert.match(primaryNav, /href="\/cv\/">View online</);
-  assert.match(primaryNav, /href=\{CV_PDF\.a4\.href\}/);
-  assert.match(primaryNav, /download=\{CV_PDF\.a4\.download\}/);
-  assert.match(primaryNav, />Download PDF</);
+  assert.match(primaryNav, /href="\/cv\/">CV</);
+  assert.equal(primaryNav.includes('View online'), false);
+  assert.equal(primaryNav.includes('Download PDF'), false);
+  assert.equal(primaryNav.includes('CV_PDF'), false);
   assert.equal(primaryNav.includes('>View CV</a>'), false);
   assert.equal(primaryNav.includes('>Download CV</a>'), false);
   assert.match(primaryNav, /sectionHref\('#contact'\)/);

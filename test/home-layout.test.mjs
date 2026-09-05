@@ -52,7 +52,7 @@ test('Experience notebook follows the complete software role list and recomposes
   );
 });
 
-test('Primary navigation uses native CV disclosures and progressive enhancement', async () => {
+test('Primary navigation uses a direct CV link and progressive enhancement', async () => {
   const [nav, layout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
@@ -94,30 +94,26 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
   assert.match(nav, /isCvPage/);
   assert.match(nav, /aria-current="page">CV</);
-  assert.match(nav, /<details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>[\s\S]*?<summary>CV<\/summary>/);
-  assert.match(nav, /<details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>[\s\S]*?<summary>CV<\/summary>/);
-  assert.equal((nav.match(/>View online<\/a>/g) ?? []).length, 2);
-  assert.equal((nav.match(/>Download PDF<\/a>/g) ?? []).length, 2);
+  assert.equal((nav.match(/href="\/cv\/">CV</g) ?? []).length, 2);
+  assert.equal((nav.match(/href="\/cv\/" aria-current="page">CV</g) ?? []).length, 2);
+  assert.equal(nav.includes('View online'), false);
+  assert.equal(nav.includes('Download PDF'), false);
   assert.equal(nav.includes('>View CV</a>'), false);
   assert.equal(nav.includes('>Download CV</a>'), false);
   assert.equal(nav.includes('primary-nav__group-label'), false);
-  assert.equal(nav.includes('primary-nav__cv-group'), false);
-  assert.equal(nav.includes('primary-nav__cv-actions'), false);
+  assert.equal(nav.includes('primary-nav__cv'), false);
+  assert.equal(nav.includes('data-cv-disclosure'), false);
   assert.equal(nav.includes('role="menu"'), false);
   assert.equal(nav.includes('role="menuitem"'), false);
   assert.equal(nav.includes('aria-expanded'), false);
   assert.equal(nav.includes('aria-controls'), false);
-  assert.match(nav, /import \{ CV_PDF \}/);
-  assert.equal((nav.match(/href="\/cv\/">View online</g) ?? []).length, 2);
-  assert.match(nav, /href=\{CV_PDF\.a4\.href\}/);
-  assert.match(nav, /download=\{CV_PDF\.a4\.download\}/);
-  assert.match(nav, /type="application\/pdf"/);
+  assert.equal(nav.includes('CV_PDF'), false);
   assert.match(nav, /event\.key !== 'Escape'/);
   assert.match(nav, /mobileNavigation\.open = false/);
-  assert.match(nav, /summary\?\.focus\(\)/);
+  assert.match(nav, /menuSummary\?\.focus\(\)/);
   assert.match(nav, /document\.addEventListener\('click'/);
-  assert.match(nav, /\[\.\.\.cvDisclosures\]\.reverse\(\)/);
-  assert.match(nav, /focus\(\{ preventScroll: true \}\)/);
+  assert.equal(nav.includes('cvDisclosures'), false);
+  assert.match(nav, /summary\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(nav, /a\[href\^="#"\]/);
   assert.match(layout, /document\.documentElement\.classList\.add\('js'\)/);
 
@@ -143,18 +139,16 @@ test('Primary navigation uses native CV disclosures and progressive enhancement'
   assert.match(shellCss, /\.primary-nav__mobile-panel \{[\s\S]*?position:\s*static;[\s\S]*?max-height:\s*none;[\s\S]*?overflow:\s*visible/);
   assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?position:\s*absolute;[\s\S]*?overflow-y:\s*auto/);
   assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?right:\s*0;[\s\S]*?left:\s*auto;[\s\S]*?width:\s*max-content;[\s\S]*?max-width:\s*min\(13\.5rem, 100%\)/);
-  assert.match(shellCss, /\.primary-nav__mobile-list > li > a,[\s\S]*?\.primary-nav__cv--mobile > summary \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
-  assert.match(shellCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options \{[\s\S]*?font-size:\s*0\.9rem/);
-  assert.match(shellCss, /\.primary-nav__cv--mobile \.primary-nav__cv-options a \{[\s\S]*?min-height:\s*2\.25rem;[\s\S]*?justify-content:\s*flex-end/);
+  assert.match(shellCss, /\.primary-nav__mobile-list > li > a \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
   assert.match(shellCss, /\.js \.page > \.site-header \{[\s\S]*?position:\s*sticky/);
   assert.equal(shellCss.includes('border-inline'), false);
   assert.equal(shellCss.includes('primary-nav__group-label'), false);
-  assert.equal(shellCss.includes('primary-nav__cv-actions'), false);
+  assert.equal(shellCss.includes('primary-nav__cv'), false);
   assert.equal(shellCss.includes('summary::after'), false);
   assert.equal(shellCss.includes('content: "+"'), false);
   assert.equal(shellCss.includes('content: "−"'), false);
-  assert.match(shellCss, /\.page \.primary-nav a,[\s\S]*?\.primary-nav__cv > summary,[\s\S]*?\.primary-nav__mobile > summary \{\s*text-underline-offset:\s*0\.2em/);
-  assert.match(shellCss, /\.primary-nav__cv > summary:hover,[\s\S]*?\.primary-nav__cv > summary:focus-visible,[\s\S]*?\.primary-nav__mobile > summary:hover,[\s\S]*?\.primary-nav__mobile > summary:focus-visible \{\s*text-decoration:\s*underline/);
+  assert.match(shellCss, /\.page \.primary-nav a,[\s\S]*?\.primary-nav__mobile > summary \{\s*text-underline-offset:\s*0\.2em/);
+  assert.match(shellCss, /\.primary-nav__mobile > summary:hover,[\s\S]*?\.primary-nav__mobile > summary:focus-visible \{\s*text-decoration:\s*underline/);
   assert.equal(shellCss.includes('[open] > summary {\n  text-decoration: underline'), false);
   assert.equal(homeCss.includes('.page > .site-header'), false);
   assert.equal(homeCss.includes('.primary-nav__mobile'), false);
@@ -192,6 +186,9 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /Escape/);
   assert.match(verifier, /summaryFocused/);
   assert.match(verifier, /focusInsideClosedDisclosure/);
+  assert.match(verifier, /primary-nav__desktop-list a\[href="\/cv\/"\]/);
+  assert.match(verifier, /primary-nav__mobile-list a\[href="\/cv\/"\]/);
+  assert.equal(verifier.includes('assertCvOptions'), false);
   assert.match(verifier, /View online/);
   assert.match(verifier, /Download PDF/);
   assert.match(verifier, /assertCvSitePages/);

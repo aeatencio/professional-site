@@ -56,8 +56,7 @@ html {
 }
 
 .primary-nav__desktop-list,
-.primary-nav__mobile-list,
-.primary-nav__cv-options {
+.primary-nav__mobile-list {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -76,15 +75,12 @@ html {
 }
 
 .page .primary-nav a,
-.primary-nav__cv > summary,
 .primary-nav__mobile > summary {
   text-underline-offset: 0.2em;
 }
 
 .page .primary-nav a:hover,
 .page .primary-nav a:focus-visible,
-.primary-nav__cv > summary:hover,
-.primary-nav__cv > summary:focus-visible,
 .primary-nav__mobile > summary:hover,
 .primary-nav__mobile > summary:focus-visible {
   text-decoration: underline;
@@ -93,48 +89,6 @@ html {
 .page .primary-nav a[aria-current="page"] {
   color: var(--color-ink);
   font-weight: 650;
-}
-
-.primary-nav__cv {
-  position: relative;
-}
-
-.primary-nav__cv > summary {
-  display: flex;
-  align-items: center;
-  color: var(--color-cobalt);
-  cursor: pointer;
-  list-style: none;
-}
-
-.primary-nav__cv > summary::-webkit-details-marker {
-  display: none;
-}
-
-.primary-nav__cv:not([open]) > .primary-nav__cv-options {
-  display: none;
-}
-
-.page .primary-nav__cv--desktop[open] > .primary-nav__cv-options {
-  position: absolute;
-  top: calc(100% + 0.65rem);
-  right: 0;
-  z-index: 30;
-  display: flex;
-  width: max-content;
-  min-width: 9.5rem;
-  flex-direction: column;
-  gap: 0;
-  padding: 0.48rem 0.7rem;
-  border: 1px solid rgb(26 63 163 / 14%);
-  background: var(--color-ivory);
-  box-shadow: 0 0.65rem 1.1rem rgb(28 25 22 / 9%);
-}
-
-.primary-nav__cv--desktop .primary-nav__cv-options a {
-  display: block;
-  padding: 0.32rem 0;
-  white-space: nowrap;
 }
 
 .primary-nav__contact a {
@@ -272,8 +226,7 @@ html {
     overscroll-behavior: contain;
   }
 
-  .page .primary-nav__mobile-list,
-  .page .primary-nav__cv--mobile[open] > .primary-nav__cv-options {
+  .page .primary-nav__mobile-list {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -287,36 +240,13 @@ html {
     justify-content: flex-end;
   }
 
-  .primary-nav__mobile-list > li > a,
-  .primary-nav__cv--mobile > summary {
+  .primary-nav__mobile-list > li > a {
     display: flex;
     width: auto;
     min-height: 2.5rem;
     align-items: center;
     justify-content: flex-end;
     padding: 0.35rem 0.85rem;
-  }
-
-  .primary-nav__cv--mobile {
-    width: auto;
-    margin-block: 0.1rem;
-  }
-
-  .primary-nav__cv--mobile > summary {
-    font-weight: 650;
-  }
-
-  .primary-nav__cv--mobile .primary-nav__cv-options {
-    padding: 0 0.85rem 0.35rem 1.5rem;
-    font-size: 0.9rem;
-  }
-
-  .primary-nav__cv--mobile .primary-nav__cv-options a {
-    display: flex;
-    min-height: 2.25rem;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0.25rem 0;
   }
 
   .primary-nav__mobile-contact a {

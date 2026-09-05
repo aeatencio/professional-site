@@ -60,7 +60,7 @@ await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
   for (const { width, height, mobile } of footerViewports) {
     await assertFooter(cdp, homeUrl, width, height, mobile);
   }
-  await assertViewOnlineNavigation(cdp, homeUrl);
+  await assertPrimaryCvNavigation(cdp, homeUrl);
   await assertCvSitePages(cdp, origin);
   await assertFooterNavigation(cdp, homeUrl);
 });
@@ -73,10 +73,9 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
     const header = document.querySelector('.site-header');
     const desktop = document.querySelector('.primary-nav__desktop-list');
     const mobile = document.querySelector('[data-mobile-navigation]');
-    const cv = document.querySelector('.primary-nav__cv--desktop');
-    const cvSummary = cv?.querySelector(':scope > summary');
+    const cv = document.querySelector('.primary-nav__desktop-list a[href="/cv/"]');
     const topLevel = [...(desktop?.children ?? [])].map((item) =>
-      item.querySelector(':scope > a, :scope > details > summary')?.textContent?.trim() ?? ''
+      item.querySelector(':scope > a')?.textContent?.trim() ?? ''
     );
     return {
       pathname: location.pathname,
@@ -86,10 +85,12 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
       desktopDisplay: desktop ? getComputedStyle(desktop).display : '',
       mobileDisplay: mobile ? getComputedStyle(mobile).display : '',
       topLevel,
-      cvOpen: cv?.open ?? null,
-      cvSummaryText: cvSummary?.textContent?.trim() ?? '',
-      ariaExpanded: cvSummary?.getAttribute('aria-expanded') ?? null,
-      ariaControls: cvSummary?.getAttribute('aria-controls') ?? null,
+      cvHref: cv?.getAttribute('href') ?? '',
+      cvText: cv?.textContent?.trim() ?? '',
+      cvCurrent: cv?.getAttribute('aria-current') ?? null,
+      desktopDetails: desktop?.querySelectorAll('details').length ?? -1,
+      viewOnline: Boolean(desktop?.innerHTML.includes('View online')),
+      downloadPdf: Boolean(desktop?.innerHTML.includes('Download PDF')),
       heroActions: document.querySelectorAll('.chapter--home .actions').length,
       ...window.__layoutMetrics()
     };
@@ -116,60 +117,21 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   ])) {
     throw new Error(`Desktop top-level navigation is incorrect at ${width}px: ${initial.topLevel.join(', ')}`);
   }
-  if (initial.cvOpen !== false || initial.cvSummaryText !== 'CV') {
-    throw new Error(`Desktop CV disclosure is not initially closed at ${width}px`);
-  }
-  if (initial.ariaExpanded !== null || initial.ariaControls !== null) {
-    throw new Error('Native CV summary must not receive manual aria-expanded or aria-controls');
+  if (initial.cvHref !== '/cv/' || initial.cvText !== 'CV' || initial.cvCurrent !== null
+    || initial.desktopDetails !== 0 || initial.viewOnline || initial.downloadPdf) {
+    throw new Error(`Desktop CV is not a direct /cv/ link at ${width}px: ${JSON.stringify({
+      href: initial.cvHref,
+      text: initial.cvText,
+      current: initial.cvCurrent,
+      details: initial.desktopDetails,
+      viewOnline: initial.viewOnline,
+      downloadPdf: initial.downloadPdf
+    })}`);
   }
   if (initial.heroActions !== 0) {
     throw new Error('The hero still contains the duplicated actions navigation');
   }
   assertNoHorizontalOverflow(initial, width, 'Desktop Home');
-
-  await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--desktop > summary', false, false, `desktop CV idle at ${width}px`);
-  await clickSelector(cdp, sessionId, '.primary-nav__cv--desktop > summary');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--desktop', `desktop pointer at ${width}px`);
-  await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--desktop > summary', true, true, `desktop CV hover at ${width}px`);
-  await movePointerToSelector(cdp, sessionId, '#home-heading');
-  await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--desktop > summary', false, true, `desktop CV open without hover at ${width}px`);
-
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--desktop a[href="/cv/"]');
-  await clickSelector(cdp, sessionId, '#experience-heading');
-  let outsideClosed = await disclosureState(cdp, sessionId, '.primary-nav__cv--desktop');
-  if (outsideClosed.open || outsideClosed.focusInsideClosedContent) {
-    throw new Error(`Outside pointer did not close desktop CV without hidden focus at ${width}px: ${JSON.stringify(outsideClosed)}`);
-  }
-
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--desktop > summary');
-  await pressKey(cdp, sessionId, 'Enter');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--desktop', `desktop Enter at ${width}px`);
-
-  await pressKey(cdp, sessionId, 'Escape');
-  let escaped = await disclosureState(cdp, sessionId, '.primary-nav__cv--desktop');
-  if (escaped.open || !escaped.summaryFocused || !escaped.focusVisible || !escaped.summaryUnderlined) {
-    throw new Error(`Desktop Escape did not close CV and return visible focus at ${width}px`);
-  }
-
-  await pressKey(cdp, sessionId, ' ');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--desktop', `desktop Space at ${width}px`);
-  await pressKey(cdp, sessionId, 'Tab');
-  let active = await activeLink(cdp, sessionId);
-  if (active.text !== 'View online') {
-    throw new Error(`Desktop CV first Tab reached ${active.text || 'nothing'} at ${width}px`);
-  }
-  await pressKey(cdp, sessionId, 'Tab');
-  active = await activeLink(cdp, sessionId);
-  if (active.text !== 'Download PDF') {
-    throw new Error(`Desktop CV second Tab reached ${active.text || 'nothing'} at ${width}px`);
-  }
-
-  await preventNextNavigation(cdp, sessionId, '.primary-nav__cv--desktop a[download]');
-  await pressKey(cdp, sessionId, 'Enter');
-  const downloaded = await disclosureState(cdp, sessionId, '.primary-nav__cv--desktop');
-  if (downloaded.open || !downloaded.summaryFocused) {
-    throw new Error(`Desktop Download PDF left focus in hidden content at ${width}px`);
-  }
 
   for (const [hash, label] of [
     ['#experience', 'Experience'],
@@ -184,7 +146,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   }
 
   await cdp.send('Target.closeTarget', { targetId });
-  console.log(`Desktop navigation, disclosures, offsets and overflow verified at ${width}px`);
+  console.log(`Desktop navigation, offsets and overflow verified at ${width}px`);
 }
 
 async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
@@ -230,77 +192,45 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
   await assertSummaryDecoration(cdp, sessionId, '[data-mobile-navigation] > summary', true, true, `mobile Menu hover at ${label}`);
   await movePointerToSelector(cdp, sessionId, '.identity-mark');
   await assertSummaryDecoration(cdp, sessionId, '[data-mobile-navigation] > summary', false, true, `mobile Menu open without hover at ${label}`);
-  await clickSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--mobile', `mobile pointer at ${label}`);
-  await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--mobile > summary', true, true, `mobile CV hover at ${label}`);
-  await movePointerToSelectorAt(cdp, sessionId, '.primary-nav__mobile-panel', 0.98, 0.98);
-  await assertSummaryDecoration(cdp, sessionId, '.primary-nav__cv--mobile > summary', false, true, `mobile CV open without hover at ${label}`);
   await assertMobilePanel(cdp, sessionId, width, height, label);
 
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--mobile a[download]');
-  await clickSelectorAt(cdp, sessionId, '.primary-nav__mobile-panel', 0.98, 0.98);
-  let outsideClosed = await disclosureState(cdp, sessionId, '.primary-nav__cv--mobile');
-  let outsideOuter = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
-  if (outsideClosed.open || outsideClosed.focusInsideClosedContent || !outsideOuter.open) {
-    throw new Error(`Pointer inside Menu but outside CV did not close only CV at ${label}`);
+  const cvItem = await evaluate(cdp, sessionId, `(() => {
+    const cv = document.querySelector('.primary-nav__mobile-list a[href="/cv/"]');
+    const nested = document.querySelector('[data-cv-disclosure], .primary-nav__cv');
+    const nav = document.querySelector('.primary-nav');
+    return {
+      text: cv?.textContent?.trim() ?? '',
+      href: cv?.getAttribute('href') ?? '',
+      current: cv?.getAttribute('aria-current'),
+      nested: Boolean(nested),
+      viewOnline: Boolean(nav?.innerHTML.includes('View online')),
+      downloadPdf: Boolean(nav?.innerHTML.includes('Download PDF'))
+    };
+  })()`);
+  if (cvItem.text !== 'CV' || cvItem.href !== '/cv/' || cvItem.current !== null
+    || cvItem.nested || cvItem.viewOnline || cvItem.downloadPdf) {
+    throw new Error(`Mobile CV is not a direct /cv/ link at ${label}: ${JSON.stringify(cvItem)}`);
   }
 
-  await clickSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--mobile a[download]');
   await clickSelector(cdp, sessionId, '.identity-mark');
-  outsideClosed = await disclosureState(cdp, sessionId, '.primary-nav__cv--mobile');
-  outsideOuter = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
-  if (outsideClosed.open || outsideOuter.open || outsideOuter.focusInsideClosedContent) {
-    throw new Error(`Pointer outside Menu did not close inner then outer without hidden focus at ${label}`);
+  let outsideOuter = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
+  if (outsideOuter.open || outsideOuter.focusInsideClosedContent) {
+    throw new Error(`Pointer outside Menu did not close it without hidden focus at ${label}`);
   }
 
   await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
-
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
-  await pressKey(cdp, sessionId, 'Enter');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--mobile', `mobile Enter at ${label}`);
   await pressKey(cdp, sessionId, 'Escape');
-  let nested = await disclosureState(cdp, sessionId, '.primary-nav__cv--mobile');
   let outer = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
-  if (nested.open || !nested.summaryFocused || !nested.summaryUnderlined || !outer.open) {
-    throw new Error(`First mobile Escape did not close only CV at ${label}`);
+  if (outer.open || !outer.summaryFocused || !outer.focusVisible || !outer.summaryUnderlined) {
+    throw new Error(`Mobile Escape did not close Menu and restore visible focus at ${label}`);
+  }
+
+  await pressKey(cdp, sessionId, ' ');
+  outer = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
+  if (!outer.open) {
+    throw new Error(`Mobile Space did not reopen Menu at ${label}`);
   }
   await pressKey(cdp, sessionId, 'Escape');
-  outer = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
-  if (outer.open || !outer.summaryFocused || !outer.focusVisible || !outer.summaryUnderlined) {
-    throw new Error(`Second mobile Escape did not close Menu and restore visible focus at ${label}`);
-  }
-
-  await pressKey(cdp, sessionId, ' ');
-  await focusSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
-  await pressKey(cdp, sessionId, ' ');
-  await assertCvOptions(cdp, sessionId, '.primary-nav__cv--mobile', `mobile Space at ${label}`);
-  await pressKey(cdp, sessionId, 'Tab');
-  let active = await activeLink(cdp, sessionId);
-  if (active.text !== 'View online') {
-    throw new Error(`Mobile CV first Tab reached ${active.text || 'nothing'} at ${label}`);
-  }
-  await pressKey(cdp, sessionId, 'Tab');
-  active = await activeLink(cdp, sessionId);
-  if (active.text !== 'Download PDF') {
-    throw new Error(`Mobile CV second Tab reached ${active.text || 'nothing'} at ${label}`);
-  }
-  await preventNextNavigation(cdp, sessionId, '.primary-nav__cv--mobile a[download]');
-  await pressKey(cdp, sessionId, 'Enter');
-  nested = await disclosureState(cdp, sessionId, '.primary-nav__cv--mobile');
-  outer = await disclosureState(cdp, sessionId, '[data-mobile-navigation]');
-  if (nested.open || outer.open || !outer.summaryFocused) {
-    throw new Error(`Mobile Download PDF left focus in hidden content at ${label}`);
-  }
-
-  await openMobileTree(cdp, sessionId);
-  await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
-  await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
-  nested = await disclosureState(cdp, sessionId, '.primary-nav__cv--mobile');
-  if (nested.open) {
-    throw new Error(`Nested CV retained stale open state after Menu closed at ${label}`);
-  }
-  await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
 
   for (const [selector, hash, name] of [
     ['.identity a[href="#home"]', '#home', 'identity'],
@@ -309,30 +239,25 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
     ['[data-mobile-navigation] a[href="#working-together"]', '#working-together', 'Working together'],
     ['[data-mobile-navigation] a[href="#contact"]', '#contact', 'Contact']
   ]) {
-    await openMobileTree(cdp, sessionId);
+    await openMobileMenu(cdp, sessionId);
     await activateByEnter(cdp, sessionId, selector);
     await sleep(100);
     const result = await evaluate(cdp, sessionId, `(() => {
-      const outer = document.querySelector('[data-mobile-navigation]');
-      const inner = document.querySelector('.primary-nav__cv--mobile');
+      const menu = document.querySelector('[data-mobile-navigation]');
       return {
-        outerOpen: outer?.open ?? null,
-        innerOpen: inner?.open ?? null,
-        focusInsideClosedDisclosure: Boolean(
-          (!outer?.open && outer?.contains(document.activeElement))
-          || (!inner?.open && inner?.contains(document.activeElement))
-        )
+        outerOpen: menu?.open ?? null,
+        focusInsideClosedDisclosure: Boolean(!menu?.open && menu?.contains(document.activeElement))
       };
     })()`);
-    if (result.outerOpen || result.innerOpen || result.focusInsideClosedDisclosure) {
-      throw new Error(`${name} did not close inner then outer disclosures cleanly at ${label}`);
+    if (result.outerOpen || result.focusInsideClosedDisclosure) {
+      throw new Error(`${name} did not close Menu cleanly at ${label}`);
     }
     const anchor = await anchorMetrics(cdp, sessionId, hash);
     assertAnchorNearHeader(anchor, hash, `Mobile ${name} at ${label}`);
   }
 
   await cdp.send('Target.closeTarget', { targetId });
-  console.log(`Mobile navigation, nested disclosures, offsets and overflow verified at ${label}`);
+  console.log(`Mobile navigation, offsets and overflow verified at ${label}`);
 }
 
 async function assertSkipLink(cdp, sessionId) {
@@ -362,9 +287,6 @@ async function assertSkipLink(cdp, sessionId) {
 async function assertDirectionalHeader(cdp, homeUrl, { width, height, mobile }) {
   const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, mobile);
   const label = `${width}x${height}`;
-  const disclosureSelector = mobile
-    ? '[data-mobile-navigation] > summary'
-    : '.primary-nav__cv--desktop > summary';
 
   assertHeaderVisible(await headerState(cdp, sessionId), `initial header at ${label}`);
 
@@ -414,29 +336,17 @@ async function assertDirectionalHeader(cdp, homeUrl, { width, height, mobile }) 
   assertHeaderHidden(await headerState(cdp, sessionId), `completed-pointer header at ${label}`);
 
   await scrollToY(cdp, sessionId, 0);
-  await clickSelector(cdp, sessionId, disclosureSelector);
-  await scrollToY(cdp, sessionId, 420);
-  const pinned = await headerState(cdp, sessionId);
-  assertHeaderVisible(pinned, `open-disclosure header at ${label}`);
-  if (!pinned.disclosureOpen) {
-    throw new Error(`Disclosure did not remain open during downward scroll at ${label}`);
-  }
   if (mobile) {
-    await clickSelector(cdp, sessionId, '.primary-nav__cv--mobile > summary');
-    await scrollToY(cdp, sessionId, 440);
-    const nestedPinned = await headerState(cdp, sessionId);
-    const nestedOpen = await evaluate(
-      cdp,
-      sessionId,
-      "document.querySelector('.primary-nav__cv--mobile')?.open ?? false"
-    );
-    assertHeaderVisible(nestedPinned, `open-mobile-CV header at ${label}`);
-    if (!nestedOpen) {
-      throw new Error(`Mobile CV did not remain open during downward scroll at ${label}`);
+    await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
+    await scrollToY(cdp, sessionId, 420);
+    const pinned = await headerState(cdp, sessionId);
+    assertHeaderVisible(pinned, `open-disclosure header at ${label}`);
+    if (!pinned.disclosureOpen) {
+      throw new Error(`Disclosure did not remain open during downward scroll at ${label}`);
     }
+    await pressKey(cdp, sessionId, 'Escape');
+    await clickSelector(cdp, sessionId, '#home-heading');
   }
-  await pressKey(cdp, sessionId, 'Escape');
-  await clickSelector(cdp, sessionId, '#home-heading');
 
   await scrollToY(cdp, sessionId, 0);
   await movePointerToSelector(cdp, sessionId, '.site-header');
@@ -569,14 +479,10 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
   }
 
   await clickNode(cdp, first.sessionId, summaryId);
-  const cvId = await queryNode(cdp, first.sessionId, detailsId, '.primary-nav__cv--mobile');
-  const cvSummaryId = await queryNode(cdp, first.sessionId, cvId, ':scope > summary');
-  await clickNode(cdp, first.sessionId, cvSummaryId);
   await sleep(75);
 
-  if (!(await hasAttribute(cdp, first.sessionId, detailsId, 'open'))
-    || !(await hasAttribute(cdp, first.sessionId, cvId, 'open'))) {
-    throw new Error(`Native disclosures did not open without JavaScript at ${width}px`);
+  if (!(await hasAttribute(cdp, first.sessionId, detailsId, 'open'))) {
+    throw new Error(`Native Menu disclosure did not open without JavaScript at ${width}px`);
   }
   const panelId = await queryNode(cdp, first.sessionId, detailsId, '.primary-nav__mobile-panel');
   if (await computedProperty(cdp, first.sessionId, panelId, 'position') !== 'static'
@@ -584,20 +490,16 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
     throw new Error(`No-JavaScript panel is not in unrestricted document flow at ${width}px`);
   }
   const { outerHTML } = await cdp.send('DOM.getOuterHTML', { nodeId: panelId }, first.sessionId);
-  for (const label of ['Experience', 'Background', 'Working together', 'CV', 'View online', 'Download PDF', 'Contact']) {
+  for (const label of ['Experience', 'Background', 'Working together', 'CV', 'Contact']) {
     if (!outerHTML.includes(label)) {
       throw new Error(`No-JavaScript mobile panel is missing ${label} at ${width}px`);
     }
   }
-  for (const expected of [
-    'href="/cv/"',
-    `href="${CV_PDF.a4.href}"`,
-    `download="${CV_PDF.a4.download}"`,
-    'type="application/pdf"'
-  ]) {
-    if (!outerHTML.includes(expected)) {
-      throw new Error(`No-JavaScript CV destination is missing ${expected} at ${width}px`);
-    }
+  if (!outerHTML.includes('href="/cv/"')
+    || outerHTML.includes('View online')
+    || outerHTML.includes('Download PDF')
+    || outerHTML.includes(`href="${CV_PDF.a4.href}"`)) {
+    throw new Error(`No-JavaScript CV destination is not a direct /cv/ link at ${width}px`);
   }
   await cdp.send('Target.closeTarget', { targetId: first.targetId });
 
@@ -630,29 +532,59 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
   }
 
   await cdp.send('Target.closeTarget', { targetId: second.targetId });
-  console.log(`No-JavaScript native disclosures and in-flow Background navigation verified at ${width}px`);
+  console.log(`No-JavaScript native Menu and in-flow Background navigation verified at ${width}px`);
 }
 
-async function assertViewOnlineNavigation(cdp, homeUrl) {
-  const { targetId, sessionId } = await openAt(cdp, homeUrl, 1366, 900, false);
-  await clickSelector(cdp, sessionId, '.primary-nav__cv--desktop > summary');
-  await activateByEnter(cdp, sessionId, '.primary-nav__cv--desktop a[href="/cv/"]');
+async function assertPrimaryCvNavigation(cdp, homeUrl) {
+  const desktop = await openAt(cdp, homeUrl, 1366, 900, false);
+  await activateByEnter(cdp, desktop.sessionId, '.primary-nav__desktop-list a[href="/cv/"]');
   await sleep(150);
-  const result = await evaluate(cdp, sessionId, `(() => ({
+  const desktopResult = await evaluate(cdp, desktop.sessionId, `(() => ({
     pathname: location.pathname,
     hasCvMain: Boolean(document.querySelector('#cv-main')),
     hasCvActions: Boolean(document.querySelector('.cv-actions')),
     hasCvChrome: Boolean(document.querySelector('.cv-chrome')),
     hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
     hasSiteHeader: Boolean(document.querySelector('.site-header')),
-    hasSiteFooter: Boolean(document.querySelector('.site-footer'))
+    hasSiteFooter: Boolean(document.querySelector('.site-footer')),
+    current: [...(document.querySelectorAll('.primary-nav a[aria-current="page"]') ?? [])]
+      .map((link) => link.textContent?.trim() ?? ''),
+    viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
+    navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
   }))()`);
-  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasCvActions || result.hasCvChrome
-    || !result.hasPrimaryNav || !result.hasSiteHeader || !result.hasSiteFooter) {
-    throw new Error(`View online did not reach the A4 CV page in the site shell: ${JSON.stringify(result)}`);
+  if (desktopResult.pathname !== '/cv/' || !desktopResult.hasCvMain || !desktopResult.hasCvActions
+    || desktopResult.hasCvChrome || !desktopResult.hasPrimaryNav || !desktopResult.hasSiteHeader
+    || !desktopResult.hasSiteFooter || desktopResult.viewOnline || desktopResult.navDownloadPdf
+    || desktopResult.current.length === 0 || !desktopResult.current.every((text) => text === 'CV')) {
+    throw new Error(`Desktop CV link did not reach the CV page in the site shell: ${JSON.stringify(desktopResult)}`);
   }
-  await cdp.send('Target.closeTarget', { targetId });
-  console.log('View online keyboard navigation and shared CV site shell verified');
+  await cdp.send('Target.closeTarget', { targetId: desktop.targetId });
+
+  const mobile = await openAt(cdp, homeUrl, 390, 844, true);
+  await clickSelector(cdp, mobile.sessionId, '[data-mobile-navigation] > summary');
+  await activateByEnter(cdp, mobile.sessionId, '.primary-nav__mobile-list a[href="/cv/"]');
+  await sleep(150);
+  const mobileResult = await evaluate(cdp, mobile.sessionId, `(() => ({
+    pathname: location.pathname,
+    hasCvMain: Boolean(document.querySelector('#cv-main')),
+    hasCvActions: Boolean(document.querySelector('.cv-actions')),
+    hasCvChrome: Boolean(document.querySelector('.cv-chrome')),
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasSiteHeader: Boolean(document.querySelector('.site-header')),
+    hasSiteFooter: Boolean(document.querySelector('.site-footer')),
+    current: [...(document.querySelectorAll('.primary-nav a[aria-current="page"]') ?? [])]
+      .map((link) => link.textContent?.trim() ?? ''),
+    viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
+    navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
+  }))()`);
+  if (mobileResult.pathname !== '/cv/' || !mobileResult.hasCvMain || !mobileResult.hasCvActions
+    || mobileResult.hasCvChrome || !mobileResult.hasPrimaryNav || !mobileResult.hasSiteHeader
+    || !mobileResult.hasSiteFooter || mobileResult.viewOnline || mobileResult.navDownloadPdf
+    || mobileResult.current.length === 0 || !mobileResult.current.every((text) => text === 'CV')) {
+    throw new Error(`Mobile CV link did not reach the CV page in the site shell: ${JSON.stringify(mobileResult)}`);
+  }
+  await cdp.send('Target.closeTarget', { targetId: mobile.targetId });
+  console.log('Primary CV keyboard navigation and shared CV site shell verified');
 }
 
 async function assertCvSitePages(cdp, origin) {
@@ -1063,9 +995,10 @@ async function assertHomeDocument(origin, url) {
   if (html.includes('class="actions"') || html.includes('>View experience<') || html.includes('>Contact me<')) {
     throw new Error('Home document still contains the duplicated hero navigation');
   }
-  if (!html.includes('>View online<') || !html.includes('>Download PDF<')
-    || html.includes('>View CV<') || html.includes('>Download CV<')) {
-    throw new Error('Home document does not contain the corrected CV disclosure labels');
+  if (html.includes('>View online<') || html.includes('>Download PDF<')
+    || html.includes('>View CV<') || html.includes('>Download CV<')
+    || (html.match(/href="\/cv\/">CV</g) ?? []).length !== 3) {
+    throw new Error('Home document does not contain a direct CV link in header and footer');
   }
   const footerHtml = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
   if (!footerHtml.includes(`<p>${projection.shared.name}</p>`)
@@ -1078,7 +1011,7 @@ async function assertHomeDocument(origin, url) {
   const letterHtml = await letterResponse.text();
   if (!cvResponse.ok || !cvHtml.includes('id="cv-main"') || !cvHtml.includes('class="cv-actions"')
     || cvHtml.includes('class="cv-chrome"') || cvHtml.includes('>View online<')) {
-    throw new Error('View online does not resolve to the built A4 CV page as a site page');
+    throw new Error('Home CV link does not resolve to the built A4 CV page as a site page');
   }
   if (!letterResponse.ok || !letterHtml.includes('id="cv-main"') || !letterHtml.includes('class="cv-actions"')
     || letterHtml.includes('class="cv-chrome"') || letterHtml.includes('>View online<')) {
@@ -1099,7 +1032,7 @@ async function assertHomeDocument(origin, url) {
   }
   const pdfBytes = new Uint8Array(await pdfResponse.arrayBuffer()).subarray(0, 5);
   if (!pdfResponse.ok || new TextDecoder().decode(pdfBytes) !== '%PDF-') {
-    throw new Error('Download PDF does not resolve to the built A4 PDF');
+    throw new Error('A4 PDF download does not resolve to the built A4 PDF');
   }
 }
 
@@ -1264,33 +1197,6 @@ async function dispatchTouchScroll(cdp, sessionId, x, y, yDistance) {
   await sleep(250);
 }
 
-async function assertCvOptions(cdp, sessionId, selector, label) {
-  const result = await evaluate(cdp, sessionId, `(() => {
-    const disclosure = document.querySelector('${selector}');
-    const options = [...(disclosure?.querySelectorAll(':scope > .primary-nav__cv-options > li > a') ?? [])]
-      .map((link) => ({
-        text: link.textContent?.trim() ?? '',
-        href: link.getAttribute('href') ?? '',
-        download: link.getAttribute('download'),
-        type: link.getAttribute('type'),
-        visible: link.getBoundingClientRect().height > 0
-      }));
-    return { open: disclosure?.open ?? null, options, ...window.__layoutMetrics() };
-  })()`);
-  if (!result.open || JSON.stringify(result.options.map(({ text }) => text)) !== JSON.stringify(['View online', 'Download PDF'])) {
-    throw new Error(`CV options are incorrect for ${label}: ${JSON.stringify(result)}`);
-  }
-  if (!result.options.every(({ visible }) => visible)) {
-    throw new Error(`CV options are not visible for ${label}`);
-  }
-  const [view, download] = result.options;
-  if (view.href !== '/cv/' || download.href !== CV_PDF.a4.href
-    || download.download !== CV_PDF.a4.download || download.type !== 'application/pdf') {
-    throw new Error(`CV options do not use the canonical A4 configuration for ${label}`);
-  }
-  assertNoHorizontalOverflow(result, result.clientWidth, label);
-}
-
 async function assertMobilePanel(cdp, sessionId, width, height, label) {
   const result = await evaluate(cdp, sessionId, `(() => {
     const panel = document.querySelector('.primary-nav__mobile-panel');
@@ -1299,7 +1205,7 @@ async function assertMobilePanel(cdp, sessionId, width, height, label) {
     const innerBox = inner?.getBoundingClientRect();
     const header = document.querySelector('.site-header');
     const headerBox = header?.getBoundingClientRect();
-    const options = [...(panel?.querySelectorAll('.primary-nav__mobile-list > li > a, .primary-nav__cv--mobile > summary, .primary-nav__cv-options a') ?? [])];
+    const options = [...(panel?.querySelectorAll('.primary-nav__mobile-list > li > a') ?? [])];
     return {
       position: panel ? getComputedStyle(panel).position : '',
       left: box?.left ?? -1,
@@ -1334,12 +1240,10 @@ async function assertMobilePanel(cdp, sessionId, width, height, label) {
   assertNoHorizontalOverflow(result, width, `Open mobile Home at ${label}`);
 }
 
-async function openMobileTree(cdp, sessionId) {
+async function openMobileMenu(cdp, sessionId) {
   await evaluate(cdp, sessionId, `(() => {
-    const outer = document.querySelector('[data-mobile-navigation]');
-    const inner = document.querySelector('.primary-nav__cv--mobile');
-    if (outer) outer.open = true;
-    if (inner) inner.open = true;
+    const menu = document.querySelector('[data-mobile-navigation]');
+    if (menu) menu.open = true;
   })()`);
   await sleep(35);
 }
@@ -1394,14 +1298,6 @@ async function assertSummaryDecoration(cdp, sessionId, selector, underlined, ope
   }
 }
 
-async function activeLink(cdp, sessionId) {
-  return evaluate(cdp, sessionId, `(() => ({
-    text: document.activeElement?.textContent?.trim() ?? '',
-    href: document.activeElement?.getAttribute?.('href') ?? '',
-    focusVisible: document.activeElement?.matches?.(':focus-visible') ?? false
-  }))()`);
-}
-
 async function focusSelector(cdp, sessionId, selector) {
   await evaluate(cdp, sessionId, `document.querySelector('${selector}')?.focus()`);
   await sleep(25);
@@ -1438,21 +1334,6 @@ async function clickSelector(cdp, sessionId, selector) {
   await cdp.send('DOM.enable', {}, sessionId);
   const { root } = await cdp.send('DOM.getDocument', { depth: -1 }, sessionId);
   await clickNode(cdp, sessionId, await queryNode(cdp, sessionId, root.nodeId, selector));
-  await sleep(50);
-}
-
-async function clickSelectorAt(cdp, sessionId, selector, xRatio, yRatio) {
-  await cdp.send('DOM.enable', {}, sessionId);
-  const { root } = await cdp.send('DOM.getDocument', { depth: -1 }, sessionId);
-  const box = await boxForNode(cdp, sessionId, await queryNode(cdp, sessionId, root.nodeId, selector));
-  const x = box.left + ((box.right - box.left) * xRatio);
-  const y = box.top + ((box.bottom - box.top) * yRatio);
-  await cdp.send('Input.dispatchMouseEvent', {
-    type: 'mousePressed', x, y, button: 'left', clickCount: 1
-  }, sessionId);
-  await cdp.send('Input.dispatchMouseEvent', {
-    type: 'mouseReleased', x, y, button: 'left', clickCount: 1
-  }, sessionId);
   await sleep(50);
 }
 

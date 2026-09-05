@@ -1,6 +1,4 @@
 ---
-import { CV_PDF } from '../../lib/cv-pdf.mjs';
-
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = pathname === '/';
 const isCvPage = pathname === '/cv' || pathname === '/cv/letter';
@@ -24,20 +22,7 @@ const contactHref = sectionHref('#contact');
       {isCvPage ? (
         <a href="/cv/" aria-current="page">CV</a>
       ) : (
-        <details class="primary-nav__cv primary-nav__cv--desktop" data-cv-disclosure>
-          <summary>CV</summary>
-          <ul class="primary-nav__cv-options">
-            <li><a href="/cv/">View online</a></li>
-            <li>
-              <a
-                href={CV_PDF.a4.href}
-                download={CV_PDF.a4.download}
-                type="application/pdf"
-                data-cv-download
-              >Download PDF</a>
-            </li>
-          </ul>
-        </details>
+        <a href="/cv/">CV</a>
       )}
     </li>
     <li class="primary-nav__contact"><a href={contactHref}>Contact</a></li>
@@ -56,20 +41,7 @@ const contactHref = sectionHref('#contact');
           {isCvPage ? (
             <a href="/cv/" aria-current="page">CV</a>
           ) : (
-            <details class="primary-nav__cv primary-nav__cv--mobile" data-cv-disclosure>
-              <summary>CV</summary>
-              <ul class="primary-nav__cv-options">
-                <li><a href="/cv/">View online</a></li>
-                <li>
-                  <a
-                    href={CV_PDF.a4.href}
-                    download={CV_PDF.a4.download}
-                    type="application/pdf"
-                    data-cv-download
-                  >Download PDF</a>
-                </li>
-              </ul>
-            </details>
+            <a href="/cv/">CV</a>
           )}
         </li>
         <li class="primary-nav__mobile-contact"><a href={contactHref}>Contact</a></li>
@@ -84,16 +56,8 @@ const contactHref = sectionHref('#contact');
 
   if (primaryNavigation && mobileNavigation) {
     const menuSummary = mobileNavigation.querySelector<HTMLElement>(':scope > summary');
-    const cvDisclosures = primaryNavigation.querySelectorAll<HTMLDetailsElement>('[data-cv-disclosure]');
-
-    const closeNestedCv = () => {
-      for (const disclosure of mobileNavigation.querySelectorAll<HTMLDetailsElement>('[data-cv-disclosure]')) {
-        disclosure.open = false;
-      }
-    };
 
     const closeMobileNavigation = (restoreFocus = false) => {
-      closeNestedCv();
       mobileNavigation.open = false;
       if (restoreFocus) menuSummary?.focus();
     };
@@ -106,34 +70,11 @@ const contactHref = sectionHref('#contact');
       }
     };
 
-    for (const disclosure of cvDisclosures) {
-      const summary = disclosure.querySelector<HTMLElement>(':scope > summary');
-
-      disclosure.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape' || !disclosure.open) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        disclosure.open = false;
-        summary?.focus();
-      });
-
-      disclosure.addEventListener('focusout', (event) => {
-        if (event.relatedTarget instanceof Node && !disclosure.contains(event.relatedTarget)) {
-          disclosure.open = false;
-        }
-      });
-    }
-
     mobileNavigation.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape' || !mobileNavigation.open) return;
 
       event.preventDefault();
       closeMobileNavigation(true);
-    });
-
-    mobileNavigation.addEventListener('toggle', () => {
-      if (!mobileNavigation.open) closeNestedCv();
     });
 
     for (const link of mobileNavigation.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
@@ -146,26 +87,8 @@ const contactHref = sectionHref('#contact');
       closeMobileNavigation();
     });
 
-    for (const link of primaryNavigation.querySelectorAll<HTMLAnchorElement>('[data-cv-download]')) {
-      link.addEventListener('click', () => {
-        const disclosure = link.closest<HTMLDetailsElement>('[data-cv-disclosure]');
-        if (mobileNavigation.contains(link)) {
-          closeMobileNavigation(true);
-        } else {
-          if (disclosure) disclosure.open = false;
-          disclosure?.querySelector<HTMLElement>(':scope > summary')?.focus();
-        }
-      });
-    }
-
     document.addEventListener('click', (event) => {
       if (!(event.target instanceof Node)) return;
-
-      for (const disclosure of [...cvDisclosures].reverse()) {
-        if (disclosure.open && !disclosure.contains(event.target)) {
-          closeOutsideDisclosure(disclosure);
-        }
-      }
 
       if (mobileNavigation.open && !mobileNavigation.contains(event.target)) {
         closeOutsideDisclosure(mobileNavigation);

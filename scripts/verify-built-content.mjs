@@ -76,12 +76,10 @@ assert.equal(cvLetterHtml.includes('workers.dev'), false, 'US Letter CV presents
 assert.equal(siteHtml.includes('https://andresatencio.com/cv'), false, 'Home uses an absolute public CV URL');
 assert.equal(siteHtml.includes(`href="${siteUrl}"`), false, 'Home contact should not duplicate the site URL');
 
-assert.match(siteHtml, /href="\/cv\/">View online</);
-assert.match(
-  siteHtml,
-  new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"`)
-);
-assert.match(siteHtml, />Download PDF</);
+assert.match(siteHtml, /href="\/cv\/">CV</);
+assert.equal(siteHtml.includes('>View online<'), false);
+assert.equal(siteHtml.includes('>Download PDF<'), false);
+assert.equal(siteHtml.includes(CV_PDF.a4.href), false);
 assert.equal(siteHtml.includes('>View CV</a>'), false);
 assert.equal(siteHtml.includes('>Download CV</a>'), false);
 assert.equal(siteHtml.includes('Download A4 CV'), false);
