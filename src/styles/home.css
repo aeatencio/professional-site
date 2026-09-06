@@ -68,10 +68,18 @@
     margin-top: 0;
   }
 
+  .experience-block--software {
+    padding-bottom: clamp(1rem, 2.5vw, 1.25rem);
+  }
+
+  .experience-block--software .role:last-child {
+    padding-bottom: 0.75rem;
+  }
+
   .experience-block--software > .chapter-art--notebook {
     position: static;
     width: min(48%, 14rem);
-    margin-top: 1.25rem;
+    margin-top: 0.5rem;
     margin-left: auto;
   }
 }
