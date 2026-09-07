@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/home.css';
 import projection from '../../data/professional-public-projection.v1.json';
 import { HOME_PATH, homeIdentityGraph } from '../../lib/site-identity.mjs';
+import { socialCardAlt } from '../../lib/social-card.mjs';
 
 const { shared, site } = projection;
 const { sections } = site;
@@ -23,6 +24,7 @@ const jsonLd = homeIdentityGraph({
   description={site.description}
   canonicalPath={HOME_PATH}
   ogType="profile"
+  socialCardAlt={socialCardAlt(shared)}
   jsonLd={jsonLd}
 >
   <main id="main">

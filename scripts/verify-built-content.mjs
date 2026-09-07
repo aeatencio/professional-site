@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { CV_PDF, PUBLIC_SITE_ORIGIN, verifyCvPdfs } from '../lib/cv-pdf.mjs';
+import { SOCIAL_CARD, socialCardAlt, verifySocialCard } from '../lib/social-card.mjs';
 import { printableCvFingerprint, stylesheetHrefsFromHtml } from '../lib/printable-cv.mjs';
 
 const projection = JSON.parse(await readFile(
@@ -117,6 +118,79 @@ assert.match(
 );
 assert.match(siteHtml, /property="og:url" content="https:\/\/andresatencio\.com\/"/);
 assert.match(siteHtml, /property="og:type" content="profile"/);
+
+const socialCardUrl = `${PUBLIC_SITE_ORIGIN}${SOCIAL_CARD.href}`;
+const socialCardDescription = socialCardAlt(projection.shared);
+
+await verifySocialCard({ dist: true });
+
+const homeSocialTags = [
+  `property="og:image" content="${socialCardUrl}"`,
+  `property="og:image:type" content="${SOCIAL_CARD.type}"`,
+  `property="og:image:width" content="${SOCIAL_CARD.width}"`,
+  `property="og:image:height" content="${SOCIAL_CARD.height}"`,
+  `property="og:image:alt" content="${socialCardDescription}"`,
+  `property="og:site_name" content="${projection.shared.name}"`,
+  'name="twitter:card" content="summary_large_image"',
+  `name="twitter:image" content="${socialCardUrl}"`,
+  `name="twitter:image:alt" content="${socialCardDescription}"`
+];
+
+for (const tag of homeSocialTags) {
+  const occurrences = siteHtml.split(tag).length - 1;
+  assert.equal(occurrences, 1, `Built Home must emit ${tag} exactly once`);
+}
+
+assert.equal(
+  siteHtml.includes('name="twitter:card" content="summary"'),
+  false,
+  'Home still declares the small twitter:card'
+);
+assert.equal(
+  siteHtml.includes(`content="${SOCIAL_CARD.href}"`),
+  false,
+  'Home declares a relative social image URL'
+);
+assert.ok(
+  siteHtml.includes(`content="${socialCardUrl}"`),
+  'Home social image URL is not absolute'
+);
+
+// The CV routes stay on the small summary card: their built head feeds the
+// printable-CV fingerprint, so metadata that never reaches paper would force a
+// PDF regeneration. Whatever they declare must at least not contradict itself.
+for (const [label, html] of [['CV', cvHtml], ['US Letter CV', cvLetterHtml]]) {
+  assert.equal(
+    (html.match(/property="og:image"/g) ?? []).length,
+    0,
+    `Built ${label} declares an og:image without the Home social card block`
+  );
+  assert.equal(
+    html.includes('summary_large_image'),
+    false,
+    `Built ${label} promises a large image card it does not provide`
+  );
+  assert.equal(
+    (html.match(/name="twitter:card"/g) ?? []).length,
+    1,
+    `Built ${label} must declare exactly one twitter:card`
+  );
+}
+
+for (const [label, html] of [['Home', siteHtml], ['CV', cvHtml], ['US Letter CV', cvLetterHtml]]) {
+  for (const property of ['og:title', 'og:description', 'og:url', 'og:type']) {
+    assert.equal(
+      (html.match(new RegExp(`property="${property}"`, 'g')) ?? []).length,
+      1,
+      `Built ${label} must declare exactly one ${property}`
+    );
+  }
+  assert.equal(
+    (html.match(/rel="canonical"/g) ?? []).length,
+    1,
+    `Built ${label} must declare exactly one canonical`
+  );
+}
 assert.match(cvHtml, /property="og:url" content="https:\/\/andresatencio\.com\/cv\/"/);
 assert.match(cvLetterHtml, /property="og:url" content="https:\/\/andresatencio\.com\/cv\/"/);
 assert.match(siteHtml, /<h1 class="identity" id="site-identity">/);
