@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { CV_PDF, PUBLIC_SITE_ORIGIN, verifyCvPdfs } from '../lib/cv-pdf.mjs';
+import { CV_PDF, CV_PREVIEW, PUBLIC_SITE_ORIGIN, verifyCvPdfs, verifyCvPreview } from '../lib/cv-pdf.mjs';
 import { SOCIAL_CARD, socialCardAlt, verifySocialCard } from '../lib/social-card.mjs';
 import { printableCvFingerprint, stylesheetHrefsFromHtml } from '../lib/printable-cv.mjs';
 
@@ -74,10 +74,49 @@ assert.ok(cvHtml.includes(visibleSiteUrl), 'Built A4 CV is missing the visible s
 assert.ok(cvLetterHtml.includes(visibleSiteUrl), 'Built US Letter CV is missing the visible site URL');
 assert.equal(cvHtml.includes('workers.dev'), false, 'A4 CV presents workers.dev as public identity');
 assert.equal(cvLetterHtml.includes('workers.dev'), false, 'US Letter CV presents workers.dev as public identity');
-assert.match(siteHtml, /href="\/cv\/">CV</);
+assert.match(siteHtml, /<section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">/);
+assert.match(siteHtml, /<h2 id="cv-heading">Curriculum vitae<\/h2>/);
+assert.match(siteHtml, /<a class="cv-sheet" href="\/cv\/">/);
+assert.match(siteHtml, />Read the full CV<\/span>/);
+assert.match(
+  siteHtml,
+  new RegExp(`<img src="${CV_PREVIEW.href}" alt="" width="${CV_PREVIEW.width}" height="${CV_PREVIEW.height}"`)
+);
+assert.match(siteHtml, new RegExp(`src="${CV_PREVIEW.href}"[^>]*loading="lazy"`));
+assert.equal(
+  /<img[^>]*cv-a4-preview\.png[^>]*alt="[^"]+"/.test(siteHtml),
+  false,
+  'The CV miniature must stay decorative'
+);
+assert.match(
+  siteHtml,
+  new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"[^>]*>A4 PDF<`)
+);
+assert.match(
+  siteHtml,
+  new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"[^>]*>US Letter PDF<`)
+);
+const homeCvIndex = siteHtml.indexOf('id="cv"');
+assert.ok(
+  siteHtml.indexOf('id="background"') < homeCvIndex
+    && homeCvIndex < siteHtml.indexOf('id="working-together"'),
+  'The Home CV section must sit between Background and Working together'
+);
+assert.match(siteHtml, /<a href="#cv">CV<\/a>/, 'Home navigation must reach the CV section');
+assert.equal(
+  (siteHtml.match(/href="\/cv\/">CV</g) ?? []).length,
+  1,
+  'Only the Home footer colophon links straight to /cv/ with the CV label'
+);
+assert.match(cvHtml, /href="\/cv\/" aria-current="page">CV</);
+assert.match(cvLetterHtml, /href="\/cv\/" aria-current="page">CV</);
+assert.equal(cvHtml.includes('href="#cv"'), false, 'CV routes must not offer a same-page CV anchor');
+assert.equal(cvHtml.includes('class="cv-sheet"'), false, 'The CV miniature belongs to Home only');
+assert.equal(cvLetterHtml.includes('class="cv-sheet"'), false);
+assert.equal(cvHtml.includes(CV_PREVIEW.href), false, 'CV routes must not embed their own miniature');
+assert.equal(cvLetterHtml.includes(CV_PREVIEW.href), false);
 assert.equal(siteHtml.includes('>View online<'), false);
 assert.equal(siteHtml.includes('>Download PDF<'), false);
-assert.equal(siteHtml.includes(CV_PDF.a4.href), false);
 assert.equal(siteHtml.includes('>View CV</a>'), false);
 assert.equal(siteHtml.includes('>Download CV</a>'), false);
 assert.equal(siteHtml.includes('Download A4 CV'), false);
@@ -254,6 +293,7 @@ assert.match(
 );
 
 await verifyCvPdfs({ dist: true });
+await verifyCvPreview({ dist: true });
 
 const fingerprint = JSON.parse(await readFile(
   new URL('../scripts/cv-pdf-fingerprint.json', import.meta.url),

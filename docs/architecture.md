@@ -24,9 +24,12 @@ The projection is organized around the real artifacts:
   site’s global header and footer. `/cv/` is the canonical responsive web
   view. `/cv/letter/` exists so US Letter print and PDF generation keep a
   stable route; on screen it matches `/cv/`. A4 and US Letter are paper
-  formats for print and download, not web layout variants. `CV` in the header
-  and footer is a direct link to `/cv/`. On the CV routes, `CV` is the
-  current section and download actions sit in the document flow. Print and
+  formats for print and download, not web layout variants. On Home, `CV` in
+  the header navigates to a section between Background and Working together.
+  That section presents a decorative miniature captured from the same A4 print
+  rendering, a link to `/cv/`, and direct links to both PDFs. The footer keeps
+  a compact direct link to `/cv/`. On the CV routes, `CV` is the current
+  section and download actions sit in the document flow. Print and
   PDF output exclude the global header, global footer, skip link and web
   download actions; they contain only the document. The canonical public
   origin is `https://andresatencio.com`; on-site navigation stays on relative
@@ -38,7 +41,9 @@ The projection is organized around the real artifacts:
   fingerprint is conservative: on-screen-only actions, skip-link markup,
   screen-only CSS in a shared stylesheet, or other referenced local assets can
   force a reprint even when print output would not change. That false-positive
-  cost is preferred to a heuristic that lets a stale PDF pass.
+  cost is preferred to a heuristic that lets a stale PDF pass. The same
+  generation command captures the decorative preview under print media and
+  records its digest and dimensions beside the PDF fingerprints.
 
 It is not a public fact registry and contains no fact IDs, approvals,
 permissions, editorial states, actors or audit timestamps. Presence in the

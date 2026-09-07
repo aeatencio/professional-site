@@ -56,7 +56,7 @@ test('Experience notebook follows the complete software role list and recomposes
   );
 });
 
-test('Primary navigation uses a direct CV link and progressive enhancement', async () => {
+test('Primary navigation keeps CV in the Home journey and marks the full CV route current', async () => {
   const [nav, layout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
@@ -98,9 +98,10 @@ test('Primary navigation uses a direct CV link and progressive enhancement', asy
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
   assert.match(nav, /isCvPage/);
-  assert.match(nav, /aria-current="page">CV</);
-  assert.equal((nav.match(/href="\/cv\/">CV</g) ?? []).length, 2);
-  assert.equal((nav.match(/href="\/cv\/" aria-current="page">CV</g) ?? []).length, 2);
+  assert.match(nav, /isCvPage \? CV_PATH : sectionHref\('#cv'\)/);
+  assert.match(nav, /aria-current=\{item\.current \? 'page' : undefined\}/);
+  assert.ok(nav.indexOf("sectionHref('#background')") < nav.indexOf("sectionHref('#cv')"));
+  assert.ok(nav.indexOf("sectionHref('#cv')") < nav.indexOf("sectionHref('#working-together')"));
   assert.equal(nav.includes('View online'), false);
   assert.equal(nav.includes('Download PDF'), false);
   assert.equal(nav.includes('>View CV</a>'), false);
@@ -193,8 +194,8 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /Escape/);
   assert.match(verifier, /summaryFocused/);
   assert.match(verifier, /focusInsideClosedDisclosure/);
-  assert.match(verifier, /primary-nav__desktop-list a\[href="\/cv\/"\]/);
-  assert.match(verifier, /primary-nav__mobile-list a\[href="\/cv\/"\]/);
+  assert.match(verifier, /primary-nav__desktop-list a\[href="#cv"\]/);
+  assert.match(verifier, /primary-nav__mobile-list a\[href="#cv"\]/);
   assert.equal(verifier.includes('assertCvOptions'), false);
   assert.match(verifier, /View online/);
   assert.match(verifier, /Download PDF/);
@@ -211,6 +212,7 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);
   assert.match(verifier, /#background/);
+  assert.match(verifier, /#cv/);
   assert.match(verifier, /#working-together/);
   assert.match(verifier, /#contact/);
   assert.match(verifier, /#main/);

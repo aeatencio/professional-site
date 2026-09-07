@@ -1,12 +1,15 @@
 ---
+import { CV_PATH } from '../../lib/site-identity.mjs';
+
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = pathname === '/';
 const isCvPage = pathname === '/cv' || pathname === '/cv/letter';
 const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 const sectionItems = [
-  { href: sectionHref('#experience'), label: 'Experience' },
-  { href: sectionHref('#background'), label: 'Background' },
-  { href: sectionHref('#working-together'), label: 'Working together' }
+  { href: sectionHref('#experience'), label: 'Experience', current: false },
+  { href: sectionHref('#background'), label: 'Background', current: false },
+  { href: isCvPage ? CV_PATH : sectionHref('#cv'), label: 'CV', current: isCvPage },
+  { href: sectionHref('#working-together'), label: 'Working together', current: false }
 ];
 const contactHref = sectionHref('#contact');
 ---
@@ -15,16 +18,9 @@ const contactHref = sectionHref('#contact');
   <ul class="primary-nav__desktop-list">
     {sectionItems.map((item) => (
       <li>
-        <a href={item.href}>{item.label}</a>
+        <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
       </li>
     ))}
-    <li>
-      {isCvPage ? (
-        <a href="/cv/" aria-current="page">CV</a>
-      ) : (
-        <a href="/cv/">CV</a>
-      )}
-    </li>
     <li class="primary-nav__contact"><a href={contactHref}>Contact</a></li>
   </ul>
 
@@ -34,16 +30,9 @@ const contactHref = sectionHref('#contact');
       <ul class="primary-nav__mobile-list">
         {sectionItems.map((item) => (
           <li>
-            <a href={item.href}>{item.label}</a>
+            <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
           </li>
         ))}
-        <li>
-          {isCvPage ? (
-            <a href="/cv/" aria-current="page">CV</a>
-          ) : (
-            <a href="/cv/">CV</a>
-          )}
-        </li>
         <li class="primary-nav__mobile-contact"><a href={contactHref}>Contact</a></li>
       </ul>
     </div>

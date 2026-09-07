@@ -1,6 +1,6 @@
 import astroConfig from '../astro.config.mjs';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
-import { CV_PDF, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
+import { CV_PDF, CV_PREVIEW, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
 import {
   evaluate,
   findBrowser,
@@ -38,29 +38,35 @@ if (new URL(astroConfig.site).origin !== PUBLIC_SITE_ORIGIN) {
 
 await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
   const homeUrl = new URL('/', origin).href;
+  console.log('Verifying built routes and Home document');
   await assertHomeDocument(origin, homeUrl);
 
+  console.log('Verifying desktop Home navigation');
   for (const width of desktopWidths) {
     await assertDesktopNavigation(cdp, homeUrl, width);
   }
 
+  console.log('Verifying mobile Home navigation');
   for (const viewport of mobileViewports) {
     await assertMobileNavigation(cdp, homeUrl, viewport);
   }
 
+  console.log('Verifying no-JavaScript Home navigation');
   for (const width of noJavaScriptWidths) {
     await assertNoJavaScriptNavigation(cdp, homeUrl, width);
   }
 
+  console.log('Verifying directional header behavior');
   for (const viewport of directionalViewports) {
     await assertDirectionalHeader(cdp, homeUrl, viewport);
   }
 
+  console.log('Verifying footer and CV destinations');
   await assertReducedMotion(cdp, homeUrl);
   for (const { width, height, mobile } of footerViewports) {
     await assertFooter(cdp, homeUrl, width, height, mobile);
   }
-  await assertPrimaryCvNavigation(cdp, homeUrl);
+  await assertHomeCvNavigation(cdp, homeUrl);
   await assertCvSitePages(cdp, origin);
   await assertFooterNavigation(cdp, homeUrl);
 });
@@ -73,7 +79,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
     const header = document.querySelector('.site-header');
     const desktop = document.querySelector('.primary-nav__desktop-list');
     const mobile = document.querySelector('[data-mobile-navigation]');
-    const cv = document.querySelector('.primary-nav__desktop-list a[href="/cv/"]');
+    const cv = document.querySelector('.primary-nav__desktop-list a[href="#cv"]');
     const topLevel = [...(desktop?.children ?? [])].map((item) =>
       item.querySelector(':scope > a')?.textContent?.trim() ?? ''
     );
@@ -111,15 +117,15 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   if (JSON.stringify(initial.topLevel) !== JSON.stringify([
     'Experience',
     'Background',
-    'Working together',
     'CV',
+    'Working together',
     'Contact'
   ])) {
     throw new Error(`Desktop top-level navigation is incorrect at ${width}px: ${initial.topLevel.join(', ')}`);
   }
-  if (initial.cvHref !== '/cv/' || initial.cvText !== 'CV' || initial.cvCurrent !== null
+  if (initial.cvHref !== '#cv' || initial.cvText !== 'CV' || initial.cvCurrent !== null
     || initial.desktopDetails !== 0 || initial.viewOnline || initial.downloadPdf) {
-    throw new Error(`Desktop CV is not a direct /cv/ link at ${width}px: ${JSON.stringify({
+    throw new Error(`Desktop CV does not target the Home section at ${width}px: ${JSON.stringify({
       href: initial.cvHref,
       text: initial.cvText,
       current: initial.cvCurrent,
@@ -136,6 +142,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   for (const [hash, label] of [
     ['#experience', 'Experience'],
     ['#background', 'Background'],
+    ['#cv', 'CV'],
     ['#working-together', 'Working together'],
     ['#contact', 'Contact']
   ]) {
@@ -143,6 +150,9 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
     await sleep(75);
     const sticky = await anchorMetrics(cdp, sessionId, hash);
     assertAnchorNearHeader(sticky, hash, `Desktop ${label} at ${width}px`);
+    if (hash === '#cv') {
+      await assertHomeCvSection(cdp, sessionId, { width, height: 900 }, `desktop ${width}px`);
+    }
   }
 
   await cdp.send('Target.closeTarget', { targetId });
@@ -195,7 +205,7 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
   await assertMobilePanel(cdp, sessionId, width, height, label);
 
   const cvItem = await evaluate(cdp, sessionId, `(() => {
-    const cv = document.querySelector('.primary-nav__mobile-list a[href="/cv/"]');
+    const cv = document.querySelector('.primary-nav__mobile-list a[href="#cv"]');
     const nested = document.querySelector('[data-cv-disclosure], .primary-nav__cv');
     const nav = document.querySelector('.primary-nav');
     return {
@@ -207,9 +217,9 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
       downloadPdf: Boolean(nav?.innerHTML.includes('Download PDF'))
     };
   })()`);
-  if (cvItem.text !== 'CV' || cvItem.href !== '/cv/' || cvItem.current !== null
+  if (cvItem.text !== 'CV' || cvItem.href !== '#cv' || cvItem.current !== null
     || cvItem.nested || cvItem.viewOnline || cvItem.downloadPdf) {
-    throw new Error(`Mobile CV is not a direct /cv/ link at ${label}: ${JSON.stringify(cvItem)}`);
+    throw new Error(`Mobile CV does not target the Home section at ${label}: ${JSON.stringify(cvItem)}`);
   }
 
   await clickSelector(cdp, sessionId, '.identity-mark');
@@ -236,6 +246,7 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
     ['.identity a[href="#home"]', '#home', 'identity'],
     ['[data-mobile-navigation] a[href="#experience"]', '#experience', 'Experience'],
     ['[data-mobile-navigation] a[href="#background"]', '#background', 'Background'],
+    ['[data-mobile-navigation] a[href="#cv"]', '#cv', 'CV'],
     ['[data-mobile-navigation] a[href="#working-together"]', '#working-together', 'Working together'],
     ['[data-mobile-navigation] a[href="#contact"]', '#contact', 'Contact']
   ]) {
@@ -254,6 +265,9 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
     }
     const anchor = await anchorMetrics(cdp, sessionId, hash);
     assertAnchorNearHeader(anchor, hash, `Mobile ${name} at ${label}`);
+    if (hash === '#cv') {
+      await assertHomeCvSection(cdp, sessionId, { width, height }, `mobile ${label}`);
+    }
   }
 
   await cdp.send('Target.closeTarget', { targetId });
@@ -495,11 +509,11 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
       throw new Error(`No-JavaScript mobile panel is missing ${label} at ${width}px`);
     }
   }
-  if (!outerHTML.includes('href="/cv/"')
+  if (!outerHTML.includes('href="#cv"')
     || outerHTML.includes('View online')
     || outerHTML.includes('Download PDF')
     || outerHTML.includes(`href="${CV_PDF.a4.href}"`)) {
-    throw new Error(`No-JavaScript CV destination is not a direct /cv/ link at ${width}px`);
+    throw new Error(`No-JavaScript CV destination does not target the Home section at ${width}px`);
   }
   await cdp.send('Target.closeTarget', { targetId: first.targetId });
 
@@ -509,35 +523,42 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
   const secondDetailsId = await queryNode(cdp, second.sessionId, root.nodeId, '[data-mobile-navigation]');
   const secondSummaryId = await queryNode(cdp, second.sessionId, secondDetailsId, ':scope > summary');
   await clickNode(cdp, second.sessionId, secondSummaryId);
-  const backgroundId = await queryNode(cdp, second.sessionId, secondDetailsId, 'a[href="#background"]');
-  await clickNode(cdp, second.sessionId, backgroundId);
+  const cvLinkId = await queryNode(cdp, second.sessionId, secondDetailsId, 'a[href="#cv"]');
+  await clickNode(cdp, second.sessionId, cvLinkId);
   await sleep(100);
 
   const history = await cdp.send('Page.getNavigationHistory', {}, second.sessionId);
   const currentUrl = history.entries.find((entry) => entry.id === history.currentIndex)?.url
     ?? history.entries[history.currentIndex]?.url
     ?? '';
-  const targetId = await queryNode(cdp, second.sessionId, root.nodeId, '#background');
+  const targetId = await queryNode(cdp, second.sessionId, root.nodeId, '#cv');
   const secondPanelId = await queryNode(cdp, second.sessionId, secondDetailsId, '.primary-nav__mobile-panel');
   const targetBox = await boxForNode(cdp, second.sessionId, targetId);
   const panelBox = await boxForNode(cdp, second.sessionId, secondPanelId);
-  if (!currentUrl.endsWith('/#background')) {
-    throw new Error(`No-JavaScript Background reached ${currentUrl} at ${width}px`);
+  if (!currentUrl.endsWith('/#cv')) {
+    throw new Error(`No-JavaScript CV reached ${currentUrl} at ${width}px`);
   }
   if (targetBox.top < -1 || targetBox.top > 32 || targetBox.bottom <= 0) {
-    throw new Error(`No-JavaScript Background is not immediately visible at ${width}px: ${JSON.stringify(targetBox)}`);
+    throw new Error(`No-JavaScript CV is not immediately visible at ${width}px: ${JSON.stringify(targetBox)}`);
   }
   if (panelBox.bottom > targetBox.top + 1) {
-    throw new Error(`No-JavaScript panel overlays Background at ${width}px`);
+    throw new Error(`No-JavaScript panel overlays CV at ${width}px`);
   }
 
   await cdp.send('Target.closeTarget', { targetId: second.targetId });
-  console.log(`No-JavaScript native Menu and in-flow Background navigation verified at ${width}px`);
+  console.log(`No-JavaScript native Menu and in-flow CV navigation verified at ${width}px`);
 }
 
-async function assertPrimaryCvNavigation(cdp, homeUrl) {
+async function assertHomeCvNavigation(cdp, homeUrl) {
   const desktop = await openAt(cdp, homeUrl, 1366, 900, false);
-  await activateByEnter(cdp, desktop.sessionId, '.primary-nav__desktop-list a[href="/cv/"]');
+  await activateByEnter(cdp, desktop.sessionId, '.primary-nav__desktop-list a[href="#cv"]');
+  await sleep(100);
+  assertAnchorNearHeader(
+    await anchorMetrics(cdp, desktop.sessionId, '#cv'),
+    '#cv',
+    'Desktop Home CV'
+  );
+  await activateByEnter(cdp, desktop.sessionId, '.cv-sheet[href="/cv/"]');
   await sleep(150);
   const desktopResult = await evaluate(cdp, desktop.sessionId, `(() => ({
     pathname: location.pathname,
@@ -562,7 +583,18 @@ async function assertPrimaryCvNavigation(cdp, homeUrl) {
 
   const mobile = await openAt(cdp, homeUrl, 390, 844, true);
   await clickSelector(cdp, mobile.sessionId, '[data-mobile-navigation] > summary');
-  await activateByEnter(cdp, mobile.sessionId, '.primary-nav__mobile-list a[href="/cv/"]');
+  await activateByEnter(cdp, mobile.sessionId, '.primary-nav__mobile-list a[href="#cv"]');
+  await sleep(100);
+  assertAnchorNearHeader(
+    await anchorMetrics(cdp, mobile.sessionId, '#cv'),
+    '#cv',
+    'Mobile Home CV'
+  );
+  const mobileMenu = await disclosureState(cdp, mobile.sessionId, '[data-mobile-navigation]');
+  if (mobileMenu.open || mobileMenu.focusInsideClosedContent) {
+    throw new Error('Mobile CV navigation did not close Menu cleanly');
+  }
+  await activateByEnter(cdp, mobile.sessionId, '.cv-sheet[href="/cv/"]');
   await sleep(150);
   const mobileResult = await evaluate(cdp, mobile.sessionId, `(() => ({
     pathname: location.pathname,
@@ -584,7 +616,99 @@ async function assertPrimaryCvNavigation(cdp, homeUrl) {
     throw new Error(`Mobile CV link did not reach the CV page in the site shell: ${JSON.stringify(mobileResult)}`);
   }
   await cdp.send('Target.closeTarget', { targetId: mobile.targetId });
-  console.log('Primary CV keyboard navigation and shared CV site shell verified');
+  console.log('Home CV anchor, section actions, keyboard navigation and shared CV site shell verified');
+}
+
+async function assertHomeCvSection(cdp, sessionId, viewport, label) {
+  await evaluate(cdp, sessionId, `(async () => {
+    const image = document.querySelector('.cv-sheet img');
+    if (image && !image.complete) await image.decode();
+  })()`);
+  const result = await evaluate(cdp, sessionId, `(() => {
+    const section = document.querySelector('#cv');
+    const body = section?.querySelector('.chapter__body');
+    const plate = section?.querySelector('.cv-plate');
+    const sheet = section?.querySelector('.cv-sheet');
+    const image = sheet?.querySelector('img');
+    const formats = section?.querySelector('.cv-formats');
+    const background = document.querySelector('#background');
+    const working = document.querySelector('#working-together');
+    const box = (element) => {
+      const rect = element?.getBoundingClientRect();
+      return rect ? { top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left, width: rect.width, height: rect.height } : null;
+    };
+    return {
+      section: box(section),
+      body: box(body),
+      plate: box(plate),
+      image: box(image),
+      formats: box(formats),
+      background: box(background),
+      working: box(working),
+      heading: section?.querySelector('h2')?.textContent?.trim() ?? '',
+      sheetHref: sheet?.getAttribute('href') ?? '',
+      sheetText: sheet?.textContent?.replace(/\s+/g, ' ').trim() ?? '',
+      imageSrc: image?.getAttribute('src') ?? '',
+      imageAlt: image?.getAttribute('alt'),
+      imageWidth: image?.getAttribute('width') ?? '',
+      imageHeight: image?.getAttribute('height') ?? '',
+      imageNaturalWidth: image?.naturalWidth ?? 0,
+      imageNaturalHeight: image?.naturalHeight ?? 0,
+      imageLoading: image?.getAttribute('loading') ?? '',
+      downloadLinks: [...(formats?.querySelectorAll('a') ?? [])].map((link) => ({
+        text: link.textContent?.trim() ?? '',
+        href: link.getAttribute('href') ?? '',
+        download: link.getAttribute('download'),
+        type: link.getAttribute('type')
+      })),
+      embeddedDocument: Boolean(section?.querySelector('iframe, object, embed')),
+      ...window.__layoutMetrics()
+    };
+  })()`);
+
+  if (!result.section || !result.body || !result.plate || !result.image || !result.formats) {
+    throw new Error(`Home CV section is incomplete at ${label}: ${JSON.stringify(result)}`);
+  }
+  if (result.heading !== 'Curriculum vitae' || result.sheetHref !== '/cv/'
+    || !result.sheetText.includes('Read the full CV') || result.embeddedDocument) {
+    throw new Error(`Home CV semantics are incorrect at ${label}: ${JSON.stringify(result)}`);
+  }
+  if (result.imageSrc !== CV_PREVIEW.href || result.imageAlt !== ''
+    || result.imageWidth !== String(CV_PREVIEW.width)
+    || result.imageHeight !== String(CV_PREVIEW.height)
+    || result.imageNaturalWidth !== CV_PREVIEW.width
+    || result.imageNaturalHeight !== CV_PREVIEW.height
+    || result.imageLoading !== 'lazy') {
+    throw new Error(`Home CV preview is stale or not decorative at ${label}: ${JSON.stringify(result)}`);
+  }
+  const expectedDownloads = [CV_PDF.a4, CV_PDF.letter].map((pdf) => ({
+    text: pdf.format === 'a4' ? 'A4 PDF' : 'US Letter PDF',
+    href: pdf.href,
+    download: pdf.download,
+    type: 'application/pdf'
+  }));
+  if (JSON.stringify(result.downloadLinks) !== JSON.stringify(expectedDownloads)) {
+    throw new Error(`Home CV download actions are incorrect at ${label}: ${JSON.stringify(result.downloadLinks)}`);
+  }
+  const ratio = result.image.height / result.image.width;
+  if (result.image.width < 220 || result.image.width > 340 || Math.abs(ratio - (CV_PREVIEW.height / CV_PREVIEW.width)) > 0.02) {
+    throw new Error(`Home CV preview scale is unreasonable at ${label}: ${JSON.stringify(result.image)}`);
+  }
+  if (result.background.bottom > result.section.top + 1 || result.section.bottom > result.working.top + 1) {
+    throw new Error(`Home CV section is outside the Background to Working together sequence at ${label}`);
+  }
+  if (viewport.width > 864) {
+    if (result.body.right >= result.plate.left || result.body.top > result.plate.bottom) {
+      throw new Error(`Home CV desktop columns are unbalanced or overlapping at ${label}: ${JSON.stringify(result)}`);
+    }
+  } else if (result.plate.top < result.body.bottom - 1) {
+    throw new Error(`Home CV mobile composition did not reflow below its introduction at ${label}: ${JSON.stringify(result)}`);
+  }
+  if (result.formats.top < result.image.bottom || result.plate.left < result.section.left - 1
+    || result.plate.right > result.section.right + 1) {
+    throw new Error(`Home CV document or actions are misaligned at ${label}: ${JSON.stringify(result)}`);
+  }
+  assertNoHorizontalOverflow(result, viewport.width, `Home CV section at ${label}`);
 }
 
 async function assertCvSitePages(cdp, origin) {
@@ -695,6 +819,10 @@ function cvSnapshotScript(includeLayoutMetrics) {
         ?? '',
       backgroundHref: document.querySelector('.primary-nav a[href="/#background"]')?.getAttribute('href')
         ?? '',
+      cvHref: document.querySelector('.primary-nav a[href="/cv/"]')?.getAttribute('href')
+        ?? '',
+      workingHref: document.querySelector('.primary-nav a[href="/#working-together"]')?.getAttribute('href')
+        ?? '',
       contactHref: document.querySelector('.primary-nav a[href="/#contact"]')?.getAttribute('href')
         ?? '',
       canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '',
@@ -772,10 +900,13 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
     })}`);
   }
   if (result.experienceHref !== '/#experience' || result.backgroundHref !== '/#background'
+    || result.cvHref !== '/cv/' || result.workingHref !== '/#working-together'
     || result.contactHref !== '/#contact') {
     throw new Error(`${label} does not keep Home section destinations: ${JSON.stringify({
       experienceHref: result.experienceHref,
       backgroundHref: result.backgroundHref,
+      cvHref: result.cvHref,
+      workingHref: result.workingHref,
       contactHref: result.contactHref
     })}`);
   }
@@ -976,11 +1107,12 @@ function assertEquivalentScreen(a, b, label) {
 }
 
 async function assertHomeDocument(origin, url) {
-  const [response, cvResponse, letterResponse, pdfResponse] = await Promise.all([
+  const [response, cvResponse, letterResponse, pdfResponse, previewResponse] = await Promise.all([
     fetch(url),
     fetch(new URL('/cv/', origin)),
     fetch(new URL('/cv/letter/', origin)),
-    fetch(new URL(CV_PDF.a4.href, origin))
+    fetch(new URL(CV_PDF.a4.href, origin)),
+    fetch(new URL(CV_PREVIEW.href, origin))
   ]);
   if (response.status !== 200 || !(response.headers.get('content-type') ?? '').includes('text/html')) {
     throw new Error(`Home returned HTTP ${response.status} with an invalid content type`);
@@ -997,8 +1129,14 @@ async function assertHomeDocument(origin, url) {
   }
   if (html.includes('>View online<') || html.includes('>Download PDF<')
     || html.includes('>View CV<') || html.includes('>Download CV<')
-    || (html.match(/href="\/cv\/">CV</g) ?? []).length !== 3) {
-    throw new Error('Home document does not contain a direct CV link in header and footer');
+    || (html.match(/href="#cv">CV</g) ?? []).length !== 2
+    || (html.match(/href="\/cv\/">CV</g) ?? []).length !== 1) {
+    throw new Error('Home document does not separate its CV section navigation from the footer link');
+  }
+  if (!html.includes('<section id="cv" class="chapter chapter--cv"')
+    || !html.includes(`<img src="${CV_PREVIEW.href}" alt=""`)
+    || !html.includes('<span class="cv-sheet__label">Read the full CV</span>')) {
+    throw new Error('Home document is missing the integrated CV section or decorative preview');
   }
   const footerHtml = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
   if (!footerHtml.includes(`<p>${projection.shared.name}</p>`)
@@ -1033,6 +1171,9 @@ async function assertHomeDocument(origin, url) {
   const pdfBytes = new Uint8Array(await pdfResponse.arrayBuffer()).subarray(0, 5);
   if (!pdfResponse.ok || new TextDecoder().decode(pdfBytes) !== '%PDF-') {
     throw new Error('A4 PDF download does not resolve to the built A4 PDF');
+  }
+  if (!previewResponse.ok || previewResponse.headers.get('content-type') !== 'image/png') {
+    throw new Error('Home CV preview does not resolve to a PNG');
   }
 }
 
