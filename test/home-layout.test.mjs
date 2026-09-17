@@ -56,6 +56,44 @@ test('Experience notebook follows the complete software role list and recomposes
   );
 });
 
+test('Home presents CV as a compact semantic interlude without preview infrastructure', async () => {
+  const [page, homeCss, cvPdf, cvTypes, generator, fingerprint] = await Promise.all([
+    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/cv-pdf.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/cv-pdf.d.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/generate-cv-pdfs.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/cv-pdf-fingerprint.json', import.meta.url), 'utf8')
+  ]);
+
+  const backgroundIndex = page.indexOf('<section id="background"');
+  const cvIndex = page.indexOf('<section id="cv"');
+  const workingIndex = page.indexOf('<section id="working-together"');
+  assert.ok(backgroundIndex >= 0 && backgroundIndex < cvIndex && cvIndex < workingIndex);
+  const cvSection = page.slice(cvIndex, workingIndex);
+  assert.match(page, /<section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">/);
+  assert.match(page, /<h2 id="cv-heading">\{sections\.cv\.heading\}<\/h2>/);
+  assert.match(page, /sections\.cv\.paragraphs\.map/);
+  assert.match(page, /class="cv-band__read" href=\{CV_PATH\}/);
+  assert.equal((page.match(/class="cv-band__downloads"/g) ?? []).length, 1);
+  assert.equal((page.match(/type="application\/pdf"/g) ?? []).length, 2);
+  assert.equal((page.match(/aria-label="Download the CV as an? [^"]+ PDF"/g) ?? []).length, 2);
+  assert.equal(cvSection.includes('<img'), false);
+
+  assert.match(homeCss, /\.chapter--cv \{[\s\S]*?display:\s*block/);
+  assert.match(homeCss, /\.cv-band \{[\s\S]*?display:\s*grid/);
+  assert.match(homeCss, /@media \(max-width: 54rem\)[\s\S]*?\.cv-band \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
+
+  for (const source of [page, homeCss, cvPdf, cvTypes, generator, fingerprint]) {
+    assert.equal(source.includes('CV_PREVIEW'), false);
+    assert.equal(source.includes('cv-a4-preview.png'), false);
+    assert.equal(source.includes('cv-sheet'), false);
+    assert.equal(source.includes('cv-plate'), false);
+    assert.equal(source.includes('captureCvPreview'), false);
+  }
+  assert.equal(generator.includes('Page.captureScreenshot'), false);
+});
+
 test('Primary navigation keeps CV in the Home journey and marks the full CV route current', async () => {
   const [nav, layout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
@@ -171,6 +209,7 @@ test('Layout verification covers responsive navigation and deployment runs it', 
 
   assert.match(pkg, /"layout:check": "npm run build && node scripts\/verify-home-overflow\.mjs"/);
   assert.match(verifier, /1024/);
+  assert.match(verifier, /1025/);
   assert.match(verifier, /768/);
   assert.match(verifier, /390/);
   assert.match(verifier, /320/);

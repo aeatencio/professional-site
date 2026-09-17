@@ -4,14 +4,11 @@ import test from 'node:test';
 import astroConfig from '../astro.config.mjs';
 import {
   CV_PDF,
-  CV_PREVIEW,
   PUBLIC_SITE_ORIGIN,
   inspectPdf,
-  inspectPng,
   printToPdfParams,
   repoPath,
-  verifyCvPdfs,
-  verifyCvPreview
+  verifyCvPdfs
 } from '../lib/cv-pdf.mjs';
 
 test('CV routes and downloads keep distinct destinations', () => {
@@ -54,9 +51,7 @@ test('PDF generator validates the live CV before printing', async () => {
   assert.match(generator, /assertExpectedDocument/);
   assert.match(generator, /assertLoadedCv/);
   assert.match(generator, /assertPrintChromeHidden/);
-  assert.match(generator, /captureCvPreview/);
   assert.match(generator, /Emulation\.setEmulatedMedia/);
-  assert.match(generator, /Page\.captureScreenshot/);
   assert.match(generator, /printToPdfParams\(pdf\)/);
   assert.match(generator, /response\.status !== 200/);
   assert.match(generator, /text\/html/);
@@ -71,19 +66,6 @@ test('PDF generator validates the live CV before printing', async () => {
 
 test('committed CV PDFs match the recorded files and stay one page', async () => {
   await verifyCvPdfs();
-});
-
-test('Home CV preview matches its recorded generated asset', async () => {
-  await verifyCvPreview();
-
-  const buffer = await readFile(repoPath(CV_PREVIEW.publicPath));
-  assert.deepEqual(inspectPng(buffer), {
-    bytes: buffer.byteLength,
-    width: CV_PREVIEW.width,
-    height: CV_PREVIEW.height
-  });
-  assert.equal(CV_PREVIEW.route, CV_PDF.a4.route);
-  assert.equal(CV_PREVIEW.format, 'a4');
 });
 
 test('CV PDFs include the public site URL and not workers.dev', async () => {

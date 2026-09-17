@@ -36,11 +36,12 @@
         "sections": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["home", "experience", "background", "workingTogether", "contact"],
+          "required": ["home", "experience", "background", "cv", "workingTogether", "contact"],
           "properties": {
             "home": { "$ref": "#/$defs/homeSection" },
             "experience": { "$ref": "#/$defs/experienceSection" },
             "background": { "$ref": "#/$defs/backgroundSection" },
+            "cv": { "$ref": "#/$defs/textSection" },
             "workingTogether": { "$ref": "#/$defs/textSection" },
             "contact": { "$ref": "#/$defs/textSection" }
           }

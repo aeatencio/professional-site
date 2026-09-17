@@ -6,10 +6,8 @@ import astroConfig from '../astro.config.mjs';
 import {
   CV_PDF,
   CV_PDF_FINGERPRINT_PATH,
-  CV_PREVIEW,
   PUBLIC_SITE_ORIGIN,
   inspectPdf,
-  inspectPng,
   printToPdfParams,
   repoPath,
   sha256
@@ -74,8 +72,6 @@ await withHeadlessBrowser(distDir, async ({ cdp, origin }) => {
       bytes: buffer.byteLength
     };
   }
-
-  await captureCvPreview(cdp, origin);
 });
 
 await writeFile(
@@ -192,57 +188,4 @@ function runProcess(command, args) {
       else reject(new Error(`${command} ${args.join(' ')} exited with code ${code}`));
     });
   });
-}
-
-async function captureCvPreview(cdp, origin) {
-  const url = new URL(CV_PREVIEW.route, origin).href;
-  console.log(`Capturing ${CV_PREVIEW.route} to ${CV_PREVIEW.publicPath}`);
-  const { targetId, sessionId } = await openPage(cdp, url, {
-    viewport: {
-      ...CV_PREVIEW.viewport,
-      deviceScaleFactor: CV_PREVIEW.scale,
-      mobile: false
-    }
-  });
-  await cdp.send('Emulation.setEmulatedMedia', { media: 'print' }, sessionId);
-  await sleep(400);
-  await assertPrintChromeHidden(cdp, sessionId);
-
-  const frame = await evaluate(cdp, sessionId, `(() => {
-    const box = document.querySelector('#cv-main').getBoundingClientRect();
-    return { top: box.top, left: box.left, width: box.width, height: box.height };
-  })()`);
-  if (Math.abs(frame.top) > 1 || Math.abs(frame.left) > 1) {
-    throw new Error(`Printable CV is not at the preview frame origin: ${JSON.stringify(frame)}`);
-  }
-  if (frame.width > CV_PREVIEW.viewport.width || frame.height > CV_PREVIEW.viewport.height) {
-    throw new Error(
-      `Printable CV is ${frame.width}x${frame.height}px, larger than the ${CV_PREVIEW.viewport.width}x${CV_PREVIEW.viewport.height}px preview frame`
-    );
-  }
-
-  const { data } = await cdp.send('Page.captureScreenshot', {
-    format: 'png',
-    fromSurface: true,
-    captureBeyondViewport: false
-  }, sessionId);
-  await cdp.send('Target.closeTarget', { targetId });
-
-  const buffer = Buffer.from(data, 'base64');
-  const inspection = inspectPng(buffer);
-  if (inspection.width !== CV_PREVIEW.width || inspection.height !== CV_PREVIEW.height) {
-    throw new Error(
-      `Captured preview is ${inspection.width}x${inspection.height}px, expected ${CV_PREVIEW.width}x${CV_PREVIEW.height}px`
-    );
-  }
-
-  const tmpFile = path.join(tmpRoot, path.basename(CV_PREVIEW.publicPath));
-  await writeFile(tmpFile, buffer);
-  await copyFile(tmpFile, repoPath(CV_PREVIEW.publicPath));
-  await mkdir(path.dirname(repoPath(CV_PREVIEW.distPath)), { recursive: true });
-  await copyFile(tmpFile, repoPath(CV_PREVIEW.distPath));
-  fingerprint.files[CV_PREVIEW.publicPath] = {
-    sha256: sha256(buffer),
-    bytes: buffer.byteLength
-  };
 }

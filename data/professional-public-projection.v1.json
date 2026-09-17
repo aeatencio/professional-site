@@ -117,6 +117,12 @@
           }
         ]
       },
+      "cv": {
+        "heading": "Curriculum vitae",
+        "paragraphs": [
+          "A compact, portable version of the trajectory above."
+        ]
+      },
       "workingTogether": {
         "heading": "Working together",
         "paragraphs": [

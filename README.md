@@ -46,9 +46,9 @@ Astro is installed locally through this project. Do not install project tools gl
 
 The downloadable files in `public/cv/` are real PDFs generated from the current printable CV HTML.
 
-`npm run cv:pdf` first validates the local projection, then rebuilds the HTML, prints both paper sizes and captures the Home miniature from the A4 print rendering. It needs a local Edge or Chrome executable; if the browser is not on a default path, set `EDGE_PATH` or `CHROME_PATH`.
+`npm run cv:pdf` first validates the local projection, then rebuilds the HTML and prints both paper sizes. It needs a local Edge or Chrome executable; if the browser is not on a default path, set `EDGE_PATH` or `CHROME_PATH`.
 
-Chromium may embed generation timestamps, so an otherwise identical reprint can change the PDF bytes. Run `cv:pdf` when the printable CV actually changes and keep the updated PDFs, preview PNG and fingerprint together. Build verification rejects a preview whose bytes or dimensions do not match that fingerprint.
+Chromium may embed generation timestamps, so an otherwise identical reprint can change the PDF bytes. Run `cv:pdf` when the printable CV actually changes and keep the updated PDFs and fingerprint together.
 
 The build fingerprints the effective CV print inputs rather than a guessed print-only CSS subset. That boundary includes:
 

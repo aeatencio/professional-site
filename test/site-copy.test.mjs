@@ -14,6 +14,8 @@ test('local projection is the authority for current professional copy', async ()
   assert.equal(projection.shared.email, 'aeatencio@gmail.com');
   assert.equal(projection.site.sections.experience.heading, 'Experience');
   assert.equal(projection.site.sections.background.heading, 'Background');
+  assert.equal(projection.site.sections.cv.heading, 'Curriculum vitae');
+  assert.equal(projection.site.sections.cv.paragraphs.length, 1);
   assert.deepEqual(
     projection.site.sections.experience.softwareDevelopment.roles.map(({ organization }) => organization),
     ['RVM Soluciones', 'Mobile Streams', 'Manas Technology Solutions']
@@ -183,6 +185,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('RVM Soluciones'), false);
   assert.equal(page.includes('mostly on existing web and mobile products'), false);
   assert.equal(page.includes('part-time remote software work on a contract or freelance basis'), false);
+  assert.equal(page.includes('A compact, portable version of the trajectory above.'), false);
   assert.equal(page.includes('class="actions"'), false);
   assert.equal(page.includes('View experience'), false);
   assert.equal(page.includes('View CV'), false);

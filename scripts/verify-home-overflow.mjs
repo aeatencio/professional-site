@@ -1,6 +1,6 @@
 import astroConfig from '../astro.config.mjs';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
-import { CV_PDF, CV_PREVIEW, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
+import { CV_PDF, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
 import {
   evaluate,
   findBrowser,
@@ -558,7 +558,7 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     '#cv',
     'Desktop Home CV'
   );
-  await activateByEnter(cdp, desktop.sessionId, '.cv-sheet[href="/cv/"]');
+  await activateByEnter(cdp, desktop.sessionId, '.cv-band__read[href="/cv/"]');
   await sleep(150);
   const desktopResult = await evaluate(cdp, desktop.sessionId, `(() => ({
     pathname: location.pathname,
@@ -594,7 +594,7 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
   if (mobileMenu.open || mobileMenu.focusInsideClosedContent) {
     throw new Error('Mobile CV navigation did not close Menu cleanly');
   }
-  await activateByEnter(cdp, mobile.sessionId, '.cv-sheet[href="/cv/"]');
+  await activateByEnter(cdp, mobile.sessionId, '.cv-band__read[href="/cv/"]');
   await sleep(150);
   const mobileResult = await evaluate(cdp, mobile.sessionId, `(() => ({
     pathname: location.pathname,
@@ -620,17 +620,13 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
 }
 
 async function assertHomeCvSection(cdp, sessionId, viewport, label) {
-  await evaluate(cdp, sessionId, `(async () => {
-    const image = document.querySelector('.cv-sheet img');
-    if (image && !image.complete) await image.decode();
-  })()`);
   const result = await evaluate(cdp, sessionId, `(() => {
     const section = document.querySelector('#cv');
-    const body = section?.querySelector('.chapter__body');
-    const plate = section?.querySelector('.cv-plate');
-    const sheet = section?.querySelector('.cv-sheet');
-    const image = sheet?.querySelector('img');
-    const formats = section?.querySelector('.cv-formats');
+    const band = section?.querySelector('.cv-band');
+    const text = section?.querySelector('.cv-band__text');
+    const routes = section?.querySelector('.cv-band__routes');
+    const read = section?.querySelector('.cv-band__read');
+    const downloads = section?.querySelector('.cv-band__downloads');
     const background = document.querySelector('#background');
     const working = document.querySelector('#working-together');
     const box = (element) => {
@@ -639,74 +635,65 @@ async function assertHomeCvSection(cdp, sessionId, viewport, label) {
     };
     return {
       section: box(section),
-      body: box(body),
-      plate: box(plate),
-      image: box(image),
-      formats: box(formats),
+      band: box(band),
+      text: box(text),
+      routes: box(routes),
+      read: box(read),
+      downloads: box(downloads),
       background: box(background),
       working: box(working),
       heading: section?.querySelector('h2')?.textContent?.trim() ?? '',
-      sheetHref: sheet?.getAttribute('href') ?? '',
-      sheetText: sheet?.textContent?.replace(/\s+/g, ' ').trim() ?? '',
-      imageSrc: image?.getAttribute('src') ?? '',
-      imageAlt: image?.getAttribute('alt'),
-      imageWidth: image?.getAttribute('width') ?? '',
-      imageHeight: image?.getAttribute('height') ?? '',
-      imageNaturalWidth: image?.naturalWidth ?? 0,
-      imageNaturalHeight: image?.naturalHeight ?? 0,
-      imageLoading: image?.getAttribute('loading') ?? '',
-      downloadLinks: [...(formats?.querySelectorAll('a') ?? [])].map((link) => ({
+      paragraphCount: section?.querySelectorAll('.cv-band__text p').length ?? 0,
+      readHref: read?.getAttribute('href') ?? '',
+      readName: read?.textContent?.replace(/\s+/g, ' ').trim() ?? '',
+      readTag: read?.tagName ?? '',
+      downloadLinks: [...(downloads?.querySelectorAll('a') ?? [])].map((link) => ({
         text: link.textContent?.trim() ?? '',
         href: link.getAttribute('href') ?? '',
         download: link.getAttribute('download'),
-        type: link.getAttribute('type')
+        type: link.getAttribute('type'),
+        ariaLabel: link.getAttribute('aria-label') ?? ''
       })),
-      embeddedDocument: Boolean(section?.querySelector('iframe, object, embed')),
+      retiredPreview: Boolean(section?.querySelector('img, picture, iframe, object, embed')),
       ...window.__layoutMetrics()
     };
   })()`);
 
-  if (!result.section || !result.body || !result.plate || !result.image || !result.formats) {
+  if (!result.section || !result.band || !result.text || !result.routes || !result.read || !result.downloads) {
     throw new Error(`Home CV section is incomplete at ${label}: ${JSON.stringify(result)}`);
   }
-  if (result.heading !== 'Curriculum vitae' || result.sheetHref !== '/cv/'
-    || !result.sheetText.includes('Read the full CV') || result.embeddedDocument) {
+  if (!result.heading || result.paragraphCount < 1 || result.readHref !== '/cv/'
+    || !result.readName || result.readTag !== 'A' || result.retiredPreview) {
     throw new Error(`Home CV semantics are incorrect at ${label}: ${JSON.stringify(result)}`);
   }
-  if (result.imageSrc !== CV_PREVIEW.href || result.imageAlt !== ''
-    || result.imageWidth !== String(CV_PREVIEW.width)
-    || result.imageHeight !== String(CV_PREVIEW.height)
-    || result.imageNaturalWidth !== CV_PREVIEW.width
-    || result.imageNaturalHeight !== CV_PREVIEW.height
-    || result.imageLoading !== 'lazy') {
-    throw new Error(`Home CV preview is stale or not decorative at ${label}: ${JSON.stringify(result)}`);
-  }
   const expectedDownloads = [CV_PDF.a4, CV_PDF.letter].map((pdf) => ({
-    text: pdf.format === 'a4' ? 'A4 PDF' : 'US Letter PDF',
+    text: pdf.format === 'a4' ? 'A4' : 'US Letter',
     href: pdf.href,
     download: pdf.download,
-    type: 'application/pdf'
+    type: 'application/pdf',
+    ariaLabel: pdf.format === 'a4'
+      ? 'Download the CV as an A4 PDF'
+      : 'Download the CV as a US Letter PDF'
   }));
   if (JSON.stringify(result.downloadLinks) !== JSON.stringify(expectedDownloads)) {
     throw new Error(`Home CV download actions are incorrect at ${label}: ${JSON.stringify(result.downloadLinks)}`);
   }
-  const ratio = result.image.height / result.image.width;
-  if (result.image.width < 220 || result.image.width > 340 || Math.abs(ratio - (CV_PREVIEW.height / CV_PREVIEW.width)) > 0.02) {
-    throw new Error(`Home CV preview scale is unreasonable at ${label}: ${JSON.stringify(result.image)}`);
-  }
   if (result.background.bottom > result.section.top + 1 || result.section.bottom > result.working.top + 1) {
     throw new Error(`Home CV section is outside the Background to Working together sequence at ${label}`);
   }
-  if (viewport.width > 864) {
-    if (result.body.right >= result.plate.left || result.body.top > result.plate.bottom) {
-      throw new Error(`Home CV desktop columns are unbalanced or overlapping at ${label}: ${JSON.stringify(result)}`);
-    }
-  } else if (result.plate.top < result.body.bottom - 1) {
-    throw new Error(`Home CV mobile composition did not reflow below its introduction at ${label}: ${JSON.stringify(result)}`);
+  if (result.section.height >= result.background.height || result.section.height >= result.working.height) {
+    throw new Error(`Home CV section is no longer a compact interlude at ${label}: ${JSON.stringify(result)}`);
   }
-  if (result.formats.top < result.image.bottom || result.plate.left < result.section.left - 1
-    || result.plate.right > result.section.right + 1) {
-    throw new Error(`Home CV document or actions are misaligned at ${label}: ${JSON.stringify(result)}`);
+  if (viewport.width > 864) {
+    if (result.text.right >= result.routes.left || result.text.top > result.routes.bottom) {
+      throw new Error(`Home CV desktop band overlaps or loses alignment at ${label}: ${JSON.stringify(result)}`);
+    }
+  } else if (result.routes.top < result.text.bottom - 1) {
+    throw new Error(`Home CV compact band did not reflow below its text at ${label}: ${JSON.stringify(result)}`);
+  }
+  if (result.downloads.top < result.read.bottom || result.band.left < result.section.left - 1
+    || result.band.right > result.section.right + 1) {
+    throw new Error(`Home CV actions are misaligned at ${label}: ${JSON.stringify(result)}`);
   }
   assertNoHorizontalOverflow(result, viewport.width, `Home CV section at ${label}`);
 }
@@ -1107,12 +1094,11 @@ function assertEquivalentScreen(a, b, label) {
 }
 
 async function assertHomeDocument(origin, url) {
-  const [response, cvResponse, letterResponse, pdfResponse, previewResponse] = await Promise.all([
+  const [response, cvResponse, letterResponse, pdfResponse] = await Promise.all([
     fetch(url),
     fetch(new URL('/cv/', origin)),
     fetch(new URL('/cv/letter/', origin)),
-    fetch(new URL(CV_PDF.a4.href, origin)),
-    fetch(new URL(CV_PREVIEW.href, origin))
+    fetch(new URL(CV_PDF.a4.href, origin))
   ]);
   if (response.status !== 200 || !(response.headers.get('content-type') ?? '').includes('text/html')) {
     throw new Error(`Home returned HTTP ${response.status} with an invalid content type`);
@@ -1127,16 +1113,16 @@ async function assertHomeDocument(origin, url) {
   if (html.includes('class="actions"') || html.includes('>View experience<') || html.includes('>Contact me<')) {
     throw new Error('Home document still contains the duplicated hero navigation');
   }
-  if (html.includes('>View online<') || html.includes('>Download PDF<')
+  if (html.includes('>View online<')
     || html.includes('>View CV<') || html.includes('>Download CV<')
     || (html.match(/href="#cv">CV</g) ?? []).length !== 2
     || (html.match(/href="\/cv\/">CV</g) ?? []).length !== 1) {
     throw new Error('Home document does not separate its CV section navigation from the footer link');
   }
   if (!html.includes('<section id="cv" class="chapter chapter--cv"')
-    || !html.includes(`<img src="${CV_PREVIEW.href}" alt=""`)
-    || !html.includes('<span class="cv-sheet__label">Read the full CV</span>')) {
-    throw new Error('Home document is missing the integrated CV section or decorative preview');
+    || !html.includes('<a class="cv-band__read" href="/cv/">')
+    || html.includes('cv-a4-preview.png')) {
+    throw new Error('Home document is missing the compact CV band or still references the retired preview');
   }
   const footerHtml = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
   if (!footerHtml.includes(`<p>${projection.shared.name}</p>`)
@@ -1171,9 +1157,6 @@ async function assertHomeDocument(origin, url) {
   const pdfBytes = new Uint8Array(await pdfResponse.arrayBuffer()).subarray(0, 5);
   if (!pdfResponse.ok || new TextDecoder().decode(pdfBytes) !== '%PDF-') {
     throw new Error('A4 PDF download does not resolve to the built A4 PDF');
-  }
-  if (!previewResponse.ok || previewResponse.headers.get('content-type') !== 'image/png') {
-    throw new Error('Home CV preview does not resolve to a PNG');
   }
 }
 

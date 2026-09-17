@@ -8,10 +8,6 @@
     "public/cv/andres-atencio-cv-letter.pdf": {
       "sha256": "a7f2cf0e80bc0d4d6e4e7be9a93dcd316a0d0a301a01f98d2676b9edec961582",
       "bytes": 83727
-    },
-    "public/cv/andres-atencio-cv-a4-preview.png": {
-      "sha256": "97a2dc3404c3a9f834e88262cba4266fe2ccb8a938438bc3cfb6fd55b797afa2",
-      "bytes": 433670
     }
   }
 }

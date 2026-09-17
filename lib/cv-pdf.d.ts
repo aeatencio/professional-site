@@ -18,20 +18,6 @@ export const CV_PDF: {
   letter: CvPdfAsset;
 };
 
-export interface CvPreviewAsset {
-  format: 'a4';
-  route: string;
-  href: string;
-  publicPath: string;
-  distPath: string;
-  viewport: { width: number; height: number };
-  scale: number;
-  width: number;
-  height: number;
-}
-
-export const CV_PREVIEW: CvPreviewAsset;
-
 export const CV_PDF_FINGERPRINT_PATH: string;
 export const PUBLIC_SITE_ORIGIN: string;
 
@@ -66,10 +52,4 @@ export function inspectPdf(buffer: Uint8Array): {
   pageCount: number;
   mediaBox: { width: number; height: number };
 };
-export function inspectPng(buffer: Uint8Array): {
-  bytes: number;
-  width: number;
-  height: number;
-};
 export function verifyCvPdfs(options?: { dist?: boolean }): Promise<void>;
-export function verifyCvPreview(options?: { dist?: boolean }): Promise<void>;
