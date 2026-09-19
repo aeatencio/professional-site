@@ -18,7 +18,7 @@ test('local projection is the authority for current professional copy', async ()
   assert.equal(projection.site.sections.cv.paragraphs.length, 1);
   assert.deepEqual(
     projection.site.sections.experience.softwareDevelopment.roles.map(({ organization }) => organization),
-    ['RVM Soluciones', 'Mobile Streams', 'Manas Technology Solutions']
+    ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']
   );
   assert.equal(
     projection.site.sections.experience.currentDevelopment.heading,
@@ -59,10 +59,13 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.workingTogether.heading,
     'Working together'
   );
-  assert.equal(projection.site.sections.workingTogether.paragraphs.length, 3);
-  assert.equal(
-    projection.site.sections.workingTogether.paragraphs[2],
-    'A short introductory call of fifteen or twenty minutes is free, and it’s only there to see whether there’s a fit. I also offer paid consultation sessions, arranged in advance, that cover the conversation and whatever guidance I can give with the information at hand. Work that has to happen outside the call, such as reading through a codebase, reproducing a problem, analysis or a written deliverable, is separate development work, scoped and quoted on its own.'
+  assert.deepEqual(
+    projection.site.sections.workingTogether.paragraphs,
+    [
+      'I’m comfortable taking ownership of a well-defined piece of work in an existing product, from investigation and technical approach through implementation, testing and delivery. That can include bugs, features, integrations and data changes.',
+      'I’m available for part-time remote contract or freelance work, with collaboration that can be mostly asynchronous.',
+      'A good place to start is a free 15–20-minute call to see whether there’s a fit. For focused questions that can be addressed during a live conversation, I also offer paid consultation sessions by appointment. Research, codebase review, problem reproduction, implementation and written deliverables are scoped separately.'
+    ]
   );
   const workingTogetherSerialized = JSON.stringify(
     projection.site.sections.workingTogether
@@ -73,6 +76,12 @@ test('local projection is the authority for current professional copy', async ()
     /\b(?:hourly|per[- ]session)\s+(?:rate|price|fee)s?\b|\b(?:rate|price|fee)s?\s+per\s+(?:hour|session)\b/i
   );
   assert.equal(projection.site.sections.contact.heading, 'Contact');
+  assert.deepEqual(
+    projection.site.sections.contact.paragraphs,
+    [
+      'If you’d like to discuss a software role or project, or arrange a consultation, get in touch.'
+    ]
+  );
   assert.equal(projection.cv.title, 'Software Developer');
   assert.deepEqual(
     projection.cv.softwareExperience.roles.map(({ organization }) => organization),

@@ -39,10 +39,10 @@
           "heading": "Software development",
           "roles": [
             {
-              "organization": "RVM Soluciones",
-              "period": "2008–2011",
+              "organization": "Manas Technology Solutions",
+              "period": "2018–2023",
               "role": "Software Developer",
-              "description": "I developed web and desktop applications, including logistics and distribution systems. Technologies included C#, ASP.NET, Visual Basic and SQL Server."
+              "description": "I worked on web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I joined Manas with a stronger back-end background and gradually worked across more of the stack, including substantial front-end work in later years. On Surveda, where I worked for several years, work often began with a product need rather than a prescribed implementation: clarifying scope, investigating the codebase, defining a technical approach, implementing and testing changes, and following them into production when needed. The work included APIs, integrations, database changes and migrations. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
             },
             {
               "organization": "Mobile Streams",
@@ -51,10 +51,10 @@
               "description": "I worked on web and mobile systems for subscription, distribution and download of digital content, including APIs, integrations and SQL-backed application work. Technologies included Android/Java, C#, ASP.NET, Angular and SQL Server."
             },
             {
-              "organization": "Manas Technology Solutions",
-              "period": "2018–2023",
+              "organization": "RVM Soluciones",
+              "period": "2008–2011",
               "role": "Software Developer",
-              "description": "I worked on web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I joined Manas with a stronger back-end background and gradually worked across more of the stack, including substantial front-end work in later years. On Surveda, where I worked for several years, work often began with a product need rather than a prescribed implementation: clarifying scope, investigating the codebase, defining a technical approach, implementing and testing changes, and following them into production when needed. The work included APIs, integrations, database changes and migrations. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
+              "description": "I developed web and desktop applications, including logistics and distribution systems. Technologies included C#, ASP.NET, Visual Basic and SQL Server."
             }
           ]
         },
@@ -126,15 +126,15 @@
       "workingTogether": {
         "heading": "Working together",
         "paragraphs": [
+          "I’m comfortable taking ownership of a well-defined piece of work in an existing product, from investigation and technical approach through implementation, testing and delivery. That can include bugs, features, integrations and data changes.",
           "I’m available for part-time remote contract or freelance work, with collaboration that can be mostly asynchronous.",
-          "I’m comfortable taking ownership of a well-defined piece of work in an existing product and carrying it from investigation and technical approach through implementation, testing and delivery.",
-          "A short introductory call of fifteen or twenty minutes is free, and it’s only there to see whether there’s a fit. I also offer paid consultation sessions, arranged in advance, that cover the conversation and whatever guidance I can give with the information at hand. Work that has to happen outside the call, such as reading through a codebase, reproducing a problem, analysis or a written deliverable, is separate development work, scoped and quoted on its own."
+          "A good place to start is a free 15–20-minute call to see whether there’s a fit. For focused questions that can be addressed during a live conversation, I also offer paid consultation sessions by appointment. Research, codebase review, problem reproduction, implementation and written deliverables are scoped separately."
         ]
       },
       "contact": {
         "heading": "Contact",
         "paragraphs": [
-          "If you’d like to discuss a software role or project, get in touch."
+          "If you’d like to discuss a software role or project, or arrange a consultation, get in touch."
         ]
       }
     }
