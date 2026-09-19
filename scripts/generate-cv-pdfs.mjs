@@ -168,7 +168,7 @@ async function assertPrintChromeHidden(cdp, sessionId) {
   if (print.header !== 'none') {
     throw new Error(`Site header is visible in print (display: ${print.header})`);
   }
-  if (print.footer !== 'none') {
+  if (print.footer !== 'none' && print.footer !== 'missing') {
     throw new Error(`Site footer is visible in print (display: ${print.footer})`);
   }
   if (print.skip !== 'none') {

@@ -191,7 +191,8 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('View CV'), false);
   assert.equal(page.includes('Download CV'), false);
   assert.equal(page.includes('Contact me'), false);
-  assert.match(primaryNav, /isCvPage \? CV_PATH : sectionHref\('#cv'\)/);
+  assert.match(primaryNav, /sectionHref\('#cv'\)/);
+  assert.equal(primaryNav.includes('isCvPage'), false);
   assert.equal(primaryNav.includes('View online'), false);
   assert.equal(primaryNav.includes('Download PDF'), false);
   assert.equal(primaryNav.includes('CV_PDF'), false);
@@ -222,6 +223,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.match(cvLayout, /data-cv-format=\{format\}/);
   assert.match(cvLayout, /canonicalPath=\{CV_PATH\}/);
   assert.match(cvLayout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
+  assert.match(cvLayout, /shell="document"/);
   assert.equal(cvLayout.includes('<header class="site-header"'), false);
   assert.equal(cvLayout.includes('class="site-footer"'), false);
   assert.equal(cvLayout.includes('CvChrome'), false);

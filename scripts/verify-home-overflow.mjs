@@ -469,14 +469,21 @@ async function assertFooterNavigation(cdp, homeUrl) {
     pathname: location.pathname,
     hasCvMain: Boolean(document.querySelector('#cv-main')),
     hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasMobileNav: Boolean(document.querySelector('[data-mobile-navigation]')),
+    hasDirectionalHeader: Boolean(document.querySelector('[data-directional-header]')),
     hasSiteHeader: Boolean(document.querySelector('.site-header')),
-    hasSiteFooter: Boolean(document.querySelector('.site-footer'))
+    hasSiteFooter: Boolean(document.querySelector('.site-footer')),
+    shell: document.body.getAttribute('data-shell') ?? '',
+    identityHref: document.querySelector('.identity a')?.getAttribute('href') ?? '',
+    skipHref: document.querySelector('.skip-link')?.getAttribute('href') ?? ''
   }))()`);
-  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasPrimaryNav || !result.hasSiteHeader || !result.hasSiteFooter) {
-    throw new Error(`Footer CV link did not reach the CV page in the site shell: ${JSON.stringify(result)}`);
+  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasSiteHeader || result.hasPrimaryNav
+    || result.hasMobileNav || result.hasDirectionalHeader || result.hasSiteFooter
+    || result.shell !== 'document' || result.identityHref !== '/' || result.skipHref !== '#cv-main') {
+    throw new Error(`Footer CV link did not reach the CV document shell: ${JSON.stringify(result)}`);
   }
   await cdp.send('Target.closeTarget', { targetId });
-  console.log('Footer CV keyboard navigation and shared site shell verified');
+  console.log('Footer CV keyboard navigation and document shell verified');
 }
 
 async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
@@ -566,18 +573,25 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     hasCvActions: Boolean(document.querySelector('.cv-actions')),
     hasCvChrome: Boolean(document.querySelector('.cv-chrome')),
     hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasMobileNav: Boolean(document.querySelector('[data-mobile-navigation]')),
+    hasDirectionalHeader: Boolean(document.querySelector('[data-directional-header]')),
     hasSiteHeader: Boolean(document.querySelector('.site-header')),
     hasSiteFooter: Boolean(document.querySelector('.site-footer')),
+    shell: document.body.getAttribute('data-shell') ?? '',
+    identityHref: document.querySelector('.identity a')?.getAttribute('href') ?? '',
+    skipHref: document.querySelector('.skip-link')?.getAttribute('href') ?? '',
     current: [...(document.querySelectorAll('.primary-nav a[aria-current="page"]') ?? [])]
       .map((link) => link.textContent?.trim() ?? ''),
     viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
     navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
   }))()`);
   if (desktopResult.pathname !== '/cv/' || !desktopResult.hasCvMain || !desktopResult.hasCvActions
-    || desktopResult.hasCvChrome || !desktopResult.hasPrimaryNav || !desktopResult.hasSiteHeader
-    || !desktopResult.hasSiteFooter || desktopResult.viewOnline || desktopResult.navDownloadPdf
-    || desktopResult.current.length === 0 || !desktopResult.current.every((text) => text === 'CV')) {
-    throw new Error(`Desktop CV link did not reach the CV page in the site shell: ${JSON.stringify(desktopResult)}`);
+    || desktopResult.hasCvChrome || desktopResult.hasPrimaryNav || desktopResult.hasMobileNav
+    || desktopResult.hasDirectionalHeader || !desktopResult.hasSiteHeader || desktopResult.hasSiteFooter
+    || desktopResult.shell !== 'document' || desktopResult.identityHref !== '/'
+    || desktopResult.skipHref !== '#cv-main' || desktopResult.viewOnline || desktopResult.navDownloadPdf
+    || desktopResult.current.length !== 0) {
+    throw new Error(`Desktop CV link did not reach the CV document shell: ${JSON.stringify(desktopResult)}`);
   }
   await cdp.send('Target.closeTarget', { targetId: desktop.targetId });
 
@@ -602,21 +616,28 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     hasCvActions: Boolean(document.querySelector('.cv-actions')),
     hasCvChrome: Boolean(document.querySelector('.cv-chrome')),
     hasPrimaryNav: Boolean(document.querySelector('.primary-nav')),
+    hasMobileNav: Boolean(document.querySelector('[data-mobile-navigation]')),
+    hasDirectionalHeader: Boolean(document.querySelector('[data-directional-header]')),
     hasSiteHeader: Boolean(document.querySelector('.site-header')),
     hasSiteFooter: Boolean(document.querySelector('.site-footer')),
+    shell: document.body.getAttribute('data-shell') ?? '',
+    identityHref: document.querySelector('.identity a')?.getAttribute('href') ?? '',
+    skipHref: document.querySelector('.skip-link')?.getAttribute('href') ?? '',
     current: [...(document.querySelectorAll('.primary-nav a[aria-current="page"]') ?? [])]
       .map((link) => link.textContent?.trim() ?? ''),
     viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
     navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
   }))()`);
   if (mobileResult.pathname !== '/cv/' || !mobileResult.hasCvMain || !mobileResult.hasCvActions
-    || mobileResult.hasCvChrome || !mobileResult.hasPrimaryNav || !mobileResult.hasSiteHeader
-    || !mobileResult.hasSiteFooter || mobileResult.viewOnline || mobileResult.navDownloadPdf
-    || mobileResult.current.length === 0 || !mobileResult.current.every((text) => text === 'CV')) {
-    throw new Error(`Mobile CV link did not reach the CV page in the site shell: ${JSON.stringify(mobileResult)}`);
+    || mobileResult.hasCvChrome || mobileResult.hasPrimaryNav || mobileResult.hasMobileNav
+    || mobileResult.hasDirectionalHeader || !mobileResult.hasSiteHeader || mobileResult.hasSiteFooter
+    || mobileResult.shell !== 'document' || mobileResult.identityHref !== '/'
+    || mobileResult.skipHref !== '#cv-main' || mobileResult.viewOnline || mobileResult.navDownloadPdf
+    || mobileResult.current.length !== 0) {
+    throw new Error(`Mobile CV link did not reach the CV document shell: ${JSON.stringify(mobileResult)}`);
   }
   await cdp.send('Target.closeTarget', { targetId: mobile.targetId });
-  console.log('Home CV anchor, section actions, keyboard navigation and shared CV site shell verified');
+  console.log('Home CV anchor, section actions, keyboard navigation and CV document shell verified');
 }
 
 async function assertHomeCvSection(cdp, sessionId, viewport, label) {
@@ -713,9 +734,6 @@ async function assertCvSitePages(cdp, origin) {
   ]) {
     const snapshot = await assertCvViewport(cdp, a4Url, viewport, false);
     if (viewport.width >= 1025) a4Desktop.push(snapshot);
-    if (viewport.width <= 390 || viewport.width === 667) {
-      await assertCvMobileMenu(cdp, a4Url, viewport);
-    }
   }
 
   const letterDesktop = await assertCvViewport(
@@ -725,10 +743,11 @@ async function assertCvSitePages(cdp, origin) {
     false
   );
   await assertCvViewport(cdp, letterUrl, { width: 390, height: 844, mobile: true }, false);
-  await assertCvMobileMenu(cdp, letterUrl, { width: 390, height: 844, mobile: true });
+  await assertCvViewport(cdp, letterUrl, { width: 320, height: 700, mobile: true }, false);
   assertEquivalentScreen(a4Desktop[0], letterDesktop, 'A4 and Letter desktop screen presentation');
 
   await assertCvViewport(cdp, a4Url, { width: 390, height: 844, mobile: true }, true);
+  await assertCvViewport(cdp, a4Url, { width: 320, height: 700, mobile: true }, true);
   await assertCvKeyboard(cdp, a4Url);
 
   for (const pdf of Object.values(CV_PDF)) {
@@ -739,7 +758,7 @@ async function assertCvSitePages(cdp, origin) {
     }
   }
 
-  console.log('CV site pages, downloads and responsive web composition verified');
+  console.log('CV document shell, downloads and responsive web composition verified');
 }
 
 function cvSnapshotScript(includeLayoutMetrics) {
@@ -792,9 +811,13 @@ function cvSnapshotScript(includeLayoutMetrics) {
       headerChildCount: header?.children.length ?? 0,
       hasSiteHeader: Boolean(header),
       hasPrimaryNav: Boolean(nav),
+      hasMobileNav: Boolean(menu),
+      hasDirectionalHeader: Boolean(document.querySelector('[data-directional-header]')),
       hasSiteFooter: Boolean(footer),
       hasCvMain: Boolean(main),
       hasCvActions: Boolean(actions),
+      shell: document.body.getAttribute('data-shell') ?? '',
+      headerPosition: header ? getComputedStyle(header).position : '',
       format: doc?.getAttribute('data-cv-format') ?? '',
       viewOnline: Boolean(nav?.innerHTML?.includes('View online')),
       navDownloadPdf: Boolean(nav?.innerHTML?.includes('Download PDF')),
@@ -859,8 +882,12 @@ function cvSnapshotScript(includeLayoutMetrics) {
 
 function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
   const label = `${result.pathname} ${viewport.width}x${viewport.height}${scriptExecutionDisabled ? ' no-js' : ''}`;
-  if (!result.hasSiteHeader || !result.hasPrimaryNav || !result.hasSiteFooter || !result.hasCvMain || !result.hasCvActions) {
-    throw new Error(`${label} is missing the shared site shell: ${JSON.stringify(result)}`);
+  if (!result.hasSiteHeader || result.hasPrimaryNav || result.hasMobileNav || result.hasSiteFooter
+    || result.hasDirectionalHeader || result.shell !== 'document' || !result.hasCvMain || !result.hasCvActions) {
+    throw new Error(`${label} is missing the document shell and does not render a mobile menu: ${JSON.stringify(result)}`);
+  }
+  if (result.headerPosition !== 'static') {
+    throw new Error(`${label} document header is not static: ${result.headerPosition}`);
   }
   if (result.hasChrome || result.hasBack || result.headerCount !== 1 || result.headerChildCount !== 1) {
     throw new Error(`${label} still has a second toolbar or rejected chrome: ${JSON.stringify({
@@ -870,31 +897,24 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
       headerChildCount: result.headerChildCount
     })}`);
   }
-  if (result.viewOnline || result.navDownloadPdf || JSON.stringify(result.current) === JSON.stringify([])) {
-    throw new Error(`${label} still has redundant CV navigation: ${JSON.stringify({
+  if (result.viewOnline || result.navDownloadPdf || result.current.length !== 0
+    || result.experienceHref || result.backgroundHref || result.cvHref || result.workingHref
+    || result.contactHref) {
+    throw new Error(`${label} still has site navigation on the document view: ${JSON.stringify({
       viewOnline: result.viewOnline,
       navDownloadPdf: result.navDownloadPdf,
-      current: result.current
-    })}`);
-  }
-  if (!result.current.every((labelText) => labelText === 'CV')) {
-    throw new Error(`${label} does not mark CV as the current section: ${JSON.stringify(result.current)}`);
-  }
-  if (result.identityHref !== '/' || result.skipHref !== '#cv-main') {
-    throw new Error(`${label} has incorrect identity or skip link: ${JSON.stringify({
-      identityHref: result.identityHref,
-      skipHref: result.skipHref
-    })}`);
-  }
-  if (result.experienceHref !== '/#experience' || result.backgroundHref !== '/#background'
-    || result.cvHref !== '/cv/' || result.workingHref !== '/#working-together'
-    || result.contactHref !== '/#contact') {
-    throw new Error(`${label} does not keep Home section destinations: ${JSON.stringify({
+      current: result.current,
       experienceHref: result.experienceHref,
       backgroundHref: result.backgroundHref,
       cvHref: result.cvHref,
       workingHref: result.workingHref,
       contactHref: result.contactHref
+    })}`);
+  }
+  if (result.identityHref !== '/' || result.skipHref !== '#cv-main') {
+    throw new Error(`${label} has incorrect identity or skip link: ${JSON.stringify({
+      identityHref: result.identityHref,
+      skipHref: result.skipHref
     })}`);
   }
   if (result.pathname === '/cv/letter/' && result.canonical !== 'https://andresatencio.com/cv/') {
@@ -906,8 +926,8 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
   if (result.innerBottom > result.mainTop + 1) {
     throw new Error(`${label} header overlaps the CV document: ${JSON.stringify(result)}`);
   }
-  if (result.footerTop + 1 < result.mainBottom) {
-    throw new Error(`${label} footer is not after the document`);
+  if (result.hasSiteFooter) {
+    throw new Error(`${label} still renders a site footer`);
   }
   if (result.pageBackground === 'rgb(255, 255, 255)' || (result.pageBoxShadow && result.pageBoxShadow !== 'none')) {
     throw new Error(`${label} still presents a paper sheet: ${JSON.stringify({
@@ -979,11 +999,13 @@ async function assertCvViewport(cdp, url, viewport, scriptExecutionDisabled) {
       return {
         hidden: header?.classList.contains('site-header--hidden') ?? false,
         hasChrome: Boolean(document.querySelector('.cv-chrome')),
+        hasDirectionalHeader: Boolean(document.querySelector('[data-directional-header]')),
+        position: header ? getComputedStyle(header).position : '',
         ...window.__layoutMetrics()
       };
     })()`);
-    if (!scrolled.hidden) {
-      throw new Error(`Desktop ${url} header did not hide on scroll`);
+    if (scrolled.hidden || scrolled.hasDirectionalHeader || scrolled.position !== 'static') {
+      throw new Error(`Desktop ${url} document header still uses directional behavior: ${JSON.stringify(scrolled)}`);
     }
     if (scrolled.hasChrome) {
       throw new Error(`Desktop ${url} still has a second toolbar after scroll`);
@@ -995,74 +1017,59 @@ async function assertCvViewport(cdp, url, viewport, scriptExecutionDisabled) {
   return snapshot;
 }
 
-async function assertCvMobileMenu(cdp, url, viewport) {
-  const label = `${url} menu ${viewport.width}x${viewport.height}`;
-  const { targetId, sessionId } = await openAt(cdp, url, viewport.width, viewport.height, true);
-  await clickSelector(cdp, sessionId, '[data-mobile-navigation] > summary');
-  const open = await evaluate(cdp, sessionId, cvSnapshotScript(true));
-  if (!open.menuOpen) {
-    throw new Error(`${label} did not open`);
-  }
-  if (open.actionsInPanel || open.viewOnline || open.navDownloadPdf) {
-    throw new Error(`${label} mixes CV actions into the global panel: ${JSON.stringify({
-      actionsInPanel: open.actionsInPanel,
-      viewOnline: open.viewOnline,
-      navDownloadPdf: open.navDownloadPdf
-    })}`);
-  }
-  if (open.panelAlpha < 1 || open.panelBackground === 'rgba(0, 0, 0, 0)') {
-    throw new Error(`${label} panel is not opaque: ${JSON.stringify({
-      background: open.panelBackground,
-      alpha: open.panelAlpha
-    })}`);
-  }
-  if (open.panelOverlapsActions && (open.panelPosition !== 'absolute' || open.panelAlpha < 1)) {
-    throw new Error(`${label} does not mix CV actions behind an opaque panel: ${JSON.stringify({
-      position: open.panelPosition,
-      alpha: open.panelAlpha
-    })}`);
-  }
-  if (open.panelLeft < -1 || open.panelRight > viewport.width + 1 || open.panelTop < -1) {
-    throw new Error(`${label} panel is not contained: ${JSON.stringify(open)}`);
-  }
-  if (open.panelBottom > viewport.height + 1 && !['auto', 'scroll', 'overlay'].includes(open.panelOverflowY)) {
-    throw new Error(`${label} open menu does not fit or scroll internally: ${JSON.stringify({
-      bottom: open.panelBottom,
-      overflowY: open.panelOverflowY
-    })}`);
-  }
-  assertNoHorizontalOverflow(open, viewport.width, label);
-  await pressKey(cdp, sessionId, 'Escape');
-  const closed = await evaluate(cdp, sessionId, `(() => ({
-    open: document.querySelector('[data-mobile-navigation]')?.open ?? null
-  }))()`);
-  if (closed.open) {
-    throw new Error(`${label} did not close on Escape`);
-  }
-  await cdp.send('Target.closeTarget', { targetId });
-}
-
 async function assertCvKeyboard(cdp, url) {
   const { targetId, sessionId } = await openAt(cdp, url, 390, 844, true);
-  await activateByEnter(cdp, sessionId, '[data-mobile-navigation] > summary');
-  const opened = await evaluate(cdp, sessionId, `(() => ({
-    open: document.querySelector('[data-mobile-navigation]')?.open ?? false
+  const menu = await evaluate(cdp, sessionId, `(() => ({
+    hasMobileNav: Boolean(document.querySelector('[data-mobile-navigation]')),
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav'))
   }))()`);
-  if (!opened.open) {
-    throw new Error('Keyboard activation did not open the CV mobile menu');
+  if (menu.hasMobileNav || menu.hasPrimaryNav) {
+    throw new Error(`CV document shell still renders a mobile menu: ${JSON.stringify(menu)}`);
   }
-  await pressKey(cdp, sessionId, 'Escape');
-  const escaped = await evaluate(cdp, sessionId, `(() => {
-    const menu = document.querySelector('[data-mobile-navigation]');
-    const summary = menu?.querySelector(':scope > summary');
+
+  await evaluate(cdp, sessionId, `(() => {
+    window.scrollTo(0, 480);
+    document.activeElement?.blur();
+  })()`);
+  await pressKey(cdp, sessionId, 'Tab');
+  const focused = await evaluate(cdp, sessionId, `(() => {
+    const skip = document.querySelector('.skip-link');
+    const box = skip?.getBoundingClientRect();
     return {
-      open: menu?.open ?? null,
-      summaryFocused: document.activeElement === summary
+      focused: document.activeElement === skip,
+      href: skip?.getAttribute('href') ?? '',
+      visible: (box?.width ?? 0) > 0 && (box?.height ?? 0) > 0
+        && (box?.top ?? -1) >= 0 && (box?.bottom ?? Infinity) <= innerHeight,
+      focusVisible: skip?.matches(':focus-visible') ?? false
     };
   })()`);
-  if (escaped.open || !escaped.summaryFocused) {
-    throw new Error(`Escape did not close the CV mobile menu and return focus: ${JSON.stringify(escaped)}`);
+  if (!focused.focused || focused.href !== '#cv-main' || !focused.visible || !focused.focusVisible) {
+    throw new Error(`CV skip link keyboard focus state is invalid: ${JSON.stringify(focused)}`);
   }
+  await pressKey(cdp, sessionId, 'Enter');
+  await sleep(75);
+  const skipped = await evaluate(cdp, sessionId, `(() => {
+    const main = document.querySelector('#cv-main')?.getBoundingClientRect();
+    return {
+      hash: location.hash,
+      mainTop: main?.top ?? -1
+    };
+  })()`);
+  if (skipped.hash !== '#cv-main' || skipped.mainTop < -1 || skipped.mainTop > 32) {
+    throw new Error(`CV skip link did not reveal #cv-main: ${JSON.stringify(skipped)}`);
+  }
+
+  await activateByEnter(cdp, sessionId, '.identity a');
+  await sleep(150);
+  const home = await evaluate(cdp, sessionId, `(() => ({
+    pathname: location.pathname,
+    shell: document.body.getAttribute('data-shell') ?? '',
+    hasPrimaryNav: Boolean(document.querySelector('.primary-nav'))
+  }))()`);
+  if ((home.pathname.replace(/\/$/, '') || '/') !== '/' || home.shell !== 'site' || !home.hasPrimaryNav) {
+    throw new Error(`CV identity did not return to the site: ${JSON.stringify(home)}`);
+  }
+  await cdp.send('Target.closeTarget', { targetId });
 
   const { targetId: desktopId, sessionId: desktopSession } = await openAt(cdp, url, 1366, 900, false);
   await preventNextNavigation(cdp, desktopSession, '.cv-actions a');
@@ -1081,7 +1088,6 @@ async function assertCvKeyboard(cdp, url) {
     throw new Error(`Keyboard did not reach the A4 PDF action: ${JSON.stringify(download)}`);
   }
   await cdp.send('Target.closeTarget', { targetId: desktopId });
-  await cdp.send('Target.closeTarget', { targetId });
 }
 
 function assertEquivalentScreen(a, b, label) {
@@ -1106,6 +1112,11 @@ async function assertHomeDocument(origin, url) {
   const html = await response.text();
   if (!html.includes('id="home"') || html.includes('Not found')) {
     throw new Error('Home route did not return the Home document');
+  }
+  if (!html.includes('data-shell="site"') || !html.includes('class="primary-nav"')
+    || !html.includes('data-mobile-navigation') || !html.includes('data-directional-header')
+    || !html.includes('class="site-footer"')) {
+    throw new Error('Home is missing the shared site shell');
   }
   if (!html.includes(projection.shared.professionalIdentity) || !html.includes(projection.shared.name)) {
     throw new Error('Home document is missing projected identity content');
@@ -1141,14 +1152,18 @@ async function assertHomeDocument(origin, url) {
     || letterHtml.includes('class="cv-chrome"') || letterHtml.includes('>View online<')) {
     throw new Error('US Letter CV is not a site page with in-flow CV actions');
   }
-  if (!cvHtml.includes('class="site-header"') || !letterHtml.includes('class="site-header"')
-    || !cvHtml.includes('class="primary-nav"') || !letterHtml.includes('class="primary-nav"')
-    || !cvHtml.includes('class="site-footer"') || !letterHtml.includes('class="site-footer"')) {
-    throw new Error('CV routes are missing the shared site header or footer');
+  if (!cvHtml.includes('data-shell="document"') || !letterHtml.includes('data-shell="document"')
+    || !cvHtml.includes('class="site-header"') || !letterHtml.includes('class="site-header"')
+    || cvHtml.includes('class="primary-nav"') || letterHtml.includes('class="primary-nav"')
+    || cvHtml.includes('data-mobile-navigation') || letterHtml.includes('data-mobile-navigation')
+    || /<header[^>]*data-directional-header/.test(cvHtml)
+    || /<header[^>]*data-directional-header/.test(letterHtml)
+    || cvHtml.includes('class="site-footer"') || letterHtml.includes('class="site-footer"')) {
+    throw new Error('CV routes are not using the document shell');
   }
-  if (!cvHtml.includes('aria-current="page">CV<') || !letterHtml.includes('aria-current="page">CV<')
+  if (cvHtml.includes('aria-current="page">CV<') || letterHtml.includes('aria-current="page">CV<')
     || cvHtml.includes('Back to site') || letterHtml.includes('Back to site')) {
-    throw new Error('CV routes do not mark CV as current or still include a back control');
+    throw new Error('CV routes still include site-current CV navigation or a back control');
   }
   if (!cvHtml.includes('>A4 PDF<') || !cvHtml.includes('>US Letter PDF<')
     || !letterHtml.includes('>A4 PDF<') || !letterHtml.includes('>US Letter PDF<')) {

@@ -94,10 +94,11 @@ test('Home presents CV as a compact semantic interlude without preview infrastru
   assert.equal(generator.includes('Page.captureScreenshot'), false);
 });
 
-test('Primary navigation keeps CV in the Home journey and marks the full CV route current', async () => {
-  const [nav, layout, homeCss, shellCss] = await Promise.all([
+test('Primary navigation keeps CV in the Home journey while CV routes opt into a document shell', async () => {
+  const [nav, layout, cvLayout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/site-shell.css', import.meta.url), 'utf8')
   ]);
@@ -135,9 +136,15 @@ test('Primary navigation keeps CV in the Home journey and marks the full CV rout
   assert.match(nav, /href=\{contactHref\}>Contact</);
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
-  assert.match(nav, /isCvPage/);
-  assert.match(nav, /isCvPage \? CV_PATH : sectionHref\('#cv'\)/);
+  assert.equal(nav.includes('isCvPage'), false);
+  assert.match(nav, /sectionHref\('#cv'\)/);
   assert.match(nav, /aria-current=\{item\.current \? 'page' : undefined\}/);
+  assert.match(layout, /shell\?: 'site' \| 'document'/);
+  assert.match(layout, /shell = 'site'/);
+  assert.match(layout, /data-shell=\{shell\}/);
+  assert.match(layout, /isDocumentShell \? null : <PrimaryNav \/>/);
+  assert.match(layout, /isDocumentShell \? undefined : true/);
+  assert.match(cvLayout, /shell="document"/);
   assert.ok(nav.indexOf("sectionHref('#background')") < nav.indexOf("sectionHref('#cv')"));
   assert.ok(nav.indexOf("sectionHref('#cv')") < nav.indexOf("sectionHref('#working-together')"));
   assert.equal(nav.includes('View online'), false);
@@ -187,6 +194,12 @@ test('Primary navigation keeps CV in the Home journey and marks the full CV rout
   assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?right:\s*0;[\s\S]*?left:\s*auto;[\s\S]*?width:\s*max-content;[\s\S]*?max-width:\s*min\(13\.5rem, 100%\)/);
   assert.match(shellCss, /\.primary-nav__mobile-list > li > a \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
   assert.match(shellCss, /\.js \.page > \.site-header \{[\s\S]*?position:\s*sticky/);
+  assert.match(shellCss, /html:has\(body\[data-shell="document"\]\) \{\s*scroll-padding-top:\s*0/);
+  assert.match(
+    shellCss,
+    /body\[data-shell="document"\] \.page > \.site-header,[\s\S]*?\.js body\[data-shell="document"\] \.page > \.site-header \{\s*position:\s*static/
+  );
+  assert.match(shellCss, /\.js body\[data-shell="document"\] \.page > \.site-header \{\s*position:\s*static/);
   assert.equal(shellCss.includes('border-inline'), false);
   assert.equal(shellCss.includes('primary-nav__group-label'), false);
   assert.equal(shellCss.includes('primary-nav__cv'), false);
@@ -243,10 +256,13 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /US Letter PDF/);
   assert.match(verifier, /cv-actions/);
   assert.match(verifier, /shared site shell/);
-  assert.match(verifier, /does not mix CV actions/);
+  assert.match(verifier, /document shell/);
+  assert.match(verifier, /data-shell/);
+  assert.match(verifier, /does not render a mobile menu/);
   assert.match(verifier, /screen presentation/);
   assert.equal(verifier.includes('aria-label="Back to site"'), false);
   assert.equal(verifier.includes('assertDesktopCvChrome'), false);
+  assert.equal(verifier.includes('assertCvMobileMenu'), false);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);

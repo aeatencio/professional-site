@@ -1,14 +1,11 @@
 ---
-import { CV_PATH } from '../../lib/site-identity.mjs';
-
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = pathname === '/';
-const isCvPage = pathname === '/cv' || pathname === '/cv/letter';
 const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 const sectionItems = [
   { href: sectionHref('#experience'), label: 'Experience', current: false },
   { href: sectionHref('#background'), label: 'Background', current: false },
-  { href: isCvPage ? CV_PATH : sectionHref('#cv'), label: 'CV', current: isCvPage },
+  { href: sectionHref('#cv'), label: 'CV', current: false },
   { href: sectionHref('#working-together'), label: 'Working together', current: false }
 ];
 const contactHref = sectionHref('#contact');

@@ -20,16 +20,18 @@ The projection is organized around the real artifacts:
   experience, current development, teaching, education, technical background
   and languages. The current private V2 renders the A4 composition at `/cv/`
   and the US Letter composition at `/cv/letter/`, from one shared document.
-  Those routes are first-class pages of `andresatencio.com`: they reuse the
-  site’s global header and footer. `/cv/` is the canonical responsive web
-  view. `/cv/letter/` exists so US Letter print and PDF generation keep a
-  stable route; on screen it matches `/cv/`. A4 and US Letter are paper
-  formats for print and download, not web layout variants. On Home, `CV` in
-  the header navigates to a section between Background and Working together.
-  That section presents a decorative miniature captured from the same A4 print
-  rendering, a link to `/cv/`, and direct links to both PDFs. The footer keeps
-  a compact direct link to `/cv/`. On the CV routes, `CV` is the current
-  section and download actions sit in the document flow. Print and
+  Those routes are first-class document views of `andresatencio.com`: they
+  reuse `BaseLayout` infrastructure in an explicit `document` shell, not the
+  site’s primary navigation, mobile menu, directional header or footer. `/cv/`
+  is the canonical responsive web view. `/cv/letter/` exists so US Letter
+  print and PDF generation keep a stable route; on screen it matches `/cv/`.
+  A4 and US Letter are paper formats for print and download, not web layout
+  variants. On Home, `CV` in the header navigates to a section between
+  Background and Working together. That section presents a decorative
+  miniature captured from the same A4 print rendering, a link to `/cv/`, and
+  direct links to both PDFs. The footer keeps a compact direct link to
+  `/cv/`. On the CV routes, a minimal header identity links back to the site
+  and download actions sit in the document flow. Print and
   PDF output exclude the global header, global footer, skip link and web
   download actions; they contain only the document. The canonical public
   origin is `https://andresatencio.com`; on-site navigation stays on relative

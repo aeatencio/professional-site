@@ -13,6 +13,7 @@ interface Props {
   canonicalPath: string;
   skipHref?: string;
   bodyClass?: string;
+  shell?: 'site' | 'document';
   ogType?: 'website' | 'profile';
   socialCardAlt?: string;
   jsonLd?: Record<string, unknown>;
@@ -26,10 +27,12 @@ const {
   canonicalPath,
   skipHref = '#main',
   bodyClass,
+  shell = 'site',
   ogType = 'website',
   socialCardAlt,
   jsonLd
 } = Astro.props;
+const isDocumentShell = shell === 'document';
 const isHome = (Astro.url.pathname.replace(/\/$/, '') || '/') === '/';
 const homeHref = isHome ? '#home' : '/';
 const IdentityTag = isHome ? 'h1' : 'p';
@@ -92,23 +95,25 @@ const socialCardUrl = absoluteUrl(SOCIAL_CARD.href, Astro.site);
     <script is:inline>document.documentElement.classList.add('js');</script>
     <slot name="head" />
   </head>
-  <body class={bodyClass}>
+  <body class={bodyClass} data-shell={shell}>
     <a class="skip-link" href={skipHref}>Skip to content</a>
     <div class="page">
-      <header class="site-header" data-directional-header>
+      <header class="site-header" data-directional-header={isDocumentShell ? undefined : true}>
         <div class="site-header__inner">
           <IdentityTag class="identity" id={isHome ? 'site-identity' : undefined}>
             <a href={homeHref}>{name}</a>
             <span class="identity-mark" aria-hidden="true"></span>
           </IdentityTag>
-          <PrimaryNav />
+          {isDocumentShell ? null : <PrimaryNav />}
         </div>
       </header>
       <slot />
-      <footer class="site-footer">
-        <p>{name}</p>
-        <a href="/cv/">CV</a>
-      </footer>
+      {isDocumentShell ? null : (
+        <footer class="site-footer">
+          <p>{name}</p>
+          <a href="/cv/">CV</a>
+        </footer>
+      )}
     </div>
     <script>
       const header = document.querySelector<HTMLElement>('[data-directional-header]');
