@@ -59,7 +59,19 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.workingTogether.heading,
     'Working together'
   );
-  assert.equal(projection.site.sections.workingTogether.paragraphs.length, 2);
+  assert.equal(projection.site.sections.workingTogether.paragraphs.length, 3);
+  assert.equal(
+    projection.site.sections.workingTogether.paragraphs[2],
+    'A short introductory call of fifteen or twenty minutes is free, and it’s only there to see whether there’s a fit. I also offer paid consultation sessions, arranged in advance, that cover the conversation and whatever guidance I can give with the information at hand. Work that has to happen outside the call, such as reading through a codebase, reproducing a problem, analysis or a written deliverable, is separate development work, scoped and quoted on its own.'
+  );
+  const workingTogetherSerialized = JSON.stringify(
+    projection.site.sections.workingTogether
+  );
+  assert.doesNotMatch(workingTogetherSerialized, /\b(?:USD|ARS)\b|\$\s*\d/i);
+  assert.doesNotMatch(
+    workingTogetherSerialized,
+    /\b(?:hourly|per[- ]session)\s+(?:rate|price|fee)s?\b|\b(?:rate|price|fee)s?\s+per\s+(?:hour|session)\b/i
+  );
   assert.equal(projection.site.sections.contact.heading, 'Contact');
   assert.equal(projection.cv.title, 'Software Developer');
   assert.deepEqual(
