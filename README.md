@@ -10,7 +10,7 @@ Built with Astro and TypeScript. This repository contains the public site, its p
 
 The site is static, versioned and reproducible. Its public origin is `https://andresatencio.com`.
 
-Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. `/cv/` is the canonical web view of the Software Development CV: a first-class, responsive page of `andresatencio.com` that uses the global header and footer. `/cv/letter/` remains a functional route for US Letter print and PDF generation; its screen presentation matches `/cv/`. A4 and US Letter are download and print formats, not alternate web layouts. Print and PDF output exclude the site shell and on-page download actions; they contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
+Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. On Home, `CV` navigates to the in-page CV section between Background and Working together. That section uses a decorative miniature of the generated A4 document and links to the complete web view and both downloads. `/cv/` is the canonical web view of the Software Development CV: a first-class, responsive document view of `andresatencio.com`. It keeps the shared page infrastructure and a minimal header whose identity links back to the site, without primary navigation, the mobile menu, directional header behavior or the site footer. `/cv/letter/` remains a functional route for US Letter print and PDF generation; its screen presentation matches `/cv/`. A4 and US Letter are download and print formats, not alternate web layouts. Print and PDF output exclude the site shell and on-page download actions; they contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
 
 This repository is public on GitHub. Its code and complete history are maintained as safe for public exposure.
 
@@ -48,7 +48,7 @@ The downloadable files in `public/cv/` are real PDFs generated from the current 
 
 `npm run cv:pdf` first validates the local projection, then rebuilds the HTML and prints both paper sizes. It needs a local Edge or Chrome executable; if the browser is not on a default path, set `EDGE_PATH` or `CHROME_PATH`.
 
-Chromium may embed generation timestamps, so an otherwise identical reprint can change the PDF bytes. Run `cv:pdf` when the printable CV actually changes and keep the updated files and fingerprint together.
+Chromium may embed generation timestamps, so an otherwise identical reprint can change the PDF bytes. Run `cv:pdf` when the printable CV actually changes and keep the updated PDFs and fingerprint together.
 
 The build fingerprints the effective CV print inputs rather than a guessed print-only CSS subset. That boundary includes:
 

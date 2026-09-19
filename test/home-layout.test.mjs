@@ -56,10 +56,49 @@ test('Experience notebook follows the complete software role list and recomposes
   );
 });
 
-test('Primary navigation uses a direct CV link and progressive enhancement', async () => {
-  const [nav, layout, homeCss, shellCss] = await Promise.all([
+test('Home presents CV as a compact semantic interlude without preview infrastructure', async () => {
+  const [page, homeCss, cvPdf, cvTypes, generator, fingerprint] = await Promise.all([
+    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/cv-pdf.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/cv-pdf.d.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/generate-cv-pdfs.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/cv-pdf-fingerprint.json', import.meta.url), 'utf8')
+  ]);
+
+  const backgroundIndex = page.indexOf('<section id="background"');
+  const cvIndex = page.indexOf('<section id="cv"');
+  const workingIndex = page.indexOf('<section id="working-together"');
+  assert.ok(backgroundIndex >= 0 && backgroundIndex < cvIndex && cvIndex < workingIndex);
+  const cvSection = page.slice(cvIndex, workingIndex);
+  assert.match(page, /<section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">/);
+  assert.match(page, /<h2 id="cv-heading">\{sections\.cv\.heading\}<\/h2>/);
+  assert.match(page, /sections\.cv\.paragraphs\.map/);
+  assert.match(page, /class="cv-band__read" href=\{CV_PATH\}/);
+  assert.equal((page.match(/class="cv-band__downloads"/g) ?? []).length, 1);
+  assert.equal((page.match(/type="application\/pdf"/g) ?? []).length, 2);
+  assert.equal((page.match(/aria-label="Download the CV as an? [^"]+ PDF"/g) ?? []).length, 2);
+  assert.equal(cvSection.includes('<img'), false);
+
+  assert.match(homeCss, /\.chapter--cv \{[\s\S]*?display:\s*block/);
+  assert.match(homeCss, /\.cv-band \{[\s\S]*?display:\s*grid/);
+  assert.match(homeCss, /@media \(max-width: 54rem\)[\s\S]*?\.cv-band \{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
+
+  for (const source of [page, homeCss, cvPdf, cvTypes, generator, fingerprint]) {
+    assert.equal(source.includes('CV_PREVIEW'), false);
+    assert.equal(source.includes('cv-a4-preview.png'), false);
+    assert.equal(source.includes('cv-sheet'), false);
+    assert.equal(source.includes('cv-plate'), false);
+    assert.equal(source.includes('captureCvPreview'), false);
+  }
+  assert.equal(generator.includes('Page.captureScreenshot'), false);
+});
+
+test('Primary navigation keeps CV in the Home journey while CV routes opt into a document shell', async () => {
+  const [nav, layout, cvLayout, homeCss, shellCss] = await Promise.all([
     readFile(new URL('../src/components/PrimaryNav.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/site-shell.css', import.meta.url), 'utf8')
   ]);
@@ -97,10 +136,17 @@ test('Primary navigation uses a direct CV link and progressive enhancement', asy
   assert.match(nav, /href=\{contactHref\}>Contact</);
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
   assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
-  assert.match(nav, /isCvPage/);
-  assert.match(nav, /aria-current="page">CV</);
-  assert.equal((nav.match(/href="\/cv\/">CV</g) ?? []).length, 2);
-  assert.equal((nav.match(/href="\/cv\/" aria-current="page">CV</g) ?? []).length, 2);
+  assert.equal(nav.includes('isCvPage'), false);
+  assert.match(nav, /sectionHref\('#cv'\)/);
+  assert.match(nav, /aria-current=\{item\.current \? 'page' : undefined\}/);
+  assert.match(layout, /shell\?: 'site' \| 'document'/);
+  assert.match(layout, /shell = 'site'/);
+  assert.match(layout, /data-shell=\{shell\}/);
+  assert.match(layout, /isDocumentShell \? null : <PrimaryNav \/>/);
+  assert.match(layout, /isDocumentShell \? undefined : true/);
+  assert.match(cvLayout, /shell="document"/);
+  assert.ok(nav.indexOf("sectionHref('#background')") < nav.indexOf("sectionHref('#cv')"));
+  assert.ok(nav.indexOf("sectionHref('#cv')") < nav.indexOf("sectionHref('#working-together')"));
   assert.equal(nav.includes('View online'), false);
   assert.equal(nav.includes('Download PDF'), false);
   assert.equal(nav.includes('>View CV</a>'), false);
@@ -148,6 +194,12 @@ test('Primary navigation uses a direct CV link and progressive enhancement', asy
   assert.match(shellCss, /\.js \.primary-nav__mobile-panel \{[\s\S]*?right:\s*0;[\s\S]*?left:\s*auto;[\s\S]*?width:\s*max-content;[\s\S]*?max-width:\s*min\(13\.5rem, 100%\)/);
   assert.match(shellCss, /\.primary-nav__mobile-list > li > a \{[\s\S]*?width:\s*auto;[\s\S]*?min-height:\s*2\.5rem;[\s\S]*?justify-content:\s*flex-end/);
   assert.match(shellCss, /\.js \.page > \.site-header \{[\s\S]*?position:\s*sticky/);
+  assert.match(shellCss, /html:has\(body\[data-shell="document"\]\) \{\s*scroll-padding-top:\s*0/);
+  assert.match(
+    shellCss,
+    /body\[data-shell="document"\] \.page > \.site-header,[\s\S]*?\.js body\[data-shell="document"\] \.page > \.site-header \{\s*position:\s*static/
+  );
+  assert.match(shellCss, /\.js body\[data-shell="document"\] \.page > \.site-header \{\s*position:\s*static/);
   assert.equal(shellCss.includes('border-inline'), false);
   assert.equal(shellCss.includes('primary-nav__group-label'), false);
   assert.equal(shellCss.includes('primary-nav__cv'), false);
@@ -170,6 +222,7 @@ test('Layout verification covers responsive navigation and deployment runs it', 
 
   assert.match(pkg, /"layout:check": "npm run build && node scripts\/verify-home-overflow\.mjs"/);
   assert.match(verifier, /1024/);
+  assert.match(verifier, /1025/);
   assert.match(verifier, /768/);
   assert.match(verifier, /390/);
   assert.match(verifier, /320/);
@@ -193,8 +246,8 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /Escape/);
   assert.match(verifier, /summaryFocused/);
   assert.match(verifier, /focusInsideClosedDisclosure/);
-  assert.match(verifier, /primary-nav__desktop-list a\[href="\/cv\/"\]/);
-  assert.match(verifier, /primary-nav__mobile-list a\[href="\/cv\/"\]/);
+  assert.match(verifier, /primary-nav__desktop-list a\[href="#cv"\]/);
+  assert.match(verifier, /primary-nav__mobile-list a\[href="#cv"\]/);
   assert.equal(verifier.includes('assertCvOptions'), false);
   assert.match(verifier, /View online/);
   assert.match(verifier, /Download PDF/);
@@ -203,14 +256,18 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /US Letter PDF/);
   assert.match(verifier, /cv-actions/);
   assert.match(verifier, /shared site shell/);
-  assert.match(verifier, /does not mix CV actions/);
+  assert.match(verifier, /document shell/);
+  assert.match(verifier, /data-shell/);
+  assert.match(verifier, /does not render a mobile menu/);
   assert.match(verifier, /screen presentation/);
   assert.equal(verifier.includes('aria-label="Back to site"'), false);
   assert.equal(verifier.includes('assertDesktopCvChrome'), false);
+  assert.equal(verifier.includes('assertCvMobileMenu'), false);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);
   assert.match(verifier, /#background/);
+  assert.match(verifier, /#cv/);
   assert.match(verifier, /#working-together/);
   assert.match(verifier, /#contact/);
   assert.match(verifier, /#main/);

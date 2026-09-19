@@ -22,6 +22,7 @@ const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
   name={name}
   canonicalPath={CV_PATH}
   skipHref="#cv-main"
+  shell="document"
 >
   <Fragment slot="head" set:html={`<style>@page { size: ${pageSize}; margin: 0; }</style>`} />
   <div class="cv-document" data-cv-format={format}>

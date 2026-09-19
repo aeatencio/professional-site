@@ -64,6 +64,10 @@ const valid = () => ({
           paragraphs: ['Synthetic education description.']
         }]
       },
+      cv: {
+        heading: 'Curriculum vitae',
+        paragraphs: ['A synthetic compact document.']
+      },
       workingTogether: {
         heading: 'Working together',
         paragraphs: ['Synthetic collaboration copy.']

@@ -74,10 +74,43 @@ assert.ok(cvHtml.includes(visibleSiteUrl), 'Built A4 CV is missing the visible s
 assert.ok(cvLetterHtml.includes(visibleSiteUrl), 'Built US Letter CV is missing the visible site URL');
 assert.equal(cvHtml.includes('workers.dev'), false, 'A4 CV presents workers.dev as public identity');
 assert.equal(cvLetterHtml.includes('workers.dev'), false, 'US Letter CV presents workers.dev as public identity');
-assert.match(siteHtml, /href="\/cv\/">CV</);
+assert.match(siteHtml, /<section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">/);
+assert.match(siteHtml, new RegExp(`<h2 id="cv-heading">${projection.site.sections.cv.heading}<\\/h2>`));
+assert.match(siteHtml, /<a class="cv-band__read" href="\/cv\/">[^<]+<\/a>/);
+assert.equal(/<section id="cv"[\s\S]*?<\/(?:section)>/.exec(siteHtml)?.[0]?.includes('<img'), false);
+assert.equal(siteHtml.includes('cv-a4-preview.png'), false, 'Home still references the retired CV preview');
+assert.match(
+  siteHtml,
+  new RegExp(`href="${CV_PDF.a4.href}"[^>]*download="${CV_PDF.a4.download}"[^>]*aria-label="[^"]+"[^>]*>A4<`)
+);
+assert.match(
+  siteHtml,
+  new RegExp(`href="${CV_PDF.letter.href}"[^>]*download="${CV_PDF.letter.download}"[^>]*aria-label="[^"]+"[^>]*>US Letter<`)
+);
+const homeCvIndex = siteHtml.indexOf('id="cv"');
+assert.ok(
+  siteHtml.indexOf('id="background"') < homeCvIndex
+    && homeCvIndex < siteHtml.indexOf('id="working-together"'),
+  'The Home CV section must sit between Background and Working together'
+);
+assert.match(siteHtml, /<a href="#cv">CV<\/a>/, 'Home navigation must reach the CV section');
+assert.equal(
+  (siteHtml.match(/href="\/cv\/">CV</g) ?? []).length,
+  1,
+  'Only the Home footer colophon links straight to /cv/ with the CV label'
+);
+assert.match(cvHtml, /data-shell="document"/);
+assert.match(cvLetterHtml, /data-shell="document"/);
+assert.equal(cvHtml.includes('class="primary-nav"'), false, 'CV routes must not render primary navigation');
+assert.equal(cvLetterHtml.includes('class="primary-nav"'), false, 'US Letter CV must not render primary navigation');
+assert.equal(cvHtml.includes('data-mobile-navigation'), false);
+assert.equal(cvLetterHtml.includes('data-mobile-navigation'), false);
+assert.equal(/<header[^>]*data-directional-header/.test(cvHtml), false);
+assert.equal(/<header[^>]*data-directional-header/.test(cvLetterHtml), false);
+assert.equal(cvHtml.includes('href="#cv"'), false, 'CV routes must not offer a same-page CV anchor');
+assert.equal(cvHtml.includes('cv-a4-preview.png'), false);
+assert.equal(cvLetterHtml.includes('cv-a4-preview.png'), false);
 assert.equal(siteHtml.includes('>View online<'), false);
-assert.equal(siteHtml.includes('>Download PDF<'), false);
-assert.equal(siteHtml.includes(CV_PDF.a4.href), false);
 assert.equal(siteHtml.includes('>View CV</a>'), false);
 assert.equal(siteHtml.includes('>Download CV</a>'), false);
 assert.equal(siteHtml.includes('Download A4 CV'), false);
@@ -91,12 +124,16 @@ assert.equal(cvLetterHtml.includes('window.print'), false);
 
 assert.match(cvHtml, /class="site-header"/);
 assert.match(cvLetterHtml, /class="site-header"/);
-assert.match(cvHtml, /class="primary-nav"/);
-assert.match(cvLetterHtml, /class="primary-nav"/);
-assert.match(cvHtml, /<footer class="site-footer">/);
-assert.match(cvLetterHtml, /<footer class="site-footer">/);
-assert.match(cvHtml, /aria-current="page">CV</);
-assert.match(cvLetterHtml, /aria-current="page">CV</);
+assert.match(cvHtml, /<p class="identity">/);
+assert.match(cvLetterHtml, /<p class="identity">/);
+assert.match(cvHtml, /<a href="\/">/);
+assert.match(cvLetterHtml, /<a href="\/">/);
+assert.equal(cvHtml.includes('class="primary-nav"'), false);
+assert.equal(cvLetterHtml.includes('class="primary-nav"'), false);
+assert.equal(cvHtml.includes('<footer class="site-footer">'), false);
+assert.equal(cvLetterHtml.includes('<footer class="site-footer">'), false);
+assert.equal(cvHtml.includes('aria-current="page">CV<'), false);
+assert.equal(cvLetterHtml.includes('aria-current="page">CV<'), false);
 assert.equal(cvHtml.includes('>View online<'), false);
 assert.equal(cvLetterHtml.includes('>View online<'), false);
 assert.equal(cvHtml.includes('class="cv-chrome"'), false);

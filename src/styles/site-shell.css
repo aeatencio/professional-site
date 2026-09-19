@@ -136,6 +136,18 @@ html {
   }
 }
 
+html:has(body[data-shell="document"]) {
+  scroll-padding-top: 0;
+}
+
+body[data-shell="document"] .page > .site-header,
+.js body[data-shell="document"] .page > .site-header {
+  position: static;
+  transform: none;
+  box-shadow: none;
+  transition: none;
+}
+
 @media (max-width: 64rem) {
   :root {
     --site-header-offset: 4.75rem;
@@ -147,6 +159,11 @@ html {
 
   html.js {
     scroll-padding-top: var(--site-header-offset);
+  }
+
+  html:has(body[data-shell="document"]),
+  html.js:has(body[data-shell="document"]) {
+    scroll-padding-top: 0;
   }
 
   .page > .site-header {
@@ -163,6 +180,10 @@ html {
 
   .js .page > .site-header {
     position: sticky;
+  }
+
+  .js body[data-shell="document"] .page > .site-header {
+    position: static;
   }
 
   .js .page > .site-header .site-header__inner {

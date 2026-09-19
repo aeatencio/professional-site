@@ -11,7 +11,7 @@ import {
   verifyCvPdfs
 } from '../lib/cv-pdf.mjs';
 
-test('Home download uses the A4 PDF and keeps View CV on a separate URL', () => {
+test('CV routes and downloads keep distinct destinations', () => {
   assert.equal(CV_PDF.a4.href, '/cv/andres-atencio-cv-a4.pdf');
   assert.equal(CV_PDF.letter.href, '/cv/andres-atencio-cv-letter.pdf');
   assert.notEqual(CV_PDF.a4.href, CV_PDF.a4.route);
@@ -51,6 +51,7 @@ test('PDF generator validates the live CV before printing', async () => {
   assert.match(generator, /assertExpectedDocument/);
   assert.match(generator, /assertLoadedCv/);
   assert.match(generator, /assertPrintChromeHidden/);
+  assert.match(generator, /Emulation\.setEmulatedMedia/);
   assert.match(generator, /printToPdfParams\(pdf\)/);
   assert.match(generator, /response\.status !== 200/);
   assert.match(generator, /text\/html/);

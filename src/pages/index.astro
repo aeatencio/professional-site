@@ -2,7 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/home.css';
 import projection from '../../data/professional-public-projection.v1.json';
-import { HOME_PATH, homeIdentityGraph } from '../../lib/site-identity.mjs';
+import { CV_PATH, HOME_PATH, homeIdentityGraph } from '../../lib/site-identity.mjs';
+import { CV_PDF } from '../../lib/cv-pdf.mjs';
 import { socialCardAlt } from '../../lib/social-card.mjs';
 
 const { shared, site } = projection;
@@ -116,6 +117,33 @@ const jsonLd = homeIdentityGraph({
             decoding="async"
             loading="lazy"
           />
+        </div>
+      </div>
+    </section>
+
+    <section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">
+      <div class="cv-band">
+        <div class="cv-band__text">
+          <h2 id="cv-heading">{sections.cv.heading}</h2>
+          {sections.cv.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <div class="cv-band__routes">
+          <a class="cv-band__read" href={CV_PATH}>Read the CV</a>
+          <p class="cv-band__downloads">
+            <span class="cv-band__label">Download PDF</span>
+            <a
+              href={CV_PDF.a4.href}
+              download={CV_PDF.a4.download}
+              type="application/pdf"
+              aria-label="Download the CV as an A4 PDF"
+            >A4</a>
+            <a
+              href={CV_PDF.letter.href}
+              download={CV_PDF.letter.download}
+              type="application/pdf"
+              aria-label="Download the CV as a US Letter PDF"
+            >US Letter</a>
+          </p>
         </div>
       </div>
     </section>
