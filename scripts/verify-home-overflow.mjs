@@ -1561,3 +1561,75 @@ function assertNoHorizontalOverflow(metrics, width, label) {
     );
   }
 }
+
+// The Experience illustration clearance runs as its own pass so the geometric
+// guard stays independent of the Home navigation walkthrough above.
+const illustrationRoutes = ['/'];
+const illustrationViewports = [
+  { width: 1600, height: 950, mobile: false },
+  { width: 1366, height: 900, mobile: false },
+  { width: 1025, height: 900, mobile: false },
+  { width: 865, height: 900, mobile: false },
+  { width: 768, height: 900, mobile: true },
+  { width: 390, height: 844, mobile: true }
+];
+
+await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
+  console.log('Verifying Experience illustration clearance');
+  for (const route of illustrationRoutes) {
+    for (const viewport of illustrationViewports) {
+      await assertExperienceIllustration(cdp, new URL(route, origin).href, viewport);
+    }
+  }
+});
+
+async function assertExperienceIllustration(cdp, homeUrl, { width, height, mobile }) {
+  const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, mobile);
+  const result = await evaluate(cdp, sessionId, `(() => {
+    const block = document.querySelector('.experience-block--software');
+    const art = block?.querySelector('.chapter-art--notebook');
+    if (!block || !art) return { missing: true };
+    const artBox = art.getBoundingClientRect();
+    const blockBox = block.getBoundingClientRect();
+    const overlapping = [];
+    const content = [
+      ...block.querySelectorAll('h3, .role h4, .role p'),
+      ...(block.nextElementSibling?.querySelectorAll(':scope > h3, :scope > p') ?? [])
+    ];
+    for (const element of content) {
+      const box = element.getBoundingClientRect();
+      if (box.width < 1 || box.height < 1) continue;
+      const overlaps = artBox.left < box.right - 0.5 && artBox.right > box.left + 0.5
+        && artBox.top < box.bottom - 0.5 && artBox.bottom > box.top + 0.5;
+      if (overlaps) {
+        overlapping.push(\`\${element.className || element.tagName}("\${element.textContent.trim().slice(0, 28)}")\`);
+      }
+    }
+    return {
+      artWidth: Math.round(artBox.width),
+      artHeight: Math.round(artBox.height),
+      artRight: Math.round(artBox.right),
+      blockRight: Math.round(blockBox.right),
+      overlapping
+    };
+  })()`);
+  await cdp.send('Target.closeTarget', { targetId });
+
+  if (result.missing) {
+    throw new Error(`The Experience software block or its illustration is missing at ${width}px`);
+  }
+  if (result.artWidth < 64 || result.artHeight < 40) {
+    throw new Error(
+      `The Experience illustration collapsed at ${width}px (${result.artWidth}x${result.artHeight})`
+    );
+  }
+  if (result.artRight > result.blockRight + 1) {
+    throw new Error(`The Experience illustration escapes its block at ${width}px`);
+  }
+  if (result.overlapping.length) {
+    throw new Error(
+      `The Experience illustration overlaps role content at ${width}px: ${result.overlapping.join(', ')}`
+    );
+  }
+  console.log(`Experience illustration clearance verified at ${width}px`);
+}

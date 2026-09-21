@@ -43,13 +43,19 @@ test('Experience notebook follows the complete software role list and recomposes
     page,
     /class="experience-block experience-block--software"[\s\S]*?class="role-list"[\s\S]*?chapter-art--notebook[\s\S]*?currentDevelopment/
   );
-  assert.match(homeCss, /\.experience-block--software \{\s*position:\s*relative/);
-  assert.match(homeCss, /\.experience-block--software \{\s*position:\s*relative;[\s\S]*?border-bottom:\s*1px solid var\(--color-line\)/);
+  assert.match(homeCss, /\.experience-block--software \{\s*border-bottom:\s*1px solid var\(--color-line\)/);
   assert.match(homeCss, /\.experience-block--software \.role:last-child \{\s*border-bottom:\s*none/);
   assert.match(
     homeCss,
-    /\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*0;[\s\S]*?bottom:\s*clamp/
+    /@media \(min-width: 54\.001rem\)\s*\{\s*\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?width:\s*min\(14\.75rem, 100%\);[\s\S]*?margin:\s*clamp\([^)]*\) 0 clamp\([^)]*\) auto/
   );
+  const notebookRules = [
+    ...homeCss.matchAll(/\.experience-block--software > \.chapter-art--notebook \{([^}]*)\}/g)
+  ].map(([, declarations]) => declarations);
+  assert.equal(notebookRules.length, 2);
+  for (const declarations of notebookRules) {
+    assert.doesNotMatch(declarations, /position:\s*(?:absolute|fixed)/);
+  }
   assert.match(
     homeCss,
     /@media \(max-width: 54rem\)[\s\S]*?\.experience-block--software > \.chapter-art--notebook \{[\s\S]*?position:\s*static;[\s\S]*?margin-left:\s*auto/
@@ -263,6 +269,8 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.equal(verifier.includes('aria-label="Back to site"'), false);
   assert.equal(verifier.includes('assertDesktopCvChrome'), false);
   assert.equal(verifier.includes('assertCvMobileMenu'), false);
+  assert.match(verifier, /assertExperienceIllustration/);
+  assert.match(verifier, /overlaps role content/);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);
