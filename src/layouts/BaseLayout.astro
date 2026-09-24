@@ -2,13 +2,15 @@
 import '../styles/global.css';
 import '../styles/site-shell.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
-import { absoluteUrl } from '../../lib/site-identity.mjs';
+import LanguageSwitch from '../components/LanguageSwitch.astro';
+import { absoluteUrl, LOCALIZED_PATHS } from '../../lib/site-identity.mjs';
 import { SOCIAL_CARD } from '../../lib/social-card.mjs';
+import type { HomeCopy, HomeLanguage } from '../../lib/home-copy';
 
 interface Props {
   title: string;
   description: string;
-  lang: string;
+  lang: HomeLanguage;
   name: string;
   canonicalPath: string;
   skipHref?: string;
@@ -17,6 +19,9 @@ interface Props {
   ogType?: 'website' | 'profile';
   socialCardAlt?: string;
   jsonLd?: Record<string, unknown>;
+  alternates?: Record<HomeLanguage, string>;
+  labels?: { skip: string; language: string };
+  homeCopy?: HomeCopy;
 }
 
 const {
@@ -30,11 +35,14 @@ const {
   shell = 'site',
   ogType = 'website',
   socialCardAlt,
-  jsonLd
+  jsonLd,
+  alternates,
+  homeCopy,
+  labels = homeCopy?.ui
 } = Astro.props;
 const isDocumentShell = shell === 'document';
-const isHome = (Astro.url.pathname.replace(/\/$/, '') || '/') === '/';
-const homeHref = isHome ? '#home' : '/';
+const isHome = Boolean(homeCopy) || (Astro.url.pathname.replace(/\/$/, '') || '/') === '/';
+const homeHref = isHome ? '#home' : LOCALIZED_PATHS.home[lang];
 const IdentityTag = isHome ? 'h1' : 'p';
 if (!Astro.site) {
   throw new Error('A site URL is required to emit canonical metadata');
@@ -52,6 +60,7 @@ const sitemapUrl = absoluteUrl('/sitemap-index.xml', Astro.site);
  * never reaches paper would force a regeneration of the versioned PDFs.
  */
 const hasSocialCard = Boolean(socialCardAlt);
+const ogLocale = { en: 'en_US', es: 'es_AR' } as const;
 const socialCardUrl = absoluteUrl(SOCIAL_CARD.href, Astro.site);
 ---
 
@@ -93,10 +102,19 @@ const socialCardUrl = absoluteUrl(SOCIAL_CARD.href, Astro.site);
       <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     ) : null}
     <script is:inline>document.documentElement.classList.add('js');</script>
+    {alternates ? (
+      <Fragment>
+        <link rel="alternate" hreflang="en" href={absoluteUrl(alternates.en, Astro.site)} />
+        <link rel="alternate" hreflang="es" href={absoluteUrl(alternates.es, Astro.site)} />
+        <link rel="alternate" hreflang="x-default" href={absoluteUrl(alternates.en, Astro.site)} />
+        <meta property="og:locale" content={ogLocale[lang]} />
+        <meta property="og:locale:alternate" content={ogLocale[lang === 'es' ? 'en' : 'es']} />
+      </Fragment>
+    ) : null}
     <slot name="head" />
   </head>
   <body class={bodyClass} data-shell={shell}>
-    <a class="skip-link" href={skipHref}>Skip to content</a>
+    <a class="skip-link" href={skipHref}>{labels?.skip ?? 'Skip to content'}</a>
     <div class="page">
       <header class="site-header" data-directional-header={isDocumentShell ? undefined : true}>
         <div class="site-header__inner">
@@ -104,14 +122,16 @@ const socialCardUrl = absoluteUrl(SOCIAL_CARD.href, Astro.site);
             <a href={homeHref}>{name}</a>
             <span class="identity-mark" aria-hidden="true"></span>
           </IdentityTag>
-          {isDocumentShell ? null : <PrimaryNav />}
+          {isDocumentShell
+            ? alternates && labels ? <LanguageSwitch language={lang} label={labels.language} alternates={alternates} /> : null
+            : <PrimaryNav copy={homeCopy} />}
         </div>
       </header>
       <slot />
       {isDocumentShell ? null : (
         <footer class="site-footer">
           <p>{name}</p>
-          <a href="/cv/">CV</a>
+          <a href={LOCALIZED_PATHS.cv[lang]}>{homeCopy?.ui.footerCv ?? 'CV'}</a>
         </footer>
       )}
     </div>

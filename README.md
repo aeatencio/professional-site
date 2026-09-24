@@ -10,7 +10,18 @@ Built with Astro and TypeScript. This repository contains the public site, its p
 
 The site is static, versioned and reproducible. Its public origin is `https://andresatencio.com`.
 
-Internal navigation uses same-origin paths, including `/`, `/cv/`, `/cv/letter/` and the downloadable PDF files under `/cv/`. On Home, `CV` navigates to the in-page CV section between Background and Working together. That section uses a decorative miniature of the generated A4 document and links to the complete web view and both downloads. `/cv/` is the canonical web view of the Software Development CV: a first-class, responsive document view of `andresatencio.com`. It keeps the shared page infrastructure and a minimal header whose identity links back to the site, without primary navigation, the mobile menu, directional header behavior or the site footer. `/cv/letter/` remains a functional route for US Letter print and PDF generation; its screen presentation matches `/cv/`. A4 and US Letter are download and print formats, not alternate web layouts. Print and PDF output exclude the site shell and on-page download actions; they contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
+The site is English by default, with Spanish versions of the Home at `/es/`
+and of the CV at `/es/cv/`, including its own A4 and Carta (US Letter) PDFs.
+An accessible EN/ES selector on every page leads to the equivalent page in the
+other language. Each page pair uses one shared Astro renderer, explicit typed
+copy and the same local public facts. See
+[Languages](docs/architecture.md#languages) for maintenance and SEO.
+
+Repository work (code, documentation, issues, pull requests and commit
+messages) is in English; visitor-facing content is maintained in each language
+the site supports. See the language policy in [AGENTS.md](AGENTS.md#language).
+
+Internal navigation uses same-origin paths, including `/`, `/es/`, `/cv/`, `/es/cv/`, the print routes `/cv/letter/` and `/es/cv/letter/`, and the downloadable PDF files under `/cv/` and `/es/cv/`. On Home, `CV` navigates to the in-page CV section between Background and Working together. That compact section links to the complete web view and both downloads in the page language. `/cv/` is the canonical web view of the Software Development CV, and `/es/cv/` of its Spanish version: first-class, responsive document views of `andresatencio.com`. They keep the shared page infrastructure and a minimal header whose identity links back to the site and whose selector switches language, without primary navigation, the mobile menu, directional header behavior or the site footer. Each `letter/` route remains a functional route for US Letter print and PDF generation; its screen presentation matches its CV. A4 and US Letter are download and print formats, not alternate web layouts. Print and PDF output exclude the site shell and on-page download actions; they contain only the document. The CV itself prints the public site origin so a downloaded copy still points back to the site.
 
 This repository is public on GitHub. Its code and complete history are maintained as safe for public exposure.
 
@@ -37,29 +48,43 @@ npm run build         # static production build in dist/
 npm run preview       # preview the production build
 npm run cv:pdf        # regenerate public CV PDFs from current HTML
 npm run layout:check  # rebuild, then verify Home navigation, anchors and responsive layout
-npm test              # public-projection boundary tests
+npm test              # content, localization, presentation and boundary tests
 ```
 
 Astro is installed locally through this project. Do not install project tools globally.
 
 ## CV generation and validation
 
-The downloadable files in `public/cv/` are real PDFs generated from the current printable CV HTML.
+The downloadable files in `public/cv/` (English) and `public/es/cv/` (Spanish) are real PDFs generated from the current printable CV HTML: A4 and US Letter for each language.
 
-`npm run cv:pdf` first validates the local projection, then rebuilds the HTML and prints both paper sizes. It needs a local Edge or Chrome executable; if the browser is not on a default path, set `EDGE_PATH` or `CHROME_PATH`.
+`npm run cv:pdf` first validates the local projection, then rebuilds the HTML, prints all four PDFs and replaces the versioned files only if every one is a single page from the canonical PDF environment.
+
+### Canonical PDF environment
+
+The approved PDFs are printed on Linux, where the typography differs from Windows and macOS: the same Segoe UI files lay out differently, and with Segoe UI Semibold absent the document's weight 600 renders with Segoe UI Bold. Reprints must use that environment:
+
+- Linux x86_64 (for example WSL Ubuntu 24.04) with Node.js 24 and dependencies installed there;
+- Chrome for Testing `153.0.8010.47` (`linux64`), passed through `CHROME_PATH`, with its system libraries available;
+- `FONTCONFIG_FILE` pointing to a fontconfig file whose only font directory holds `georgia.ttf`, `georgiab.ttf`, `georgiai.ttf`, `georgiaz.ttf`, `segoeui.ttf`, `segoeuib.ttf`, `segoeuii.ttf` and `segoeuiz.ttf` from a Windows installation, and no `seguisb.ttf`. These fonts are licensed with Windows and are not distributed in this repository.
+
+```bash
+FONTCONFIG_FILE=/path/to/cv-fonts/fonts.conf CHROME_PATH=/path/to/chrome-linux64/chrome npm run cv:pdf
+```
+
+The generator and `verifyCvPdfs` reject any PDF whose producer is not Linux or whose embedded fonts are not exactly Georgia, Segoe UI and Segoe UI Bold, so a reprint from another environment fails instead of silently changing the documents.
 
 Chromium may embed generation timestamps, so an otherwise identical reprint can change the PDF bytes. Run `cv:pdf` when the printable CV actually changes and keep the updated PDFs and fingerprint together.
 
 The build fingerprints the effective CV print inputs rather than a guessed print-only CSS subset. That boundary includes:
 
-- the built HTML for `/cv/` and `/cv/letter/`, including head, metadata, `@page` and `#cv-main`;
+- the built HTML for `/cv/`, `/cv/letter/`, `/es/cv/` and `/es/cv/letter/`, including head, metadata, `@page` and `#cv-main`;
 - the local stylesheets and local font/image assets those pages load;
 - `Astro.site`;
 - the `Page.printToPDF` options for A4 and US Letter.
 
 Changes that cannot affect the PDF may still require a reprint; a stale PDF must not pass.
 
-`layout:check` rebuilds first, then verifies Home navigation, CV site-page composition, sticky anchor offsets, horizontal overflow, and the native mobile fallback with JavaScript disabled before page load. Deployment CI runs tests, `check` and `layout:check`.
+`layout:check` rebuilds first, then verifies Home and CV in both languages, language switching between equivalent pages, CV site-page composition and independent desktop column rhythm, sticky anchor offsets, horizontal overflow, and the native mobile fallback with JavaScript disabled before page load. Deployment CI runs tests, `check` and `layout:check`.
 
 ## Architecture and public data boundary
 

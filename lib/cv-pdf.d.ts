@@ -1,5 +1,9 @@
+export type CvPdfLanguage = 'en' | 'es';
+export type CvPdfFormat = 'a4' | 'letter';
+
 export interface CvPdfAsset {
-  format: 'a4' | 'letter';
+  language: CvPdfLanguage;
+  format: CvPdfFormat;
   href: string;
   download: string;
   publicPath: string;
@@ -13,9 +17,12 @@ export interface CvPdfAsset {
   };
 }
 
-export const CV_PDF: {
-  a4: CvPdfAsset;
-  letter: CvPdfAsset;
+export const CV_PDF: Record<CvPdfLanguage, Record<CvPdfFormat, CvPdfAsset>>;
+export const CV_PDFS: CvPdfAsset[];
+
+export const CV_PDF_ENVIRONMENT: {
+  platform: string;
+  fonts: string[];
 };
 
 export const CV_PDF_FINGERPRINT_PATH: string;
@@ -45,11 +52,16 @@ export function printToPdfParams(pdf: CvPdfAsset): {
   marginRight: 0;
 };
 
-export function repoPath(...parts: string[]): string;
-export function sha256(buffer: Uint8Array): string;
-export function inspectPdf(buffer: Uint8Array): {
+export interface CvPdfInspection {
   bytes: number;
   pageCount: number;
   mediaBox: { width: number; height: number };
-};
+  creator: string | null;
+  fonts: string[];
+}
+
+export function repoPath(...parts: string[]): string;
+export function sha256(buffer: Uint8Array): string;
+export function inspectPdf(buffer: Uint8Array): CvPdfInspection;
+export function assertCanonicalCvPdf(inspection: CvPdfInspection, label: string): void;
 export function verifyCvPdfs(options?: { dist?: boolean }): Promise<void>;

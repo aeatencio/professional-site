@@ -1,6 +1,9 @@
+import { homeCopy } from '../lib/home-copy.ts';
+import { cvCopy } from '../lib/cv-copy.ts';
 import astroConfig from '../astro.config.mjs';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
-import { CV_PDF, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
+import { CV_PDF, CV_PDFS, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
+import { LOCALIZED_PATHS } from '../lib/site-identity.mjs';
 import {
   evaluate,
   findBrowser,
@@ -23,12 +26,29 @@ const directionalViewports = [
   ...mobileViewports.map((viewport) => ({ ...viewport, mobile: true }))
 ];
 const noJavaScriptWidths = [390, 320];
+const illustrationViewports = [
+  { width: 1600, height: 950, mobile: false },
+  { width: 1366, height: 900, mobile: false },
+  { width: 1025, height: 900, mobile: false },
+  { width: 865, height: 900, mobile: false },
+  { width: 768, height: 900, mobile: true },
+  { width: 390, height: 844, mobile: true }
+];
 const footerViewports = [
   { width: 1366, height: 900, mobile: false },
   { width: 390, height: 844, mobile: true },
   { width: 320, height: 700, mobile: true }
 ];
 const projection = await loadLocalPublicProjection();
+let copy = homeCopy('en');
+const navigationLabels = () => [
+  copy.site.sections.experience.heading,
+  copy.site.sections.background.heading,
+  copy.ui.cv,
+  copy.site.sections.workingTogether.heading,
+  copy.site.sections.contact.heading
+];
+const cvPath = () => LOCALIZED_PATHS.cv[copy.language];
 
 await findBrowser();
 
@@ -37,38 +57,49 @@ if (new URL(astroConfig.site).origin !== PUBLIC_SITE_ORIGIN) {
 }
 
 await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
-  const homeUrl = new URL('/', origin).href;
-  console.log('Verifying built routes and Home document');
-  await assertHomeDocument(origin, homeUrl);
+  for (const language of ['en', 'es']) {
+    copy = homeCopy(language);
+    const homeUrl = new URL(copy.path, origin).href;
+    console.log(`Verifying ${language} Home`);
+    console.log('Verifying built routes and Home document');
+    await assertHomeDocument(origin, homeUrl);
 
-  console.log('Verifying desktop Home navigation');
-  for (const width of desktopWidths) {
-    await assertDesktopNavigation(cdp, homeUrl, width);
-  }
+    console.log('Verifying desktop Home navigation');
+    for (const width of desktopWidths) {
+      await assertDesktopNavigation(cdp, homeUrl, width);
+    }
 
-  console.log('Verifying mobile Home navigation');
-  for (const viewport of mobileViewports) {
-    await assertMobileNavigation(cdp, homeUrl, viewport);
-  }
+    console.log('Verifying mobile Home navigation');
+    for (const viewport of mobileViewports) {
+      await assertMobileNavigation(cdp, homeUrl, viewport);
+    }
 
-  console.log('Verifying no-JavaScript Home navigation');
-  for (const width of noJavaScriptWidths) {
-    await assertNoJavaScriptNavigation(cdp, homeUrl, width);
-  }
+    console.log('Verifying no-JavaScript Home navigation');
+    for (const width of noJavaScriptWidths) {
+      await assertNoJavaScriptNavigation(cdp, homeUrl, width);
+    }
 
-  console.log('Verifying directional header behavior');
-  for (const viewport of directionalViewports) {
-    await assertDirectionalHeader(cdp, homeUrl, viewport);
-  }
+    console.log('Verifying Experience illustration clearance');
+    for (const viewport of illustrationViewports) {
+      await assertExperienceIllustration(cdp, homeUrl, viewport);
+    }
 
-  console.log('Verifying footer and CV destinations');
-  await assertReducedMotion(cdp, homeUrl);
-  for (const { width, height, mobile } of footerViewports) {
-    await assertFooter(cdp, homeUrl, width, height, mobile);
+    console.log('Verifying directional header behavior');
+    for (const viewport of directionalViewports) {
+      await assertDirectionalHeader(cdp, homeUrl, viewport);
+    }
+
+    console.log('Verifying footer and CV destinations');
+    await assertReducedMotion(cdp, homeUrl);
+    for (const { width, height, mobile } of footerViewports) {
+      await assertFooter(cdp, homeUrl, width, height, mobile);
+    }
+    await assertHomeCvNavigation(cdp, homeUrl);
+    await assertFooterNavigation(cdp, homeUrl);
+    await assertLanguageSwitch(cdp, homeUrl);
   }
-  await assertHomeCvNavigation(cdp, homeUrl);
   await assertCvSitePages(cdp, origin);
-  await assertFooterNavigation(cdp, homeUrl);
+  await assertCvLanguageSwitch(cdp, origin);
 });
 
 async function assertDesktopNavigation(cdp, homeUrl, width) {
@@ -82,7 +113,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
     const cv = document.querySelector('.primary-nav__desktop-list a[href="#cv"]');
     const topLevel = [...(desktop?.children ?? [])].map((item) =>
       item.querySelector(':scope > a')?.textContent?.trim() ?? ''
-    );
+    ).filter(Boolean);
     return {
       pathname: location.pathname,
       heading: document.querySelector('#home-heading')?.textContent ?? '',
@@ -102,10 +133,10 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
     };
   })()`);
 
-  if ((initial.pathname.replace(/\/$/, '') || '/') !== '/') {
+  if (initial.pathname !== copy.path) {
     throw new Error(`Desktop layout check loaded ${initial.pathname}, expected /`);
   }
-  if (initial.heading !== projection.shared.professionalIdentity) {
+  if (initial.heading !== copy.shared.professionalIdentity) {
     throw new Error('Desktop layout check did not load the Home document');
   }
   if (initial.headerPosition !== 'sticky' || initial.headerBackground === 'rgba(0, 0, 0, 0)') {
@@ -114,13 +145,7 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   if (initial.desktopDisplay === 'none' || initial.mobileDisplay !== 'none') {
     throw new Error(`Desktop navigation visibility is incorrect at ${width}px`);
   }
-  if (JSON.stringify(initial.topLevel) !== JSON.stringify([
-    'Experience',
-    'Background',
-    'CV',
-    'Working together',
-    'Contact'
-  ])) {
+  if (JSON.stringify(initial.topLevel) !== JSON.stringify(navigationLabels())) {
     throw new Error(`Desktop top-level navigation is incorrect at ${width}px: ${initial.topLevel.join(', ')}`);
   }
   if (initial.cvHref !== '#cv' || initial.cvText !== 'CV' || initial.cvCurrent !== null
@@ -159,6 +184,59 @@ async function assertDesktopNavigation(cdp, homeUrl, width) {
   console.log(`Desktop navigation, offsets and overflow verified at ${width}px`);
 }
 
+async function assertLanguageSwitch(cdp, homeUrl) {
+  const targetLanguage = copy.language === 'en' ? 'es' : 'en';
+  const destination = homeCopy(targetLanguage);
+  for (const mobile of [false, true]) {
+    const { targetId, sessionId } = await openAt(cdp, homeUrl, mobile ? 390 : 1366, 900, mobile);
+    if (mobile) await openMobileMenu(cdp, sessionId);
+    const container = mobile ? '.primary-nav__mobile-list' : '.primary-nav__desktop-list';
+    const selector = `${container} .language-switch a[hreflang="${targetLanguage}"]`;
+    await focusSelector(cdp, sessionId, selector);
+    await pressKey(cdp, sessionId, 'Tab');
+    await focusSelector(cdp, sessionId, selector);
+    const before = await evaluate(cdp, sessionId, `(() => {
+      const group = document.querySelector('${container} .language-switch');
+      const active = document.activeElement;
+      return {
+        label: group?.getAttribute('aria-label'),
+        current: group?.querySelector('[aria-current="page"]')?.getAttribute('hreflang'),
+        focused: active?.matches('${selector}'),
+        focusVisible: active?.matches(':focus-visible'),
+        width: active?.getBoundingClientRect().width,
+        height: active?.getBoundingClientRect().height
+      };
+    })()`);
+    if (before.label !== copy.ui.language || before.current !== copy.language || !before.focused
+      || !before.focusVisible || before.width < 24 || before.height < 24) {
+      throw new Error(`Language switch is not accessible: ${JSON.stringify(before)}`);
+    }
+    await pressKey(cdp, sessionId, 'Enter');
+    await sleep(150);
+    const after = await evaluate(cdp, sessionId, `({
+      path: location.pathname,
+      language: document.documentElement.lang,
+      heading: document.querySelector('#home-heading')?.textContent,
+      current: document.querySelector('${container} .language-switch [aria-current="page"]')?.getAttribute('hreflang')
+    })`);
+    if (after.path !== destination.path || after.language !== targetLanguage
+      || after.heading !== destination.shared.professionalIdentity || after.current !== targetLanguage) {
+      throw new Error(`Language switch did not reach the correct Home: ${JSON.stringify(after)}`);
+    }
+    await cdp.send('Target.closeTarget', { targetId });
+  }
+
+  const page = await openAt(cdp, homeUrl, 320, 700, true, true);
+  await clickSelector(cdp, page.sessionId, '[data-mobile-navigation] > summary');
+  await clickSelector(cdp, page.sessionId, `.primary-nav__mobile-list .language-switch a[hreflang="${targetLanguage}"]`);
+  const history = await cdp.send('Page.getNavigationHistory', {}, page.sessionId);
+  if (new URL(history.entries[history.currentIndex].url).pathname !== destination.path) {
+    throw new Error('Language switch failed with JavaScript disabled');
+  }
+  await cdp.send('Target.closeTarget', { targetId: page.targetId });
+  console.log(`Language switch ${copy.language} to ${targetLanguage} verified with keyboard and without JavaScript`);
+}
+
 async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
   const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, true);
   const label = `${width}x${height}`;
@@ -187,7 +265,7 @@ async function assertMobileNavigation(cdp, homeUrl, { width, height }) {
   if (initial.mobileDisplay === 'none' || initial.desktopDisplay !== 'none') {
     throw new Error(`Mobile navigation visibility is incorrect at ${label}`);
   }
-  if (initial.open !== false || initial.summaryText !== 'Menu') {
+  if (initial.open !== false || initial.summaryText !== copy.ui.menu) {
     throw new Error(`Mobile navigation is not initially closed at ${label}`);
   }
   if (initial.ariaExpanded !== null || initial.ariaControls !== null) {
@@ -443,8 +521,8 @@ async function assertFooter(cdp, homeUrl, width, height, mobile) {
   })()`);
   if (result.name !== projection.shared.name
     || result.linkCount !== 1
-    || result.hrefs[0] !== '/cv/'
-    || result.labels[0] !== 'CV'
+    || result.hrefs[0] !== cvPath()
+    || result.labels[0] !== copy.ui.footerCv
     || result.forbidden.length) {
     throw new Error(`Footer content is incorrect at ${width}px: ${JSON.stringify(result)}`);
   }
@@ -463,7 +541,7 @@ async function assertFooterNavigation(cdp, homeUrl) {
   const { targetId, sessionId } = await openAt(cdp, homeUrl, 390, 844, true);
   await evaluate(cdp, sessionId, 'window.scrollTo(0, document.documentElement.scrollHeight)');
   await sleep(200);
-  await activateByEnter(cdp, sessionId, '.site-footer a[href="/cv/"]');
+  await activateByEnter(cdp, sessionId, `.site-footer a[href="${cvPath()}"]`);
   await sleep(150);
   const result = await evaluate(cdp, sessionId, `(() => ({
     pathname: location.pathname,
@@ -477,9 +555,9 @@ async function assertFooterNavigation(cdp, homeUrl) {
     identityHref: document.querySelector('.identity a')?.getAttribute('href') ?? '',
     skipHref: document.querySelector('.skip-link')?.getAttribute('href') ?? ''
   }))()`);
-  if (result.pathname !== '/cv/' || !result.hasCvMain || !result.hasSiteHeader || result.hasPrimaryNav
+  if (result.pathname !== cvPath() || !result.hasCvMain || !result.hasSiteHeader || result.hasPrimaryNav
     || result.hasMobileNav || result.hasDirectionalHeader || result.hasSiteFooter
-    || result.shell !== 'document' || result.identityHref !== '/' || result.skipHref !== '#cv-main') {
+    || result.shell !== 'document' || result.identityHref !== copy.path || result.skipHref !== '#cv-main') {
     throw new Error(`Footer CV link did not reach the CV document shell: ${JSON.stringify(result)}`);
   }
   await cdp.send('Target.closeTarget', { targetId });
@@ -511,7 +589,7 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
     throw new Error(`No-JavaScript panel is not in unrestricted document flow at ${width}px`);
   }
   const { outerHTML } = await cdp.send('DOM.getOuterHTML', { nodeId: panelId }, first.sessionId);
-  for (const label of ['Experience', 'Background', 'Working together', 'CV', 'Contact']) {
+  for (const label of navigationLabels()) {
     if (!outerHTML.includes(label)) {
       throw new Error(`No-JavaScript mobile panel is missing ${label} at ${width}px`);
     }
@@ -519,7 +597,7 @@ async function assertNoJavaScriptNavigation(cdp, homeUrl, width) {
   if (!outerHTML.includes('href="#cv"')
     || outerHTML.includes('View online')
     || outerHTML.includes('Download PDF')
-    || outerHTML.includes(`href="${CV_PDF.a4.href}"`)) {
+    || outerHTML.includes(`href="${CV_PDF[copy.language].a4.href}"`)) {
     throw new Error(`No-JavaScript CV destination does not target the Home section at ${width}px`);
   }
   await cdp.send('Target.closeTarget', { targetId: first.targetId });
@@ -565,7 +643,7 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     '#cv',
     'Desktop Home CV'
   );
-  await activateByEnter(cdp, desktop.sessionId, '.cv-band__read[href="/cv/"]');
+  await activateByEnter(cdp, desktop.sessionId, `.cv-band__read[href="${cvPath()}"]`);
   await sleep(150);
   const desktopResult = await evaluate(cdp, desktop.sessionId, `(() => ({
     pathname: location.pathname,
@@ -585,10 +663,10 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
     navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
   }))()`);
-  if (desktopResult.pathname !== '/cv/' || !desktopResult.hasCvMain || !desktopResult.hasCvActions
+  if (desktopResult.pathname !== cvPath() || !desktopResult.hasCvMain || !desktopResult.hasCvActions
     || desktopResult.hasCvChrome || desktopResult.hasPrimaryNav || desktopResult.hasMobileNav
     || desktopResult.hasDirectionalHeader || !desktopResult.hasSiteHeader || desktopResult.hasSiteFooter
-    || desktopResult.shell !== 'document' || desktopResult.identityHref !== '/'
+    || desktopResult.shell !== 'document' || desktopResult.identityHref !== copy.path
     || desktopResult.skipHref !== '#cv-main' || desktopResult.viewOnline || desktopResult.navDownloadPdf
     || desktopResult.current.length !== 0) {
     throw new Error(`Desktop CV link did not reach the CV document shell: ${JSON.stringify(desktopResult)}`);
@@ -608,7 +686,7 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
   if (mobileMenu.open || mobileMenu.focusInsideClosedContent) {
     throw new Error('Mobile CV navigation did not close Menu cleanly');
   }
-  await activateByEnter(cdp, mobile.sessionId, '.cv-band__read[href="/cv/"]');
+  await activateByEnter(cdp, mobile.sessionId, `.cv-band__read[href="${cvPath()}"]`);
   await sleep(150);
   const mobileResult = await evaluate(cdp, mobile.sessionId, `(() => ({
     pathname: location.pathname,
@@ -628,10 +706,10 @@ async function assertHomeCvNavigation(cdp, homeUrl) {
     viewOnline: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('View online')),
     navDownloadPdf: Boolean(document.querySelector('.primary-nav')?.innerHTML.includes('Download PDF'))
   }))()`);
-  if (mobileResult.pathname !== '/cv/' || !mobileResult.hasCvMain || !mobileResult.hasCvActions
+  if (mobileResult.pathname !== cvPath() || !mobileResult.hasCvMain || !mobileResult.hasCvActions
     || mobileResult.hasCvChrome || mobileResult.hasPrimaryNav || mobileResult.hasMobileNav
     || mobileResult.hasDirectionalHeader || !mobileResult.hasSiteHeader || mobileResult.hasSiteFooter
-    || mobileResult.shell !== 'document' || mobileResult.identityHref !== '/'
+    || mobileResult.shell !== 'document' || mobileResult.identityHref !== copy.path
     || mobileResult.skipHref !== '#cv-main' || mobileResult.viewOnline || mobileResult.navDownloadPdf
     || mobileResult.current.length !== 0) {
     throw new Error(`Mobile CV link did not reach the CV document shell: ${JSON.stringify(mobileResult)}`);
@@ -683,18 +761,18 @@ async function assertHomeCvSection(cdp, sessionId, viewport, label) {
   if (!result.section || !result.band || !result.text || !result.routes || !result.read || !result.downloads) {
     throw new Error(`Home CV section is incomplete at ${label}: ${JSON.stringify(result)}`);
   }
-  if (!result.heading || result.paragraphCount < 1 || result.readHref !== '/cv/'
+  if (!result.heading || result.paragraphCount < 1 || result.readHref !== cvPath()
     || !result.readName || result.readTag !== 'A' || result.retiredPreview) {
     throw new Error(`Home CV semantics are incorrect at ${label}: ${JSON.stringify(result)}`);
   }
-  const expectedDownloads = [CV_PDF.a4, CV_PDF.letter].map((pdf) => ({
-    text: pdf.format === 'a4' ? 'A4' : 'US Letter',
+  const expectedDownloads = [CV_PDF[copy.language].a4, CV_PDF[copy.language].letter].map((pdf) => ({
+    text: pdf.format === 'a4' ? 'A4' : copy.ui.letter,
     href: pdf.href,
     download: pdf.download,
     type: 'application/pdf',
     ariaLabel: pdf.format === 'a4'
-      ? 'Download the CV as an A4 PDF'
-      : 'Download the CV as a US Letter PDF'
+      ? copy.ui.downloadA4
+      : copy.ui.downloadLetter
   }));
   if (JSON.stringify(result.downloadLinks) !== JSON.stringify(expectedDownloads)) {
     throw new Error(`Home CV download actions are incorrect at ${label}: ${JSON.stringify(result.downloadLinks)}`);
@@ -720,8 +798,8 @@ async function assertHomeCvSection(cdp, sessionId, viewport, label) {
 }
 
 async function assertCvSitePages(cdp, origin) {
-  const a4Url = new URL(CV_PDF.a4.route, origin).href;
-  const letterUrl = new URL(CV_PDF.letter.route, origin).href;
+  const a4Url = new URL(CV_PDF.en.a4.route, origin).href;
+  const letterUrl = new URL(CV_PDF.en.letter.route, origin).href;
   const a4Desktop = [];
 
   for (const viewport of [
@@ -750,7 +828,29 @@ async function assertCvSitePages(cdp, origin) {
   await assertCvViewport(cdp, a4Url, { width: 320, height: 700, mobile: true }, true);
   await assertCvKeyboard(cdp, a4Url);
 
-  for (const pdf of Object.values(CV_PDF)) {
+  const spanishUrl = new URL(LOCALIZED_PATHS.cv.es, origin).href;
+  const spanishDesktop = [];
+  for (const viewport of [
+    { width: 1366, height: 900, mobile: false },
+    { width: 1025, height: 900, mobile: false },
+    { width: 768, height: 900, mobile: true },
+    { width: 390, height: 844, mobile: true },
+    { width: 320, height: 700, mobile: true }
+  ]) {
+    const snapshot = await assertCvViewport(cdp, spanishUrl, viewport, false);
+    if (viewport.width >= 1025) spanishDesktop.push(snapshot);
+  }
+  assertEquivalentScreen(a4Desktop[0], spanishDesktop[0], 'English and Spanish desktop CV presentation');
+  await assertCvViewport(cdp, spanishUrl, { width: 390, height: 844, mobile: true }, true);
+  const spanishLetterDesktop = await assertCvViewport(
+    cdp,
+    new URL(CV_PDF.es.letter.route, origin).href,
+    { width: 1366, height: 900, mobile: false },
+    false
+  );
+  assertEquivalentScreen(spanishDesktop[0], spanishLetterDesktop, 'Spanish A4 and Carta desktop screen presentation');
+
+  for (const pdf of CV_PDFS) {
     const response = await fetch(new URL(pdf.href, origin));
     const bytes = new Uint8Array(await response.arrayBuffer()).subarray(0, 5);
     if (!response.ok || new TextDecoder().decode(bytes) !== '%PDF-') {
@@ -759,6 +859,55 @@ async function assertCvSitePages(cdp, origin) {
   }
 
   console.log('CV document shell, downloads and responsive web composition verified');
+}
+
+async function assertCvLanguageSwitch(cdp, origin) {
+  for (const [from, to] of [['en', 'es'], ['es', 'en']]) {
+    const source = cvCopy(from);
+    const target = cvCopy(to);
+    const selector = `.site-header .language-switch a[hreflang="${to}"]`;
+    for (const mobile of [false, true]) {
+      const { targetId, sessionId } = await openAt(cdp, new URL(source.path, origin).href, mobile ? 390 : 1366, 900, mobile);
+      await focusSelector(cdp, sessionId, selector);
+      await pressKey(cdp, sessionId, 'Tab');
+      await focusSelector(cdp, sessionId, selector);
+      const before = await evaluate(cdp, sessionId, `(() => {
+        const group = document.querySelector('.site-header .language-switch');
+        const active = document.activeElement;
+        return {
+          label: group?.getAttribute('aria-label'),
+          current: group?.querySelector('[aria-current="page"]')?.getAttribute('hreflang'),
+          focused: active?.matches('${selector}'),
+          focusVisible: active?.matches(':focus-visible')
+        };
+      })()`);
+      if (before.label !== source.ui.language || before.current !== from || !before.focused || !before.focusVisible) {
+        throw new Error(`${source.path} language switch is not accessible: ${JSON.stringify(before)}`);
+      }
+      await pressKey(cdp, sessionId, 'Enter');
+      await sleep(150);
+      const after = await evaluate(cdp, sessionId, `({
+        path: location.pathname,
+        language: document.documentElement.lang,
+        title: document.querySelector('#cv-main .cv-identity')?.textContent ?? '',
+        current: document.querySelector('.site-header .language-switch [aria-current="page"]')?.getAttribute('hreflang')
+      })`);
+      if (after.path !== target.path || after.language !== to || after.title !== target.cv.title || after.current !== to) {
+        throw new Error(`${source.path} language switch did not reach the equivalent CV: ${JSON.stringify(after)}`);
+      }
+      await cdp.send('Target.closeTarget', { targetId });
+    }
+
+    const page = await openAt(cdp, new URL(source.path, origin).href, 320, 700, true, true);
+    await clickSelector(cdp, page.sessionId, selector);
+    await sleep(150);
+    const history = await cdp.send('Page.getNavigationHistory', {}, page.sessionId);
+    if (new URL(history.entries[history.currentIndex].url).pathname !== target.path) {
+      throw new Error(`${source.path} language switch failed with JavaScript disabled`);
+    }
+    await cdp.send('Target.closeTarget', { targetId: page.targetId });
+  }
+  console.log('CV language switch reaches the equivalent CV with keyboard and without JavaScript');
 }
 
 function cvSnapshotScript(includeLayoutMetrics) {
@@ -875,6 +1024,16 @@ function cvSnapshotScript(includeLayoutMetrics) {
       panelRight: panelBox?.right ?? -1,
       actionsInPanel: Boolean(panel && actions && panel.contains(actions)),
       panelOverlapsActions: overlaps(panelBox, actionsBox),
+      switchLinks: [...document.querySelectorAll('.site-header .language-switch a')].map((link) => ({
+        href: link.getAttribute('href') ?? '',
+        current: link.getAttribute('aria-current'),
+        width: link.getBoundingClientRect().width,
+        height: link.getBoundingClientRect().height
+      })),
+      switchOverlapsIdentity: overlaps(
+        document.querySelector('.site-header .language-switch')?.getBoundingClientRect(),
+        document.querySelector('.site-header .identity')?.getBoundingClientRect()
+      ),
       ...${metrics}
     };
   })()`;
@@ -911,7 +1070,9 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
       contactHref: result.contactHref
     })}`);
   }
-  if (result.identityHref !== '/' || result.skipHref !== '#cv-main') {
+  const cvLanguage = result.pathname.startsWith('/es/') ? 'es' : 'en';
+  const expected = cvCopy(cvLanguage);
+  if (result.identityHref !== LOCALIZED_PATHS.home[cvLanguage] || result.skipHref !== '#cv-main') {
     throw new Error(`${label} has incorrect identity or skip link: ${JSON.stringify({
       identityHref: result.identityHref,
       skipHref: result.skipHref
@@ -922,6 +1083,20 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
   }
   if (result.pathname === '/cv/' && result.canonical !== 'https://andresatencio.com/cv/') {
     throw new Error(`${label} is missing the self-canonical /cv/ link`);
+  }
+  if (result.pathname === '/es/cv/' && result.canonical !== 'https://andresatencio.com/es/cv/') {
+    throw new Error(`${label} is missing the self-canonical /es/cv/ link`);
+  }
+  const switchHrefs = result.switchLinks.map(({ href }) => href);
+  const currentSwitch = result.switchLinks.filter(({ current }) => current === 'page').map(({ href }) => href);
+  if (JSON.stringify(switchHrefs) !== JSON.stringify([LOCALIZED_PATHS.cv.en, LOCALIZED_PATHS.cv.es])
+    || JSON.stringify(currentSwitch) !== JSON.stringify([expected.path])
+    || !result.switchLinks.every(({ width, height }) => width >= 24 && height >= 24)
+    || result.switchOverlapsIdentity) {
+    throw new Error(`${label} language switch is incorrect: ${JSON.stringify({
+      switchLinks: result.switchLinks,
+      overlapsIdentity: result.switchOverlapsIdentity
+    })}`);
   }
   if (result.innerBottom > result.mainTop + 1) {
     throw new Error(`${label} header overlaps the CV document: ${JSON.stringify(result)}`);
@@ -965,12 +1140,12 @@ function assertCvSnapshot(result, viewport, scriptExecutionDisabled) {
   if (viewport.width <= 768 && columnCount !== 1) {
     throw new Error(`${label} narrow composition is not a single column: ${result.bodyColumns}`);
   }
-  if (JSON.stringify(result.actionLinks.map(({ text }) => text)) !== JSON.stringify(['A4 PDF', 'US Letter PDF'])) {
+  if (JSON.stringify(result.actionLinks.map(({ text }) => text)) !== JSON.stringify([expected.ui.pdfA4, expected.ui.pdfLetter])) {
     throw new Error(`${label} download labels are incorrect: ${JSON.stringify(result.actionLinks)}`);
   }
   const [a4, letter] = result.actionLinks;
-  if (a4.href !== CV_PDF.a4.href || a4.download !== CV_PDF.a4.download || a4.type !== 'application/pdf'
-    || letter.href !== CV_PDF.letter.href || letter.download !== CV_PDF.letter.download || letter.type !== 'application/pdf') {
+  if (a4.href !== CV_PDF[cvLanguage].a4.href || a4.download !== CV_PDF[cvLanguage].a4.download || a4.type !== 'application/pdf'
+    || letter.href !== CV_PDF[cvLanguage].letter.href || letter.download !== CV_PDF[cvLanguage].letter.download || letter.type !== 'application/pdf') {
     throw new Error(`${label} download attributes are incorrect`);
   }
   if (!result.actionLinks.every(({ visible, height }) => visible && height >= 40)) {
@@ -1084,7 +1259,7 @@ async function assertCvKeyboard(cdp, url) {
       focusVisible: link?.matches(':focus-visible') ?? false
     };
   })()`);
-  if (download.href !== CV_PDF.a4.href || download.text !== 'A4 PDF') {
+  if (download.href !== CV_PDF.en.a4.href || download.text !== 'A4 PDF') {
     throw new Error(`Keyboard did not reach the A4 PDF action: ${JSON.stringify(download)}`);
   }
   await cdp.send('Target.closeTarget', { targetId: desktopId });
@@ -1102,9 +1277,9 @@ function assertEquivalentScreen(a, b, label) {
 async function assertHomeDocument(origin, url) {
   const [response, cvResponse, letterResponse, pdfResponse] = await Promise.all([
     fetch(url),
-    fetch(new URL('/cv/', origin)),
+    fetch(new URL(cvPath(), origin)),
     fetch(new URL('/cv/letter/', origin)),
-    fetch(new URL(CV_PDF.a4.href, origin))
+    fetch(new URL(CV_PDF[copy.language].a4.href, origin))
   ]);
   if (response.status !== 200 || !(response.headers.get('content-type') ?? '').includes('text/html')) {
     throw new Error(`Home returned HTTP ${response.status} with an invalid content type`);
@@ -1118,7 +1293,7 @@ async function assertHomeDocument(origin, url) {
     || !html.includes('class="site-footer"')) {
     throw new Error('Home is missing the shared site shell');
   }
-  if (!html.includes(projection.shared.professionalIdentity) || !html.includes(projection.shared.name)) {
+  if (!html.includes(copy.shared.professionalIdentity) || !html.includes(projection.shared.name)) {
     throw new Error('Home document is missing projected identity content');
   }
   if (html.includes('class="actions"') || html.includes('>View experience<') || html.includes('>Contact me<')) {
@@ -1127,17 +1302,17 @@ async function assertHomeDocument(origin, url) {
   if (html.includes('>View online<')
     || html.includes('>View CV<') || html.includes('>Download CV<')
     || (html.match(/href="#cv">CV</g) ?? []).length !== 2
-    || (html.match(/href="\/cv\/">CV</g) ?? []).length !== 1) {
+    || (html.split(`href="${cvPath()}">${copy.ui.footerCv}<`).length - 1) !== 1) {
     throw new Error('Home document does not separate its CV section navigation from the footer link');
   }
   if (!html.includes('<section id="cv" class="chapter chapter--cv"')
-    || !html.includes('<a class="cv-band__read" href="/cv/">')
+    || !html.includes(`<a class="cv-band__read" href="${cvPath()}">`)
     || html.includes('cv-a4-preview.png')) {
     throw new Error('Home document is missing the compact CV band or still references the retired preview');
   }
   const footerHtml = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
   if (!footerHtml.includes(`<p>${projection.shared.name}</p>`)
-    || !footerHtml.includes('<a href="/cv/">CV</a>')
+    || !footerHtml.includes(`<a href="${cvPath()}">${copy.ui.footerCv}</a>`)
     || (footerHtml.match(/<a\b/g) ?? []).length !== 1
     || /GitHub|LinkedIn|Download PDF|mailto:/.test(footerHtml)) {
     throw new Error('Home footer is not the minimal name and direct CV colophon');
@@ -1165,7 +1340,8 @@ async function assertHomeDocument(origin, url) {
     || cvHtml.includes('Back to site') || letterHtml.includes('Back to site')) {
     throw new Error('CV routes still include site-current CV navigation or a back control');
   }
-  if (!cvHtml.includes('>A4 PDF<') || !cvHtml.includes('>US Letter PDF<')
+  const cvUi = cvCopy(copy.language).ui;
+  if (!cvHtml.includes(`>${cvUi.pdfA4}<`) || !cvHtml.includes(`>${cvUi.pdfLetter}<`)
     || !letterHtml.includes('>A4 PDF<') || !letterHtml.includes('>US Letter PDF<')) {
     throw new Error('CV routes are missing A4 and US Letter PDF actions');
   }
@@ -1562,27 +1738,6 @@ function assertNoHorizontalOverflow(metrics, width, label) {
   }
 }
 
-// The Experience illustration clearance runs as its own pass so the geometric
-// guard stays independent of the Home navigation walkthrough above.
-const illustrationRoutes = ['/'];
-const illustrationViewports = [
-  { width: 1600, height: 950, mobile: false },
-  { width: 1366, height: 900, mobile: false },
-  { width: 1025, height: 900, mobile: false },
-  { width: 865, height: 900, mobile: false },
-  { width: 768, height: 900, mobile: true },
-  { width: 390, height: 844, mobile: true }
-];
-
-await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
-  console.log('Verifying Experience illustration clearance');
-  for (const route of illustrationRoutes) {
-    for (const viewport of illustrationViewports) {
-      await assertExperienceIllustration(cdp, new URL(route, origin).href, viewport);
-    }
-  }
-});
-
 async function assertExperienceIllustration(cdp, homeUrl, { width, height, mobile }) {
   const { targetId, sessionId } = await openAt(cdp, homeUrl, width, height, mobile);
   const result = await evaluate(cdp, sessionId, `(() => {
@@ -1632,4 +1787,70 @@ async function assertExperienceIllustration(cdp, homeUrl, { width, height, mobil
     );
   }
   console.log(`Experience illustration clearance verified at ${width}px`);
+}
+
+// Desktop CV columns keep independent rhythms, as on paper: Teaching follows
+// Technical Experience and Software Experience follows Profile, each after one
+// row gap, whichever column is taller.
+const cvRhythmRoutes = ['/cv/', '/es/cv/'];
+const cvRhythmWidths = [1600, 1366, 1280, 1025, 900];
+
+await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
+  console.log('Verifying CV column rhythm');
+  for (const route of cvRhythmRoutes) {
+    for (const width of cvRhythmWidths) {
+      await assertCvColumnRhythm(cdp, new URL(route, origin).href, width);
+    }
+  }
+});
+
+async function assertCvColumnRhythm(cdp, url, width) {
+  const { targetId, sessionId } = await openAt(cdp, url, width, 900, false);
+  const result = await evaluate(cdp, sessionId, `(() => {
+    const box = (selector) => {
+      const rect = document.querySelector(selector)?.getBoundingClientRect();
+      return rect ? { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right } : null;
+    };
+    return {
+      pathname: location.pathname,
+      rowGap: Number.parseFloat(getComputedStyle(document.querySelector('.cv-body')).rowGap),
+      body: box('.cv-body'),
+      profile: box('.cv-profile'),
+      technical: box('.cv-technical'),
+      primary: box('.cv-primary'),
+      secondary: box('.cv-secondary')
+    };
+  })()`);
+  await cdp.send('Target.closeTarget', { targetId });
+
+  const { pathname, rowGap, body, profile, technical, primary, secondary } = result;
+  const label = `${pathname} at ${width}px`;
+  if (!body || !profile || !technical || !primary || !secondary || !(rowGap > 0)) {
+    throw new Error(`${label} is missing the CV columns: ${JSON.stringify(result)}`);
+  }
+  const technicalToTeaching = secondary.top - technical.bottom;
+  if (Math.abs(technicalToTeaching - rowGap) > 2) {
+    throw new Error(
+      `${label}: Teaching starts ${technicalToTeaching.toFixed(1)}px after Technical Experience; expected the ${rowGap.toFixed(1)}px row gap`
+    );
+  }
+  const profileToExperience = primary.top - profile.bottom;
+  if (Math.abs(profileToExperience - rowGap) > 2) {
+    throw new Error(
+      `${label}: Software Experience starts ${profileToExperience.toFixed(1)}px after Profile; expected the ${rowGap.toFixed(1)}px row gap`
+    );
+  }
+  if (Math.abs(technical.top - profile.top) > 2) {
+    throw new Error(`${label}: Technical Experience and Profile do not start together`);
+  }
+  const leftEdge = Math.max(profile.right, primary.right);
+  const rightEdge = Math.min(technical.left, secondary.left);
+  if (leftEdge > rightEdge - 1) {
+    throw new Error(`${label}: the CV columns overlap (${leftEdge.toFixed(1)}px > ${rightEdge.toFixed(1)}px)`);
+  }
+  if (Math.min(profile.left, primary.left) < body.left - 1
+    || Math.max(technical.right, secondary.right) > body.right + 1) {
+    throw new Error(`${label}: the CV columns leave the document body`);
+  }
+  console.log(`CV column rhythm verified at ${label}`);
 }

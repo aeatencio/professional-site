@@ -44,15 +44,23 @@ canonical source.
 
 ## Consumer
 
-`data/professional-public-projection.v1.json` is the sole productive content
+`data/professional-public-projection.v1.json` is the sole professional factual
 input. `loadLocalPublicProjection` validates that path for commands and tests.
 Astro imports the same JSON after `projection:validate` succeeds; it does not
 use a filesystem loader inside the prerender graph.
 
 The projection owns professional copy and public structured data. Astro owns
 HTML structure, components, layout, styling, print behavior and routes,
-including `/cv/` and `/cv/letter/`. Do not hardcode a second copy of
-professional text in Astro.
+including `/cv/`, `/cv/letter/` and their Spanish counterparts `/es/cv/` and
+`/es/cv/letter/`. Do not hardcode a second copy of professional text in Astro.
+
+The English Home and CV remain projection-backed at `/` and `/cv/`. The
+Spanish Home at `/es/` and the Spanish CV at `/es/cv/`, with its PDFs, use the
+explicit editorial adaptations in `lib/home-copy.ts` and `lib/cv-copy.ts`,
+with the same facts, contact values, organizations, institutions and periods.
+This task-authorized localization does not change the projection, its schema
+or the private source. See [Languages](architecture.md#languages) for
+presentation and maintenance details.
 
 The generic `loadPublicProjection` helper accepts caller-provided paths only for
 controlled tests and tools. It does not make arbitrary paths production-safe.

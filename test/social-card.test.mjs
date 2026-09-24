@@ -99,7 +99,7 @@ test('BaseLayout declares the social image block once, behind an opt-in', async 
 
 test('the Home opts into the social card and the CV layout does not', async () => {
   const [home, cvLayout] = await Promise.all([
-    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8')
   ]);
 

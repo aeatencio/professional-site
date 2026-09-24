@@ -17,11 +17,29 @@
 
 ## Language
 
-- Every artifact in this repository is English: code, comments, documentation,
-  `AGENTS.md`, tests, fixtures, materials, public site content, and Software
-  Development CV source and content.
-- This English-artifact rule replaces any earlier instruction that the first
-  site is in Spanish.
+- English is the operating language of this repository. Write
+  human-maintained development artifacts in English: code, identifiers,
+  comments, tests, technical documentation, `AGENTS.md`, issues, pull requests
+  and commit messages.
+- Visitor-facing product content (site and CV copy, interface labels, page
+  metadata and CV PDFs) may exist in each language the site deliberately
+  supports, currently English and Spanish. Tests and fixtures may contain the
+  localized content they assert.
+- This rule is prospective. Do not translate, rename or rewrite existing
+  issues, commits, branches, files or history for language consistency.
+
+## Localization
+
+- English is the default language: Home at `/`, CV at `/cv/`. The Spanish
+  counterparts live at `/es/` and `/es/cv/`. Each pair shares one renderer and
+  explicit, typed editorial copy; the language switch leads to the equivalent
+  page.
+- Each language offers its own A4 and US Letter CV PDFs, printed from its CV
+  routes. `/cv/letter/` and `/es/cv/letter/` are print routes, not indexable
+  pages.
+- Print the versioned CV PDFs only in the canonical PDF environment documented
+  in the README. Never commit PDFs printed elsewhere, and never edit the PDF
+  fingerprint by hand.
 
 ## Public data boundary
 
@@ -56,6 +74,11 @@
 - Astro owns semantic structure, components, layout, styles and behavior. The
   local projection owns professional copy and necessary public structured data;
   do not keep duplicate professional copy hardcoded in Astro.
+- `lib/home-copy.ts` and `lib/cv-copy.ts` own the Spanish editorial adaptation
+  of the Home and the CV and their interface labels. They translate only facts
+  already in the local projection; they are not a second factual source. Keep
+  English professional copy projection-backed. Do not edit the projection to
+  maintain these translations.
 - Do not add advisor or illustration configuration to the projection
   merely because those features exist.
 - Advance page structure and layout against the repository-local public

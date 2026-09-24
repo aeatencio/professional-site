@@ -1,0 +1,11 @@
+---
+import CvLayout from '../../../layouts/CvLayout.astro';
+import CvDocument from '../../../components/CvDocument.astro';
+import { cvCopy } from '../../../../lib/cv-copy';
+
+const copy = cvCopy('es');
+---
+
+<CvLayout copy={copy} format="letter">
+  <CvDocument copy={copy} />
+</CvLayout>

@@ -1,17 +1,11 @@
 ---
 import CvLayout from '../../layouts/CvLayout.astro';
 import CvDocument from '../../components/CvDocument.astro';
-import projection from '../../../data/professional-public-projection.v1.json';
+import { cvCopy } from '../../../lib/cv-copy';
 
-const { shared, cv } = projection;
+const copy = cvCopy('en');
 ---
 
-<CvLayout
-  format="a4"
-  lang={shared.language}
-  name={shared.name}
-  title={`${shared.name} — ${cv.title}`}
-  description={cv.profile.text}
->
-  <CvDocument />
+<CvLayout copy={copy} format="a4">
+  <CvDocument copy={copy} />
 </CvLayout>

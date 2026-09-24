@@ -1,16 +1,23 @@
 ---
 import { CV_PDF } from '../../lib/cv-pdf.mjs';
+import type { CvCopy } from '../../lib/cv-copy';
+
+interface Props {
+  copy: CvCopy;
+}
+const { copy } = Astro.props;
+const pdfs = CV_PDF[copy.language];
 ---
 
 <p class="cv-actions">
   <a
-    href={CV_PDF.a4.href}
-    download={CV_PDF.a4.download}
+    href={pdfs.a4.href}
+    download={pdfs.a4.download}
     type="application/pdf"
-  >A4 PDF</a>
+  >{copy.ui.pdfA4}</a>
   <a
-    href={CV_PDF.letter.href}
-    download={CV_PDF.letter.download}
+    href={pdfs.letter.href}
+    download={pdfs.letter.download}
     type="application/pdf"
-  >US Letter PDF</a>
+  >{copy.ui.pdfLetter}</a>
 </p>

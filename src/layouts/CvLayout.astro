@@ -1,26 +1,27 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import '../styles/cv.css';
-import { CV_PATH } from '../../lib/site-identity.mjs';
+import { LOCALIZED_PATHS } from '../../lib/site-identity.mjs';
+import type { CvCopy } from '../../lib/cv-copy';
 
 interface Props {
-  title: string;
-  description: string;
-  lang: string;
-  name: string;
+  copy: CvCopy;
   format?: 'a4' | 'letter';
 }
 
-const { title, description, lang, name, format = 'a4' } = Astro.props;
+const { copy, format = 'a4' } = Astro.props;
+const { shared, cv } = copy;
 const pageSize = format === 'letter' ? '215.9mm 279.4mm' : '210mm 297mm';
 ---
 
 <BaseLayout
-  title={title}
-  description={description}
-  lang={lang}
-  name={name}
-  canonicalPath={CV_PATH}
+  title={`${shared.name} — ${cv.title}`}
+  description={cv.profile.text}
+  lang={copy.language}
+  name={shared.name}
+  canonicalPath={copy.path}
+  alternates={LOCALIZED_PATHS.cv}
+  labels={copy.ui}
   skipHref="#cv-main"
   shell="document"
 >

@@ -1,13 +1,21 @@
 {
-  "printableSha256": "84bd2668e676b767d2e9d949bcee4257704865344c7f7f37c951675476fe0985",
+  "printableSha256": "c3ce42150931fef586b2746289ce46d2af0802b3ae847a6cb688e1ad6a9d260c",
   "files": {
     "public/cv/andres-atencio-cv-a4.pdf": {
-      "sha256": "6a703e2bc3f06ead0b5f3b7e5b592eaa7db258b5580a6965781f06d2e0148b0e",
+      "sha256": "f1a37ec0260b69038cac19d5abcb14738196d96c67b417a6425670f692f2f3f0",
       "bytes": 83534
     },
     "public/cv/andres-atencio-cv-letter.pdf": {
-      "sha256": "2cbbca2977f0b83674053566c252f51f1ee5017fd5d60bc3fc7874165c724038",
+      "sha256": "5e059d1da719cb182ad5d68eb94c7e7aca60cb9f7e7aa6b70070f2f472497278",
       "bytes": 80731
+    },
+    "public/es/cv/andres-atencio-cv-es-a4.pdf": {
+      "sha256": "09cf55ec379c235ec22a8bba66ca49e1cbd30f2dd90b1f3f5265d891f0ffd1b1",
+      "bytes": 85300
+    },
+    "public/es/cv/andres-atencio-cv-es-carta.pdf": {
+      "sha256": "3523491eafa1c095033ba0e399230625ae91a8254a9ddae009d99e96488b5d81",
+      "bytes": 82516
     }
   }
 }

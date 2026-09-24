@@ -1,0 +1,16 @@
+---
+import type { HomeLanguage } from '../../lib/home-copy';
+
+interface Props {
+  language: HomeLanguage;
+  label: string;
+  alternates: Record<HomeLanguage, string>;
+}
+const { language, label, alternates } = Astro.props;
+---
+
+<div class="language-switch" role="group" aria-label={label}>
+  <a href={alternates.en} lang="en" hreflang="en" aria-label="English" aria-current={language === 'en' ? 'page' : undefined}>EN</a>
+  <span aria-hidden="true">/</span>
+  <a href={alternates.es} lang="es" hreflang="es" aria-label="Español" aria-current={language === 'es' ? 'page' : undefined}>ES</a>
+</div>

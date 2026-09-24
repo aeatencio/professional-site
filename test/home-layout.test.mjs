@@ -6,7 +6,7 @@ test('Home keeps shrinking safeguards while its new styles stay page-local', asy
   const [globalCss, homeCss, page] = await Promise.all([
     readFile(new URL('../src/styles/global.css', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
-    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8')
+    readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8')
   ]);
 
   assert.match(globalCss, /\.page \{[\s\S]*?max-width:\s*100%/);
@@ -27,7 +27,7 @@ test('Home keeps shrinking safeguards while its new styles stay page-local', asy
 });
 
 test('Home no longer references the retired Working together folder illustration', async () => {
-  const page = await readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
+  const page = await readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8');
 
   assert.equal(page.includes('/images/working-together/folder.png'), false);
   assert.equal(page.includes('chapter-art--folder'), false);
@@ -35,7 +35,7 @@ test('Home no longer references the retired Working together folder illustration
 
 test('Experience notebook follows the complete software role list and recomposes in flow', async () => {
   const [page, homeCss] = await Promise.all([
-    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8')
   ]);
 
@@ -64,7 +64,7 @@ test('Experience notebook follows the complete software role list and recomposes
 
 test('Home presents CV as a compact semantic interlude without preview infrastructure', async () => {
   const [page, homeCss, cvPdf, cvTypes, generator, fingerprint] = await Promise.all([
-    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/styles/home.css', import.meta.url), 'utf8'),
     readFile(new URL('../lib/cv-pdf.mjs', import.meta.url), 'utf8'),
     readFile(new URL('../lib/cv-pdf.d.ts', import.meta.url), 'utf8'),
@@ -80,10 +80,10 @@ test('Home presents CV as a compact semantic interlude without preview infrastru
   assert.match(page, /<section id="cv" class="chapter chapter--cv" aria-labelledby="cv-heading">/);
   assert.match(page, /<h2 id="cv-heading">\{sections\.cv\.heading\}<\/h2>/);
   assert.match(page, /sections\.cv\.paragraphs\.map/);
-  assert.match(page, /class="cv-band__read" href=\{CV_PATH\}/);
+  assert.match(page, /class="cv-band__read" href=\{LOCALIZED_PATHS\.cv\[copy\.language\]\}/);
   assert.equal((page.match(/class="cv-band__downloads"/g) ?? []).length, 1);
   assert.equal((page.match(/type="application\/pdf"/g) ?? []).length, 2);
-  assert.equal((page.match(/aria-label="Download the CV as an? [^"]+ PDF"/g) ?? []).length, 2);
+  assert.equal((page.match(/aria-label=\{ui.download(?:A4|Letter)\}/g) ?? []).length, 2);
   assert.equal(cvSection.includes('<img'), false);
 
   assert.match(homeCss, /\.chapter--cv \{[\s\S]*?display:\s*block/);
@@ -111,13 +111,13 @@ test('Primary navigation keeps CV in the Home journey while CV routes opt into a
 
   assert.match(layout, /IdentityTag = isHome \? 'h1' : 'p'/);
   assert.match(layout, /class="identity"[\s\S]*?href=\{homeHref\}/);
-  assert.match(layout, /isHome \? '#home' : '\/'/);
+  assert.match(layout, /isHome \? '#home' : LOCALIZED_PATHS\.home\[lang\]/);
   assert.equal(layout.includes('slot name="contextual"'), false);
   assert.equal(layout.includes('cvFormat'), false);
   assert.match(layout, /import '\.\.\/styles\/site-shell\.css'/);
   assert.equal(layout.includes("import '../styles/home.css'"), false);
   assert.match(layout, /class="site-header" data-directional-header/);
-  assert.match(layout, /class="site-header__inner">[\s\S]*?class="identity"[\s\S]*?<PrimaryNav \/>/);
+  assert.match(layout, /class="site-header__inner">[\s\S]*?class="identity"[\s\S]*?<PrimaryNav copy=\{homeCopy\} \/>/);
   assert.match(layout, /const TOP_TOLERANCE = 24/);
   assert.match(layout, /const HIDE_DISTANCE = 16/);
   assert.match(layout, /const REVEAL_DISTANCE = 8/);
@@ -135,20 +135,20 @@ test('Primary navigation keeps CV in the Home journey while CV routes opt into a
   assert.equal(layout.includes("addEventListener('mouseenter'"), false);
   assert.equal(layout.includes("matches(':hover')"), false);
   assert.match(layout, /addEventListener\('hashchange'/);
-  assert.match(layout, /<footer class="site-footer">[\s\S]*?<p>\{name\}<\/p>[\s\S]*?<a href="\/cv\/">CV<\/a>/);
+  assert.match(layout, /<footer class="site-footer">[\s\S]*?<p>\{name\}<\/p>[\s\S]*?<a href=\{LOCALIZED_PATHS\.cv\[lang\]\}>\{homeCopy\?\.ui.footerCv \?\? 'CV'\}<\/a>/);
   assert.equal(nav.includes("{ href: '#home', label: 'Home' }"), false);
-  assert.match(nav, /<nav class="primary-nav" aria-label="Primary" data-primary-navigation>/);
+  assert.match(nav, /<nav class="primary-nav" aria-label=\{copy.ui.primary\} data-primary-navigation>/);
   assert.match(nav, /sectionHref\('#experience'\)/);
-  assert.match(nav, /href=\{contactHref\}>Contact</);
+  assert.match(nav, /href=\{contactHref\}>\{sections.contact.heading\}</);
   assert.match(nav, /<details class="primary-nav__mobile" data-mobile-navigation>/);
-  assert.match(nav, /<summary><span>Menu<\/span><\/summary>/);
+  assert.match(nav, /<summary><span>\{copy.ui.menu\}<\/span><\/summary>/);
   assert.equal(nav.includes('isCvPage'), false);
   assert.match(nav, /sectionHref\('#cv'\)/);
   assert.match(nav, /aria-current=\{item\.current \? 'page' : undefined\}/);
   assert.match(layout, /shell\?: 'site' \| 'document'/);
   assert.match(layout, /shell = 'site'/);
   assert.match(layout, /data-shell=\{shell\}/);
-  assert.match(layout, /isDocumentShell \? null : <PrimaryNav \/>/);
+  assert.match(layout, /:\s*<PrimaryNav copy=\{homeCopy\} \/>/);
   assert.match(layout, /isDocumentShell \? undefined : true/);
   assert.match(cvLayout, /shell="document"/);
   assert.ok(nav.indexOf("sectionHref('#background')") < nav.indexOf("sectionHref('#cv')"));
@@ -216,7 +216,10 @@ test('Primary navigation keeps CV in the Home journey while CV routes opt into a
   assert.match(shellCss, /\.primary-nav__mobile > summary:hover,[\s\S]*?\.primary-nav__mobile > summary:focus-visible \{\s*text-decoration:\s*underline/);
   assert.equal(shellCss.includes('[open] > summary {\n  text-decoration: underline'), false);
   assert.equal(homeCss.includes('.page > .site-header'), false);
-  assert.equal(homeCss.includes('.primary-nav__mobile'), false);
+  assert.equal(homeCss.includes('.language-switch'), false);
+  assert.match(shellCss, /\.primary-nav__mobile-list \.language-switch/);
+  assert.match(shellCss, /\.language-switch a \{[\s\S]*?color:\s*var\(--color-cobalt\)/);
+  assert.equal(homeCss.includes('.primary-nav__mobile-panel'), false);
 });
 
 test('Layout verification covers responsive navigation and deployment runs it', async () => {
@@ -238,7 +241,7 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /assertReducedMotion/);
   assert.match(verifier, /prefers-reduced-motion/);
   assert.match(verifier, /assertFooterNavigation/);
-  assert.match(verifier, /site-footer a\[href="\/cv\/"\]/);
+  assert.match(verifier, /site-footer a\[href="\$\{cvPath\(\)\}"\]/);
   assert.match(verifier, /Input\.dispatchTouchEvent/);
   assert.match(verifier, /type: 'mouseWheel'/);
   assert.match(verifier, /jittered header/);
@@ -271,6 +274,10 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.equal(verifier.includes('assertCvMobileMenu'), false);
   assert.match(verifier, /assertExperienceIllustration/);
   assert.match(verifier, /overlaps role content/);
+  assert.match(verifier, /assertCvColumnRhythm/);
+  assert.match(verifier, /after Technical Experience; expected the/);
+  assert.match(verifier, /assertCvLanguageSwitch/);
+  assert.match(verifier, /LOCALIZED_PATHS\.cv\.es/);
   assert.match(verifier, /assertAnchorNearHeader/);
   assert.match(verifier, /assertSummaryDecoration/);
   assert.match(verifier, /summaryUnderlined/);
@@ -280,7 +287,9 @@ test('Layout verification covers responsive navigation and deployment runs it', 
   assert.match(verifier, /#contact/);
   assert.match(verifier, /#main/);
   assert.match(verifier, /primary-nav__mobile-panel/);
-  assert.match(verifier, /CV_PDF\.a4\.href/);
+  assert.match(verifier, /CV_PDF\.en\.a4\.href/);
+  assert.match(verifier, /CV_PDF\[cvLanguage\]\.a4\.href/);
+  assert.match(verifier, /for \(const pdf of CV_PDFS\)/);
   assert.match(workflow, /npm run check/);
   assert.match(workflow, /npm run layout:check/);
 });

@@ -4,9 +4,10 @@ import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import astroConfig from '../astro.config.mjs';
 import {
-  CV_PDF,
+  CV_PDFS,
   CV_PDF_FINGERPRINT_PATH,
   PUBLIC_SITE_ORIGIN,
+  assertCanonicalCvPdf,
   inspectPdf,
   printToPdfParams,
   repoPath,
@@ -32,7 +33,6 @@ await findBrowser();
 
 await rm(tmpRoot, { recursive: true, force: true });
 await mkdir(tmpRoot, { recursive: true });
-await mkdir(repoPath('public', 'cv'), { recursive: true });
 
 console.log('Building current CV HTML');
 await runProcess(process.execPath, [astroBin, 'build']);
@@ -42,9 +42,10 @@ const fingerprint = {
   printableSha256,
   files: {}
 };
+const printed = [];
 
 await withHeadlessBrowser(distDir, async ({ cdp, origin }) => {
-  for (const pdf of Object.values(CV_PDF)) {
+  for (const pdf of CV_PDFS) {
     const url = new URL(pdf.route, origin).href;
     console.log(`Printing ${pdf.route} to ${pdf.publicPath}`);
     await assertExpectedDocument(origin, url, pdf);
@@ -61,18 +62,25 @@ await withHeadlessBrowser(distDir, async ({ cdp, origin }) => {
     if (inspection.pageCount !== 1) {
       throw new Error(`${pdf.publicPath} has ${inspection.pageCount} pages; expected 1`);
     }
+    assertCanonicalCvPdf(inspection, pdf.publicPath);
 
     const tmpFile = path.join(tmpRoot, path.basename(pdf.publicPath));
     await writeFile(tmpFile, buffer);
-    await copyFile(tmpFile, repoPath(pdf.publicPath));
-    await mkdir(path.dirname(repoPath(pdf.distPath)), { recursive: true });
-    await copyFile(tmpFile, repoPath(pdf.distPath));
-    fingerprint.files[pdf.publicPath] = {
-      sha256: sha256(buffer),
-      bytes: buffer.byteLength
-    };
+    printed.push({ pdf, tmpFile, buffer });
   }
 });
+
+// Replace the versioned PDFs only once all of them printed canonically.
+for (const { pdf, tmpFile, buffer } of printed) {
+  for (const target of [pdf.publicPath, pdf.distPath]) {
+    await mkdir(path.dirname(repoPath(target)), { recursive: true });
+    await copyFile(tmpFile, repoPath(target));
+  }
+  fingerprint.files[pdf.publicPath] = {
+    sha256: sha256(buffer),
+    bytes: buffer.byteLength
+  };
+}
 
 await writeFile(
   repoPath(CV_PDF_FINGERPRINT_PATH),
@@ -113,8 +121,9 @@ async function assertLoadedCv(cdp, sessionId, pdf, publicProjection) {
     hasMain: Boolean(document.querySelector('#cv-main')),
     mainClass: document.querySelector('#cv-main')?.className ?? '',
     format: document.querySelector('[data-cv-format]')?.getAttribute('data-cv-format') ?? '',
+    lang: document.documentElement.lang,
     name: document.querySelector('#cv-main h1')?.textContent ?? '',
-    siteHref: document.querySelector('#cv-main a[rel="me"][aria-label="Website"]')?.getAttribute('href') ?? '',
+    profileHrefs: [...document.querySelectorAll('#cv-main a[rel="me"]')].map((link) => link.getAttribute('href') ?? ''),
     workersDev: document.querySelector('#cv-main')?.innerHTML.includes('workers.dev') ?? true
   })`);
 
@@ -129,11 +138,14 @@ async function assertLoadedCv(cdp, sessionId, pdf, publicProjection) {
   if (info.format !== pdf.format) {
     throw new Error(`${pdf.route} has format ${info.format}, expected ${pdf.format}`);
   }
+  if (info.lang !== pdf.language) {
+    throw new Error(`${pdf.route} is lang="${info.lang}", expected ${pdf.language}`);
+  }
   if (info.name !== publicProjection.shared.name) {
     throw new Error(`${pdf.route} heading is ${info.name}, expected ${publicProjection.shared.name}`);
   }
-  if (info.siteHref !== PUBLIC_SITE_ORIGIN && info.siteHref !== `${PUBLIC_SITE_ORIGIN}/`) {
-    throw new Error(`${pdf.route} site URL is ${info.siteHref}, expected ${PUBLIC_SITE_ORIGIN}`);
+  if (!info.profileHrefs.includes(PUBLIC_SITE_ORIGIN) && !info.profileHrefs.includes(`${PUBLIC_SITE_ORIGIN}/`)) {
+    throw new Error(`${pdf.route} does not link ${PUBLIC_SITE_ORIGIN}: ${info.profileHrefs.join(', ')}`);
   }
   if (info.workersDev) {
     throw new Error(`${pdf.route} still presents a workers.dev URL as public identity`);

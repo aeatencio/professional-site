@@ -489,7 +489,9 @@
   .cv-body {
     grid-template-areas:
       "profile technical"
+      "profile secondary"
       "primary secondary";
+    grid-template-rows: auto auto 1fr;
     row-gap: clamp(1.75rem, 3vw, 2.75rem);
     padding-top: 1.85rem;
   }
@@ -628,6 +630,7 @@
       "technical"
       "primary"
       "secondary";
+    grid-template-rows: none;
     row-gap: 1.75rem;
     padding-top: 1.6rem;
   }

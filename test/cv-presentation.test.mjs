@@ -19,7 +19,7 @@ test('CV presentation derives visible profile URLs and keeps canonical hrefs', a
   assert.equal(cvPage.includes('github.com/aeatencio'), false);
   assert.equal(cvPage.includes('linkedin.com/in/aeatencio'), false);
   assert.match(cvPage, /Astro\.site/);
-  assert.match(cvPage, /aria-label="Website"/);
+  assert.match(cvPage, /aria-label=\{ui\.website\}/);
   assert.equal(cvPage.includes('professional-site.aeatencio.workers.dev'), false);
   assert.equal(cvPage.includes('andresatencio.com'), false);
 });
@@ -127,13 +127,17 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.match(layout, /skipHref="#cv-main"/);
   assert.match(layout, /class="cv-document"/);
   assert.match(layout, /data-cv-format=\{format\}/);
-  assert.match(layout, /canonicalPath=\{CV_PATH\}/);
+  assert.match(layout, /canonicalPath=\{copy\.path\}/);
+  assert.match(layout, /alternates=\{LOCALIZED_PATHS\.cv\}/);
   assert.match(layout, /shell="document"/);
   assert.match(baseLayout, /rel="canonical"/);
   assert.match(baseLayout, /shell\?: 'site' \| 'document'/);
   assert.match(baseLayout, /shell = 'site'/);
   assert.match(baseLayout, /data-shell=\{shell\}/);
-  assert.match(baseLayout, /isDocumentShell \? null : <PrimaryNav \/>/);
+  assert.match(
+    baseLayout,
+    /isDocumentShell\s*\?\s*alternates && labels \? <LanguageSwitch language=\{lang\} label=\{labels\.language\} alternates=\{alternates\} \/> : null\s*:\s*<PrimaryNav copy=\{homeCopy\} \/>/
+  );
   assert.match(baseLayout, /isDocumentShell \? undefined : true/);
   assert.equal(layout.includes('bodyClass="cv-document"'), false);
   assert.equal(layout.includes('cvFormat'), false);
@@ -142,22 +146,23 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.equal(layout.includes('<header class="site-header"'), false);
   assert.equal(layout.includes('class="site-footer"'), false);
   assert.equal(layout.includes('PrimaryNav'), false);
-  assert.match(cvDocument, /<CvActions \/>/);
+  assert.match(cvDocument, /<CvActions copy=\{copy\} \/>/);
   assert.match(cvDocument, /id="cv-main"/);
   assert.equal(cvDocument.includes('cv-chrome'), false);
   assert.equal(actions.includes('Back to site'), false);
   assert.equal(actions.includes('cv-chrome'), false);
   assert.equal(actions.includes('history.back'), false);
   assert.equal(actions.includes('<details'), false);
-  assert.equal(actions.includes('CV_PDF.a4.route'), false);
-  assert.equal(actions.includes('CV_PDF.letter.route'), false);
-  assert.match(actions, /href=\{CV_PDF\.a4\.href\}/);
-  assert.match(actions, /href=\{CV_PDF\.letter\.href\}/);
-  assert.match(actions, /download=\{CV_PDF\.a4\.download\}/);
-  assert.match(actions, /download=\{CV_PDF\.letter\.download\}/);
+  assert.equal(actions.includes('.route'), false);
+  assert.match(actions, /const pdfs = CV_PDF\[copy\.language\];/);
+  assert.match(actions, /href=\{pdfs\.a4\.href\}/);
+  assert.match(actions, /href=\{pdfs\.letter\.href\}/);
+  assert.match(actions, /download=\{pdfs\.a4\.download\}/);
+  assert.match(actions, /download=\{pdfs\.letter\.download\}/);
   assert.match(actions, /type="application\/pdf"/);
-  assert.match(actions, />A4 PDF</);
-  assert.match(actions, />US Letter PDF</);
+  assert.match(actions, />\{copy\.ui\.pdfA4\}</);
+  assert.match(actions, />\{copy\.ui\.pdfLetter\}</);
+  assert.equal(actions.includes('hreflang'), false);
   assert.equal(actions.includes('window.print'), false);
   assert.equal(actions.includes('andresatencio.com'), false);
   assert.equal(nav.includes('isCvPage'), false);
@@ -165,7 +170,7 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.match(nav, /aria-current=\{item\.current \? 'page' : undefined\}/);
   assert.equal(nav.includes('View online'), false);
   assert.equal(nav.includes('CV_PDF'), false);
-  assert.match(baseLayout, /isDocumentShell \? null : <PrimaryNav \/>/);
+  assert.match(baseLayout, /:\s*<PrimaryNav copy=\{homeCopy\} \/>/);
   assert.match(baseLayout, /class="site-footer"/);
   assert.match(baseLayout, /import '\.\.\/styles\/site-shell\.css'/);
   assert.equal(baseLayout.includes("import '../styles/home.css'"), false);
@@ -188,13 +193,15 @@ test('CV actions sit in the document flow and are hidden in print', async () => 
   assert.match(cvCss, /@media screen \{[\s\S]*?\.cv-page \{[\s\S]*?width:\s*100%/);
   assert.match(cvCss, /@media screen \{[\s\S]*?min-height:\s*0/);
   assert.match(cvCss, /@media screen \{[\s\S]*?background:\s*transparent/);
+  // Profile spans the rows beside Technical Experience and the last row is
+  // flexible, so each desktop column keeps its own rhythm on screen.
   assert.match(
     cvCss,
-    /@media screen \{[\s\S]*?grid-template-areas:[\s\S]*?"profile technical"[\s\S]*?"primary secondary"/
+    /@media screen \{[\s\S]*?grid-template-areas:\s*"profile technical"\s*"profile secondary"\s*"primary secondary";\s*grid-template-rows:\s*auto auto 1fr;/
   );
   assert.match(
     cvCss,
-    /@media screen and \(max-width: 54rem\) \{[\s\S]*?grid-template-areas:[\s\S]*?"profile"[\s\S]*?"technical"[\s\S]*?"primary"[\s\S]*?"secondary"/
+    /@media screen and \(max-width: 54rem\) \{[\s\S]*?grid-template-areas:[\s\S]*?"profile"[\s\S]*?"technical"[\s\S]*?"primary"[\s\S]*?"secondary";\s*grid-template-rows:\s*none;/
   );
   assert.equal(/\border\s*:/.test(cvCss.replace(/@media screen[\s\S]*$/, '')), false);
 });

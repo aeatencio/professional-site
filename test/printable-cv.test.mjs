@@ -29,18 +29,18 @@ function sampleInputs({
     documents: [
       {
         format: 'a4',
-        route: CV_PDF.a4.route,
-        paper: CV_PDF.a4.paper,
-        printToPDF: printToPdfParams(CV_PDF.a4),
+        route: CV_PDF.en.a4.route,
+        paper: CV_PDF.en.a4.paper,
+        printToPDF: printToPdfParams(CV_PDF.en.a4),
         html: a4Html,
         stylesheets: [{ href: '/_astro/cv.css', css }],
         assets: []
       },
       {
         format: 'letter',
-        route: CV_PDF.letter.route,
-        paper: CV_PDF.letter.paper,
-        printToPDF: printToPdfParams(CV_PDF.letter),
+        route: CV_PDF.en.letter.route,
+        paper: CV_PDF.en.letter.paper,
+        printToPDF: printToPdfParams(CV_PDF.en.letter),
         html: letterHtml,
         stylesheets: [{ href: '/_astro/cv.css', css: letterCss }],
         assets: []

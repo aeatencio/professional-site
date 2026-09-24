@@ -51,6 +51,17 @@ DATA-BOUNDARY-001 while preserving its privacy boundary.
    and publication are independent. Each may require distinct authority.
    Local transfer is not visibility, deployment or publication.
 
+### Spanish presentation exception
+
+The approved Spanish increments add editorial translations of the Home at
+`/es/` in `lib/home-copy.ts` and of the CV at `/es/cv/` in `lib/cv-copy.ts`,
+including its printed PDFs. This narrows invariant 6: the unchanged local
+projection remains the sole factual authority and the source of English
+professional copy; Spanish wording is maintained locally as its presentation
+adaptation, outside Astro markup. Neither the projection contract nor the
+private source changes. This exception does not authorize new professional
+facts or publication.
+
 ## Consequences
 
 The public schema itself is the allowlist, so no recursive prohibited-key walker

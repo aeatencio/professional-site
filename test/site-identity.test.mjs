@@ -74,7 +74,7 @@ test('layouts declare canonical metadata from the site origin', async () => {
   const [layout, cvLayout, page, robots, config] = await Promise.all([
     readFile(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8'),
-    readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8'),
     readFile(new URL('../src/pages/robots.txt.ts', import.meta.url), 'utf8'),
     readFile(new URL('../astro.config.mjs', import.meta.url), 'utf8')
   ]);
@@ -89,10 +89,11 @@ test('layouts declare canonical metadata from the site origin', async () => {
   assert.match(layout, /application\/ld\+json/);
   assert.match(layout, /IdentityTag = isHome \? 'h1' : 'p'/);
   assert.equal(layout.includes('https://andresatencio.com'), false);
-  assert.match(cvLayout, /canonicalPath=\{CV_PATH\}/);
+  assert.match(cvLayout, /canonicalPath=\{copy\.path\}/);
+  assert.match(layout, /rel="alternate" hreflang="x-default" href=\{absoluteUrl\(alternates\.en, Astro\.site\)\}/);
   assert.equal(cvLayout.includes('rel="canonical"'), false);
   assert.equal(cvLayout.includes('PUBLIC_SITE_ORIGIN'), false);
-  assert.match(page, /canonicalPath=\{HOME_PATH\}/);
+  assert.match(page, /canonicalPath=\{copy.path\}/);
   assert.match(page, /homeIdentityGraph/);
   assert.match(page, /ogType="profile"/);
   assert.match(page, /aria-labelledby="site-identity home-heading"/);

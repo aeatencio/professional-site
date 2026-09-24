@@ -178,7 +178,7 @@ test('local projection is the authority for current professional copy', async ()
 });
 
 test('Astro owns structure while site and CV copy stay in the projection', async () => {
-  const page = await readFile(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
+  const page = await readFile(new URL('../src/components/HomePage.astro', import.meta.url), 'utf8');
   const cvPage = await readFile(new URL('../src/pages/cv/index.astro', import.meta.url), 'utf8');
   const cvLetterPage = await readFile(new URL('../src/pages/cv/letter.astro', import.meta.url), 'utf8');
   const cvDocument = await readFile(new URL('../src/components/CvDocument.astro', import.meta.url), 'utf8');
@@ -187,21 +187,15 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   const cvLayout = await readFile(new URL('../src/layouts/CvLayout.astro', import.meta.url), 'utf8');
 
   assert.equal(
-    page.includes("import projection from '../../data/professional-public-projection.v1.json'"),
+    page.includes("from '../../lib/home-copy'"),
     true
   );
-  assert.equal(
-    cvPage.includes("import projection from '../../../data/professional-public-projection.v1.json'"),
-    true
-  );
-  assert.equal(
-    cvLetterPage.includes("import projection from '../../../data/professional-public-projection.v1.json'"),
-    true
-  );
-  assert.equal(
-    cvDocument.includes("import projection from '../../data/professional-public-projection.v1.json'"),
-    true
-  );
+  for (const route of [cvPage, cvLetterPage]) {
+    assert.ok(route.includes("import { cvCopy } from '../../../lib/cv-copy'"));
+    assert.ok(route.includes("const copy = cvCopy('en');"));
+  }
+  assert.equal(cvDocument.includes('professional-public-projection'), false);
+  assert.match(cvDocument, /const \{ shared, cv, ui \} = copy;/);
   assert.equal(page.includes('I’m a software developer and IT teacher based in Buenos Aires.'), false);
   assert.equal(page.includes('RVM Soluciones'), false);
   assert.equal(page.includes('mostly on existing web and mobile products'), false);
@@ -220,7 +214,7 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(primaryNav.includes('>View CV</a>'), false);
   assert.equal(primaryNav.includes('>Download CV</a>'), false);
   assert.match(primaryNav, /sectionHref\('#contact'\)/);
-  assert.match(primaryNav, /href=\{contactHref\}>Contact</);
+  assert.match(primaryNav, /href=\{contactHref\}>\{sections.contact.heading\}</);
   assert.equal(primaryNav.includes('Download A4 CV'), false);
   assert.equal(page.includes('window.print'), false);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
@@ -242,13 +236,13 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(cvLayout.includes('Andrés Atencio'), false);
   assert.match(cvLayout, /class="cv-document"/);
   assert.match(cvLayout, /data-cv-format=\{format\}/);
-  assert.match(cvLayout, /canonicalPath=\{CV_PATH\}/);
+  assert.match(cvLayout, /canonicalPath=\{copy\.path\}/);
   assert.match(cvLayout, /import BaseLayout from '\.\/BaseLayout\.astro'/);
   assert.match(cvLayout, /shell="document"/);
   assert.equal(cvLayout.includes('<header class="site-header"'), false);
   assert.equal(cvLayout.includes('class="site-footer"'), false);
   assert.equal(cvLayout.includes('CvChrome'), false);
-  assert.match(cvDocument, /<CvActions \/>/);
+  assert.match(cvDocument, /<CvActions copy=\{copy\} \/>/);
   assert.equal(cvDocument.includes('cv-chrome'), false);
   assert.equal(cvDocument.includes('window.print'), false);
   assert.equal(cvLayout.includes('window.print'), false);

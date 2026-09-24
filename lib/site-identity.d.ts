@@ -1,6 +1,10 @@
 export const HOME_PATH: '/';
 export const CV_PATH: '/cv/';
 export const CV_LETTER_PATH: '/cv/letter/';
+export const LOCALIZED_PATHS: {
+  home: { en: '/'; es: '/es/' };
+  cv: { en: '/cv/'; es: '/es/cv/' };
+};
 
 export function absoluteUrl(pathname: string, site: string | URL): string;
 export function pagePathname(pageUrl: string): string;
@@ -15,5 +19,6 @@ export function homeIdentityGraph(options: {
     links: Array<{ label: string; url: string }>;
   };
   title: string;
+  path?: '/' | '/es/';
   site: string | URL;
 }): Record<string, unknown>;

@@ -1,28 +1,38 @@
 ---
+import LanguageSwitch from './LanguageSwitch.astro';
+import { homeCopy, type HomeCopy } from '../../lib/home-copy';
+import { LOCALIZED_PATHS } from '../../lib/site-identity.mjs';
+
+interface Props {
+  copy?: HomeCopy;
+}
+const { copy = homeCopy('en') } = Astro.props;
+const { sections } = copy.site;
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isHome = pathname === '/';
-const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
+const isHome = pathname === '/' || pathname === '/es';
+const sectionHref = (hash: string) => (isHome ? hash : `${copy.path}${hash}`);
 const sectionItems = [
-  { href: sectionHref('#experience'), label: 'Experience', current: false },
-  { href: sectionHref('#background'), label: 'Background', current: false },
-  { href: sectionHref('#cv'), label: 'CV', current: false },
-  { href: sectionHref('#working-together'), label: 'Working together', current: false }
+  { href: sectionHref('#experience'), label: sections.experience.heading, current: false },
+  { href: sectionHref('#background'), label: sections.background.heading, current: false },
+  { href: sectionHref('#cv'), label: copy.ui.cv, current: false },
+  { href: sectionHref('#working-together'), label: sections.workingTogether.heading, current: false }
 ];
 const contactHref = sectionHref('#contact');
 ---
 
-<nav class="primary-nav" aria-label="Primary" data-primary-navigation>
+<nav class="primary-nav" aria-label={copy.ui.primary} data-primary-navigation>
   <ul class="primary-nav__desktop-list">
     {sectionItems.map((item) => (
       <li>
         <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
       </li>
     ))}
-    <li class="primary-nav__contact"><a href={contactHref}>Contact</a></li>
+    <li class="primary-nav__contact"><a href={contactHref}>{sections.contact.heading}</a></li>
+    <li><LanguageSwitch language={copy.language} label={copy.ui.language} alternates={LOCALIZED_PATHS.home} /></li>
   </ul>
 
   <details class="primary-nav__mobile" data-mobile-navigation>
-    <summary><span>Menu</span></summary>
+    <summary><span>{copy.ui.menu}</span></summary>
     <div class="primary-nav__mobile-panel">
       <ul class="primary-nav__mobile-list">
         {sectionItems.map((item) => (
@@ -30,7 +40,8 @@ const contactHref = sectionHref('#contact');
             <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
           </li>
         ))}
-        <li class="primary-nav__mobile-contact"><a href={contactHref}>Contact</a></li>
+        <li class="primary-nav__mobile-contact"><a href={contactHref}>{sections.contact.heading}</a></li>
+        <li><LanguageSwitch language={copy.language} label={copy.ui.language} alternates={LOCALIZED_PATHS.home} /></li>
       </ul>
     </div>
   </details>

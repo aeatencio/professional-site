@@ -1,8 +1,12 @@
 ---
-import projection from '../../data/professional-public-projection.v1.json';
 import CvActions from './CvActions.astro';
+import type { CvCopy } from '../../lib/cv-copy';
 
-const { shared, cv } = projection;
+interface Props {
+  copy: CvCopy;
+}
+const { copy } = Astro.props;
+const { shared, cv, ui } = copy;
 const siteUrl = Astro.site ? Astro.site.origin : '';
 
 function visibleProfileUrl(url: string) {
@@ -15,13 +19,13 @@ function visibleProfileUrl(url: string) {
     <div class="cv-masthead">
       <h1>{shared.name}</h1>
       <p class="cv-identity">{cv.title}</p>
-      <CvActions />
+      <CvActions copy={copy} />
     </div>
     <address class="cv-contact">
       <span>{shared.location}</span>
       <a href={`mailto:${shared.email}`}>{shared.email}</a>
       {siteUrl ? (
-        <a href={siteUrl} rel="me" aria-label="Website">{visibleProfileUrl(siteUrl)}</a>
+        <a href={siteUrl} rel="me" aria-label={ui.website}>{visibleProfileUrl(siteUrl)}</a>
       ) : null}
       {shared.links.map((link) => (
         <a href={link.url} rel="me" aria-label={link.label}>{visibleProfileUrl(link.url)}</a>
@@ -78,7 +82,7 @@ function visibleProfileUrl(url: string) {
                 </ul>
               ) : null}
               <p class="cv-technologies">
-                <span class="cv-context-label">Context:</span> {role.technologies.join(', ')}
+                <span class="cv-context-label">{ui.technologies}</span> {role.technologies.join(', ')}
               </p>
             </article>
           ))}
