@@ -20,6 +20,11 @@ import {
   sleep,
   withHeadlessBrowser
 } from '../lib/headless-chrome.mjs';
+import {
+  assertCvPrintSafeArea,
+  formatCvPrintSafeArea,
+  measureCvPrintSafeArea
+} from '../lib/cv-print-layout.mjs';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
 import { printableCvFingerprint } from '../lib/printable-cv.mjs';
 
@@ -54,6 +59,9 @@ await withHeadlessBrowser(distDir, async ({ cdp, origin }) => {
     await cdp.send('Emulation.setEmulatedMedia', { media: 'print' }, sessionId);
     await sleep(400);
     await assertPrintChromeHidden(cdp, sessionId);
+    const safeArea = await measureCvPrintSafeArea(cdp, sessionId);
+    console.log(`  Bottom margin: ${formatCvPrintSafeArea(safeArea)}`);
+    assertCvPrintSafeArea(safeArea, pdf.route);
     const { data } = await cdp.send('Page.printToPDF', printToPdfParams(pdf), sessionId);
     await cdp.send('Target.closeTarget', { targetId });
 

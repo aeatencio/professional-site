@@ -45,11 +45,31 @@
   --cv-secondary-col: 61mm;
   --cv-masthead-gap: 10.2mm;
   --cv-intro-gap: 6.6mm;
-  --cv-stack-gap: 8.6mm;
-  --cv-role-gap: 6.6mm;
-  --cv-edu-gap: 4.5mm;
+  --cv-stack-gap: 7.9mm;
+  --cv-role-gap: 6.4mm;
+  --cv-edu-gap: 4.4mm;
   --cv-tech-gap: 4.4mm;
   --cv-heading-gap: 3.3mm;
+}
+
+/*
+ * The printed page has a fixed height and visible overflow, and the secondary
+ * column is anchored out of flow, so --cv-margin-y alone cannot keep either
+ * column off the bottom edge. Spanish copy runs longer; its papers tighten the
+ * vertical rhythm, never the type, so every column ends at least 9mm above the
+ * page edge. `cv:pdf` and `layout:check` measure that distance.
+ */
+.cv-document[data-cv-format="a4"]:lang(es) {
+  --cv-stack-gap: 8.4mm;
+  --cv-role-gap: 8.2mm;
+  --cv-edu-gap: 5.6mm;
+}
+
+.cv-document[data-cv-format="letter"]:lang(es) {
+  --cv-masthead-gap: 9.2mm;
+  --cv-stack-gap: 7mm;
+  --cv-role-gap: 5.4mm;
+  --cv-edu-gap: 4.2mm;
 }
 
 .cv-page {

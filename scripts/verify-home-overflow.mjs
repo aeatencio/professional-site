@@ -3,6 +3,13 @@ import { cvCopy } from '../lib/cv-copy.ts';
 import astroConfig from '../astro.config.mjs';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
 import { CV_PDF, CV_PDFS, PUBLIC_SITE_ORIGIN, repoPath } from '../lib/cv-pdf.mjs';
+import {
+  CV_PRINT_MIN_BOTTOM_MM,
+  assertCvPrintSafeArea,
+  formatCvPrintSafeArea,
+  isCanonicalCvPrintEnvironment,
+  measureCvPrintSafeArea
+} from '../lib/cv-print-layout.mjs';
 import { LOCALIZED_PATHS } from '../lib/site-identity.mjs';
 import {
   evaluate,
@@ -1854,3 +1861,32 @@ async function assertCvColumnRhythm(cdp, url, width) {
   }
   console.log(`CV column rhythm verified at ${label}`);
 }
+
+// Printed CV pages have a fixed height and an out-of-flow secondary column, so
+// content can sink into the bottom margin without overflowing. Each printable
+// route must keep every column's lowest text at least CV_PRINT_MIN_BOTTOM_MM
+// above the page edge. Line breaks depend on the canonical Linux fonts, so the
+// distance is enforced where they render; elsewhere it is reported, and
+// `cv:pdf` always enforces it before printing.
+await withHeadlessBrowser(repoPath('dist'), async ({ cdp, origin }) => {
+  console.log('Verifying CV print bottom margin');
+  for (const pdf of CV_PDFS) {
+    const { targetId, sessionId } = await openPage(cdp, new URL(pdf.route, origin).href);
+    await cdp.send('Emulation.setEmulatedMedia', { media: 'print' }, sessionId);
+    await sleep(400);
+    const measurement = await measureCvPrintSafeArea(cdp, sessionId);
+    await cdp.send('Target.closeTarget', { targetId });
+
+    const label = `${pdf.route} (${pdf.language} ${pdf.format})`;
+    if (isCanonicalCvPrintEnvironment(measurement)) {
+      assertCvPrintSafeArea(measurement, label);
+      console.log(`CV print bottom margin verified at ${label}: ${formatCvPrintSafeArea(measurement)}`);
+    } else {
+      console.log(
+        `CV print bottom margin measured without the canonical PDF fonts at ${label}: `
+        + `${formatCvPrintSafeArea(measurement)}; the ${CV_PRINT_MIN_BOTTOM_MM}mm minimum is enforced by \`cv:pdf\` `
+        + 'and wherever the canonical fonts render'
+      );
+    }
+  }
+});
