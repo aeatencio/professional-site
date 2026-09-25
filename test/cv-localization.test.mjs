@@ -38,7 +38,7 @@ test('English CV uses the unchanged projection and the existing labels', async (
     skip: 'Skip to content',
     language: 'Language',
     website: 'Website',
-    technologies: 'Context:',
+    technologies: 'Technologies:',
     pdfA4: 'A4 PDF',
     pdfLetter: 'US Letter PDF'
   });

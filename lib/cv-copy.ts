@@ -30,7 +30,7 @@ export const spanishCvRoles = {
     role: 'Desarrollador de software',
     summary: 'Trabajé en productos web y móviles existentes de encuestas, salud y comunidades en línea, en equipos distribuidos que trabajaban en inglés.',
     highlights: [
-      'Las tareas partían de necesidades del producto, no de implementaciones ya definidas; colaboré con los responsables de producto en alcance y estimaciones, y definí enfoques técnicos dentro de mi área.',
+      'Las tareas partían de necesidades del producto, no de implementaciones ya definidas; colaboré con los responsables de producto en alcance y estimaciones, y definí enfoques técnicos.',
       'Usé ampliamente pruebas automatizadas y TDD para entender el comportamiento actual, reproducir errores y hacer cambios de forma segura en bases de código existentes y complejas.',
       'Implementé cambios en bases de datos y en los datos, incluidas migraciones y SQL, y acompañé algunos de ellos durante el despliegue y la verificación posterior.'
     ]
@@ -90,7 +90,7 @@ const spanishCv: Cv = {
   title: 'Desarrollador de software',
   profile: {
     heading: 'Perfil',
-    text: 'Desarrollador de software con unos quince años de experiencia profesional en sistemas web, de escritorio y móviles existentes, con una base sólida en desarrollo back-end, bases de datos, APIs e integraciones, y amplia experiencia full-stack. Mi trabajo también incluyó pruebas automatizadas, cambios en datos y el seguimiento de cambios hasta producción cuando hacía falta. Desde fines de 2023, mi actividad profesional principal es la enseñanza de Informática. Ahora retomo el desarrollo profesional de software junto con la enseñanza y tengo disponibilidad para trabajo remoto a tiempo parcial, por contrato o freelance.'
+    text: 'Soy desarrollador de software, con unos quince años de experiencia profesional en sistemas web, de escritorio y móviles existentes, una base sólida en desarrollo back-end, bases de datos, APIs e integraciones, y amplia experiencia full-stack. Mi trabajo también incluyó pruebas automatizadas, cambios en datos y el seguimiento de cambios hasta producción cuando hacía falta. Desde fines de 2023, la enseñanza de Informática es mi actividad profesional principal, sin dejar de desarrollar software. Hoy construyo una actividad independiente como desarrollador junto con la docencia y tengo disponibilidad para trabajo remoto a tiempo parcial, por contrato o freelance.'
   },
   softwareExperience: {
     heading: 'Experiencia en software',
@@ -100,7 +100,7 @@ const spanishCv: Cv = {
     }))
   },
   currentDevelopment: {
-    heading: 'Desarrollo reciente',
+    heading: 'Desarrollo actual',
     text: 'Pequeñas herramientas para la enseñanza y la gestión escolar, además del trabajo en curso en mi sitio profesional.'
   },
   teaching: {
@@ -143,7 +143,7 @@ const cvs: Record<HomeLanguage, CvCopy> = {
       skip: homeCopy('en').ui.skip,
       language: homeCopy('en').ui.language,
       website: 'Website',
-      technologies: 'Context:',
+      technologies: 'Technologies:',
       pdfA4: 'A4 PDF',
       pdfLetter: 'US Letter PDF'
     }

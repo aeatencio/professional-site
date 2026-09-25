@@ -33,7 +33,7 @@ type RoleTranslation = { role: string; description: string };
 export const spanishRoles = {
   'Manas Technology Solutions': {
     role: 'Desarrollador de software',
-    description: 'Trabajé en productos web y móviles para encuestas, salud y comunidades en línea, en equipos distribuidos que se comunicaban en inglés. Llegué a Manas con una experiencia más centrada en back-end y fui ampliando mi trabajo al resto del stack, con una participación importante en front-end durante los últimos años. En Surveda, donde trabajé varios años, las tareas solían partir de una necesidad del producto y no de una implementación ya definida: aclarar el alcance, investigar el código existente, definir una solución técnica, implementarla, probarla y acompañar algunos cambios hasta producción. El trabajo incluyó APIs, integraciones, cambios en bases de datos y migraciones. Los proyectos utilizaban JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL y Flutter/Dart.'
+    description: 'Trabajé en productos web y móviles para encuestas, salud y comunidades en línea, en equipos distribuidos que se comunicaban en inglés. Llegué a Manas con una experiencia más centrada en back-end y fui ampliando mi trabajo al resto del stack, con una participación importante en front-end durante los últimos años. En Surveda, donde trabajé varios años, las tareas solían partir de una necesidad del producto y no de una implementación ya definida: aclarar el alcance, investigar el código existente, definir una solución técnica, implementarla, probarla y acompañar algunos cambios hasta producción. El trabajo incluyó APIs, integraciones, cambios en bases de datos y migraciones. En Surveda trabajé con Elixir/Phoenix y React; en los distintos proyectos de Manas, el trabajo también incluyó JavaScript/TypeScript, Python, Node.js, Ruby on Rails, PostgreSQL y Flutter/Dart.'
   },
   'Mobile Streams': {
     role: 'Desarrollador de software',
@@ -91,7 +91,7 @@ const spanishSite: HomeCopy['site'] = {
   sections: {
     home: {
       paragraphs: [
-        'Soy desarrollador de software y profesor de Informática en Buenos Aires. Durante unos quince años trabajé profesionalmente en software, sobre todo en productos web y móviles ya existentes. A fines de 2023 me volqué a la enseñanza de Informática, que desde entonces es mi actividad profesional principal.',
+        'Soy desarrollador de software y profesor de Informática en Buenos Aires. Durante unos quince años trabajé profesionalmente en software, sobre todo en productos web y móviles ya existentes. A fines de 2023, la enseñanza de Informática pasó a ser mi actividad profesional principal.',
         'Seguí desarrollando software en proyectos educativos, institucionales y personales. Hoy estoy construyendo mi propia actividad como desarrollador independiente, en paralelo con la docencia, y el desarrollo volvió a ocupar un lugar central en mi trabajo. Busco trabajo remoto a tiempo parcial, por contrato o como freelance, con una colaboración que pueda ser mayormente asincrónica.'
       ]
     },

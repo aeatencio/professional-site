@@ -88,7 +88,7 @@ test('Spanish lists stay keyed to projected entries and preserve identity, dates
     assert.equal(esRoles[index].description, spanishRoles[role.organization].description);
   });
   const serialized = JSON.stringify(spanish.site);
-  for (const name of ['Surveda', 'JavaScript/TypeScript', 'React', 'Node.js', 'Python', 'Ruby on Rails', 'PostgreSQL', 'Flutter/Dart', 'Android/Java', 'C#', 'ASP.NET', 'Angular', 'SQL Server', 'Visual Basic', 'Astro', 'TypeScript', 'UNAHUR', 'IES Juan B. Justo', 'Universidad del Salvador']) {
+  for (const name of ['Surveda', 'Elixir/Phoenix', 'JavaScript/TypeScript', 'React', 'Node.js', 'Python', 'Ruby on Rails', 'PostgreSQL', 'Flutter/Dart', 'Android/Java', 'C#', 'ASP.NET', 'Angular', 'SQL Server', 'Visual Basic', 'Astro', 'TypeScript', 'UNAHUR', 'IES Juan B. Justo', 'Universidad del Salvador']) {
     assert.ok(serialized.includes(name), `Missing projected name ${name}`);
   }
 });

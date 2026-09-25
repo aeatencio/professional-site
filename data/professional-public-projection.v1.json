@@ -25,7 +25,7 @@
     "sections": {
       "home": {
         "paragraphs": [
-          "I’m a software developer and IT teacher based in Buenos Aires. For around fifteen years I worked professionally in software, mostly on existing web and mobile products. In late 2023, I turned to teaching Information Technology, which has been my main professional work since.",
+          "I’m a software developer and IT teacher based in Buenos Aires. For around fifteen years I worked professionally in software, mostly on existing web and mobile products. In late 2023, teaching Information Technology became my main professional work.",
           "I kept developing software through educational, institutional and personal projects. Now I’m building an independent software practice alongside teaching, and development is once again a central part of my work. I’m looking for part-time remote work on a contract or freelance basis, with collaboration that can be mostly asynchronous."
         ]
       },
@@ -42,7 +42,7 @@
               "organization": "Manas Technology Solutions",
               "period": "2018–2023",
               "role": "Software Developer",
-              "description": "I worked on web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I joined Manas with a stronger back-end background and gradually worked across more of the stack, including substantial front-end work in later years. On Surveda, where I worked for several years, work often began with a product need rather than a prescribed implementation: clarifying scope, investigating the codebase, defining a technical approach, implementing and testing changes, and following selected changes into production. The work included APIs, integrations, database changes and migrations. The projects involved JavaScript/TypeScript, React, Node.js, Python, Ruby on Rails, PostgreSQL and Flutter/Dart."
+              "description": "I worked on web and mobile products across surveys, healthcare and online communities, in distributed teams working in English. I joined Manas with a stronger back-end background and gradually worked across more of the stack, including substantial front-end work in later years. On Surveda, where I worked for several years, work often began with a product need rather than a prescribed implementation: clarifying scope, investigating the codebase, defining a technical approach, implementing and testing changes, and following selected changes into production. The work included APIs, integrations, database changes and migrations. On Surveda I worked with Elixir/Phoenix and React; across Manas projects, the work also involved JavaScript/TypeScript, Python, Node.js, Ruby on Rails, PostgreSQL and Flutter/Dart."
             },
             {
               "organization": "Mobile Streams",
@@ -143,7 +143,7 @@
     "title": "Software Developer",
     "profile": {
       "heading": "Profile",
-      "text": "Software developer with around fifteen years of professional experience across existing web, desktop and mobile systems, with a strong background in back-end development, databases, APIs and integrations and broad full-stack experience. My work has also included automated testing, data changes and following changes into production when needed. Since late 2023, my primary professional work has been teaching Information Technology. I’m now returning to professional software development alongside teaching and am available for remote part-time contract or freelance work."
+      "text": "I’m a software developer with around fifteen years of professional experience across existing web, desktop and mobile systems, with a strong background in back-end development, databases, APIs and integrations and broad full-stack experience. My work has also included automated testing, data changes and following changes into production when needed. Since late 2023, teaching Information Technology has been my main professional work, while I’ve kept developing software. I’m now building an independent software practice alongside teaching and am available for part-time remote contract or freelance work."
     },
     "softwareExperience": {
       "heading": "Software experience",
@@ -156,13 +156,12 @@
           "technologies": [
             "JavaScript",
             "React",
-            "PostgreSQL",
-            "Node.js",
+            "Elixir/Phoenix",
             "TypeScript",
             "Python"
           ],
           "highlights": [
-            "Worked from product needs rather than prescribed implementations, collaborating with product owners on scope and estimates and defining technical approaches within my area of work.",
+            "Worked from product needs rather than prescribed implementations, collaborating with product owners on scope and estimates and defining technical approaches.",
             "Used automated testing and TDD extensively to understand existing behavior, reproduce bugs and make changes safely in complex existing codebases.",
             "Implemented database and data changes, including migrations and SQL, and followed selected changes through deployment and post-change verification."
           ]
@@ -195,8 +194,8 @@
       ]
     },
     "currentDevelopment": {
-      "heading": "Recent development",
-      "text": "Small tools built for teaching and school workflows, along with ongoing work on my professional site."
+      "heading": "Current development",
+      "text": "Small tools for teaching and school workflows, along with ongoing work on my professional site."
     },
     "teaching": {
       "heading": "Teaching",
