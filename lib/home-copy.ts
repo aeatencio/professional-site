@@ -48,7 +48,7 @@ export const spanishRoles = {
 export const spanishCurrentItems = {
   'Institutional tools': {
     heading: 'Herramientas institucionales',
-    paragraphs: ['Herramientas pequeñas para necesidades institucionales, entre ellas un generador de boletines que desarrollé y sigo manteniendo para el CFP N.º 7.']
+    paragraphs: ['Herramientas para necesidades institucionales, entre ellas un generador de boletines que desarrollé y sigo manteniendo para el CFP N.º 7.']
   },
   'Educational software': {
     heading: 'Software educativo',
