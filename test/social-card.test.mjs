@@ -2,45 +2,63 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import astroConfig from '../astro.config.mjs';
+import { homeCopy } from '../lib/home-copy.ts';
 import { loadLocalPublicProjection } from '../lib/load-public-projection.mjs';
 import { absoluteUrl } from '../lib/site-identity.mjs';
 import {
-  SOCIAL_CARD,
+  SOCIAL_CARDS,
   inspectPng,
   socialCardAlt,
   verifySocialCard
 } from '../lib/social-card.mjs';
 
-test('social card descriptor declares a PNG at the platform size', () => {
-  assert.equal(SOCIAL_CARD.href, '/images/social/social-card.png');
-  assert.equal(SOCIAL_CARD.publicPath, 'public/images/social/social-card.png');
-  assert.equal(SOCIAL_CARD.distPath, 'dist/images/social/social-card.png');
-  assert.equal(SOCIAL_CARD.type, 'image/png');
-  assert.equal(SOCIAL_CARD.width, 1200);
-  assert.equal(SOCIAL_CARD.height, 630);
-  assert.equal(SOCIAL_CARD.href.startsWith('/'), true, 'href must be root-relative');
-  assert.equal(SOCIAL_CARD.href.includes('andresatencio.com'), false);
+const CARD_FILES = { en: 'social-card.png', es: 'social-card-es.png' };
+
+test('each Home language has a social card descriptor for a PNG at the platform size', () => {
+  assert.deepEqual(Object.keys(SOCIAL_CARDS).sort(), ['en', 'es']);
+
+  for (const [language, file] of Object.entries(CARD_FILES)) {
+    const card = SOCIAL_CARDS[language];
+    assert.equal(card.href, `/images/social/${file}`);
+    assert.equal(card.publicPath, `public/images/social/${file}`);
+    assert.equal(card.distPath, `dist/images/social/${file}`);
+    assert.equal(card.type, 'image/png');
+    assert.equal(card.width, 1200);
+    assert.equal(card.height, 630);
+    assert.equal(card.href.startsWith('/'), true, 'href must be root-relative');
+    assert.equal(card.href.includes('andresatencio.com'), false);
+  }
 });
 
-test('social card URL is absolute and derived from the canonical site', () => {
+test('social card URLs are absolute and derived from the canonical site', () => {
   assert.equal(
-    absoluteUrl(SOCIAL_CARD.href, astroConfig.site),
+    absoluteUrl(SOCIAL_CARDS.en.href, astroConfig.site),
     'https://andresatencio.com/images/social/social-card.png'
+  );
+  assert.equal(
+    absoluteUrl(SOCIAL_CARDS.es.href, astroConfig.site),
+    'https://andresatencio.com/images/social/social-card-es.png'
   );
 });
 
-test('committed social card is a 1200x630 non-interlaced PNG', async () => {
+test('committed social cards are distinct 1200x630 non-interlaced PNGs', async () => {
   await verifySocialCard();
 
-  const buffer = await readFile(new URL(`../${SOCIAL_CARD.publicPath}`, import.meta.url));
-  const png = inspectPng(buffer);
+  const buffers = [];
+  for (const card of Object.values(SOCIAL_CARDS)) {
+    const buffer = await readFile(new URL(`../${card.publicPath}`, import.meta.url));
+    const png = inspectPng(buffer);
 
-  assert.equal(png.width, 1200);
-  assert.equal(png.height, 630);
-  assert.equal(png.bitDepth, 8);
-  assert.equal(png.colorType, 2, 'card must stay truecolor with no alpha channel');
-  assert.equal(png.interlace, 0);
-  assert.ok(png.bytes < 5 * 1024 * 1024, 'card must stay under the 5 MB scraper limit');
+    assert.equal(png.width, 1200);
+    assert.equal(png.height, 630);
+    assert.equal(png.bitDepth, 8);
+    assert.equal(png.colorType, 2, 'card must stay truecolor with no alpha channel');
+    assert.equal(png.interlace, 0);
+    assert.ok(png.bytes < 5 * 1024 * 1024, 'card must stay under the 5 MB scraper limit');
+    buffers.push(buffer);
+  }
+
+  assert.equal(buffers[0].equals(buffers[1]), false, 'each language needs its own card');
 });
 
 test('inspectPng rejects files that are not PNGs', () => {
@@ -54,6 +72,10 @@ test('social card alt comes from the projection, not from hardcoded copy', async
   assert.equal(alt, 'Andrés Atencio — Software Developer · IT Teacher');
   assert.ok(alt.includes(projection.shared.name));
   assert.ok(alt.includes(projection.shared.professionalIdentity));
+  assert.equal(
+    socialCardAlt(homeCopy('es').shared),
+    'Andrés Atencio — Desarrollador de software · Profesor de Informática'
+  );
 
   const card = await readFile(new URL('../lib/social-card.mjs', import.meta.url), 'utf8');
   assert.equal(card.includes(projection.shared.professionalIdentity), false);
@@ -92,9 +114,12 @@ test('BaseLayout declares the social image block once, behind an opt-in', async 
   assert.match(layout, /name="twitter:card" content="summary"/);
   assert.match(layout, /const hasSocialCard = Boolean\(socialCardAlt\)/);
   assert.match(layout, /socialCardAlt\?: string;/);
-  assert.match(layout, /socialCardUrl = absoluteUrl\(SOCIAL_CARD\.href, Astro\.site\)/);
+  assert.match(layout, /const socialCard = SOCIAL_CARDS\[lang\];/);
+  assert.match(layout, /socialCardUrl = absoluteUrl\(socialCard\.href, Astro\.site\)/);
   assert.equal(layout.includes('https://andresatencio.com'), false, 'no hardcoded origin');
-  assert.equal(layout.includes(SOCIAL_CARD.href), false, 'no hardcoded asset path');
+  for (const card of Object.values(SOCIAL_CARDS)) {
+    assert.equal(layout.includes(card.href), false, 'no hardcoded asset path');
+  }
 });
 
 test('the Home opts into the social card and the CV layout does not', async () => {

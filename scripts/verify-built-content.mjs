@@ -4,7 +4,7 @@ import { cvCopy } from '../lib/cv-copy.ts';
 import { readFile } from 'node:fs/promises';
 import { CV_PDF, PUBLIC_SITE_ORIGIN, verifyCvPdfs } from '../lib/cv-pdf.mjs';
 import { LOCALIZED_PATHS } from '../lib/site-identity.mjs';
-import { SOCIAL_CARD, socialCardAlt, verifySocialCard } from '../lib/social-card.mjs';
+import { SOCIAL_CARDS, socialCardAlt, verifySocialCard } from '../lib/social-card.mjs';
 import { printableCvFingerprint, stylesheetHrefsFromHtml } from '../lib/printable-cv.mjs';
 
 const projection = JSON.parse(await readFile(
@@ -322,42 +322,48 @@ assert.match(
 assert.match(siteHtml, /property="og:url" content="https:\/\/andresatencio\.com\/"/);
 assert.match(siteHtml, /property="og:type" content="profile"/);
 
-const socialCardUrl = `${PUBLIC_SITE_ORIGIN}${SOCIAL_CARD.href}`;
-const socialCardDescription = socialCardAlt(projection.shared);
-
 await verifySocialCard({ dist: true });
 
-const homeSocialTags = [
-  `property="og:image" content="${socialCardUrl}"`,
-  `property="og:image:type" content="${SOCIAL_CARD.type}"`,
-  `property="og:image:width" content="${SOCIAL_CARD.width}"`,
-  `property="og:image:height" content="${SOCIAL_CARD.height}"`,
-  `property="og:image:alt" content="${socialCardDescription}"`,
-  `property="og:site_name" content="${projection.shared.name}"`,
-  'name="twitter:card" content="summary_large_image"',
-  `name="twitter:image" content="${socialCardUrl}"`,
-  `name="twitter:image:alt" content="${socialCardDescription}"`
-];
+for (const [language, html] of [['en', siteHtml], ['es', spanishHtml]]) {
+  const card = SOCIAL_CARDS[language];
+  const otherCard = SOCIAL_CARDS[language === 'es' ? 'en' : 'es'];
+  const socialCardUrl = `${PUBLIC_SITE_ORIGIN}${card.href}`;
+  const socialCardDescription = socialCardAlt(homeCopy(language).shared);
+  const label = `${language} Home`;
 
-for (const tag of homeSocialTags) {
-  const occurrences = siteHtml.split(tag).length - 1;
-  assert.equal(occurrences, 1, `Built Home must emit ${tag} exactly once`);
+  const homeSocialTags = [
+    `property="og:image" content="${socialCardUrl}"`,
+    `property="og:image:type" content="${card.type}"`,
+    `property="og:image:width" content="${card.width}"`,
+    `property="og:image:height" content="${card.height}"`,
+    `property="og:image:alt" content="${socialCardDescription}"`,
+    `property="og:site_name" content="${projection.shared.name}"`,
+    'name="twitter:card" content="summary_large_image"',
+    `name="twitter:image" content="${socialCardUrl}"`,
+    `name="twitter:image:alt" content="${socialCardDescription}"`
+  ];
+
+  for (const tag of homeSocialTags) {
+    const occurrences = html.split(tag).length - 1;
+    assert.equal(occurrences, 1, `Built ${label} must emit ${tag} exactly once`);
+  }
+
+  assert.equal(
+    html.includes('name="twitter:card" content="summary"'),
+    false,
+    `${label} still declares the small twitter:card`
+  );
+  assert.equal(
+    html.includes(`content="${card.href}"`),
+    false,
+    `${label} declares a relative social image URL`
+  );
+  assert.equal(
+    html.includes(otherCard.href),
+    false,
+    `${label} references the social card of another language`
+  );
 }
-
-assert.equal(
-  siteHtml.includes('name="twitter:card" content="summary"'),
-  false,
-  'Home still declares the small twitter:card'
-);
-assert.equal(
-  siteHtml.includes(`content="${SOCIAL_CARD.href}"`),
-  false,
-  'Home declares a relative social image URL'
-);
-assert.ok(
-  siteHtml.includes(`content="${socialCardUrl}"`),
-  'Home social image URL is not absolute'
-);
 
 // The CV routes stay on the small summary card: their built head feeds the
 // printable-CV fingerprint, so metadata that never reaches paper would force a

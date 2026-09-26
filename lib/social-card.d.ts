@@ -1,13 +1,15 @@
 import type { Buffer } from 'node:buffer';
 
-export const SOCIAL_CARD: {
+export interface SocialCard {
   href: string;
   publicPath: string;
   distPath: string;
   type: 'image/png';
   width: number;
   height: number;
-};
+}
+
+export const SOCIAL_CARDS: Record<'en' | 'es', SocialCard>;
 
 export function socialCardAlt(shared: {
   name: string;

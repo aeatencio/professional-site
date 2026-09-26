@@ -41,8 +41,8 @@ page language.
 Each page declares its own `lang`, canonical, description and social title;
 `BaseLayout` emits reciprocal `en`/`es` alternates, `x-default` (English) and
 `og:locale` from the page's alternates. The Home pages carry localized
-ProfilePage JSON-LD with shared Person and WebSite IDs and reuse the social
-image with localized alternative text. The CV pages keep the summary card and
+ProfilePage JSON-LD with shared Person and WebSite IDs and a social image in
+their language with localized alternative text. The CV pages keep the summary card and
 no JSON-LD. The sitemap lists `/`, `/es/`, `/cv/` and `/es/cv/`.
 
 Each CV language has an A4 and a US Letter PDF. `CV_PDF` in `lib/cv-pdf.mjs`
