@@ -100,6 +100,24 @@ test('Spanish CV lists stay keyed to projected entries', () => {
   }
 });
 
+test('Spanish CV Current development stays compact and equivalent to the projection', () => {
+  const english = cvCopy('en').cv.currentDevelopment;
+  const spanish = cvCopy('es').cv.currentDevelopment;
+  assert.equal(
+    english.text,
+    'My current development work spans institutional tools, software for teaching and learning, and tooling for my own development environment.'
+  );
+  assert.equal(spanish.heading, 'Desarrollo actual');
+  assert.equal(
+    spanish.text,
+    'Mi trabajo actual de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y herramientas para mi propio entorno de desarrollo.'
+  );
+  for (const text of [english.text, spanish.text]) {
+    assert.doesNotMatch(text, /Aula|bulletin|boletin|professional site|sitio profesional|this site|este sitio|dev-setup|DevOps/i);
+    assert.doesNotMatch(text, /\b(?:small|tiny|little|modest)\b|pequeñ/i);
+  }
+});
+
 test('Spanish CV follows the Spanish Home terminology and offers its own PDFs', () => {
   const spanish = cvCopy('es');
   const serialized = JSON.stringify(spanish.cv);

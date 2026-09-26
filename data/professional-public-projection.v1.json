@@ -61,7 +61,7 @@
         "currentDevelopment": {
           "heading": "Current development",
           "paragraphs": [
-            "Alongside teaching, my development work today spans institutional tools, educational software and this site."
+            "Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and my own development environment."
           ],
           "items": [
             {
@@ -71,15 +71,15 @@
               ]
             },
             {
-              "heading": "Educational software",
+              "heading": "Teaching and learning",
               "paragraphs": [
-                "Web and software projects for classes and technical training, combining development work with teaching."
+                "Web projects for teaching and learning, including Aula, a website where I publish materials I use in class so they can be projected, consulted and revisited later."
               ]
             },
             {
-              "heading": "This site",
+              "heading": "Development environment",
               "paragraphs": [
-                "This professional site is a versioned static project built with Astro and TypeScript."
+                "A versioned, recoverable setup for my own development work across Windows and WSL, with verification, recovery steps and shared working conventions."
               ]
             }
           ]
@@ -195,7 +195,7 @@
     },
     "currentDevelopment": {
       "heading": "Current development",
-      "text": "Tools for teaching and school workflows, along with ongoing work on my professional site."
+      "text": "My current development work spans institutional tools, software for teaching and learning, and tooling for my own development environment."
     },
     "teaching": {
       "heading": "Teaching",

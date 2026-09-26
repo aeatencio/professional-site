@@ -28,9 +28,13 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.experience.currentDevelopment.paragraphs.length,
     1
   );
-  assert.equal(
-    projection.site.sections.experience.currentDevelopment.items.length,
-    3
+  assert.deepEqual(
+    projection.site.sections.experience.currentDevelopment.paragraphs,
+    ['Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and my own development environment.']
+  );
+  assert.deepEqual(
+    projection.site.sections.experience.currentDevelopment.items.map(({ heading }) => heading),
+    ['Institutional tools', 'Teaching and learning', 'Development environment']
   );
   assert.equal(
     projection.site.sections.experience.teaching.heading,
@@ -93,11 +97,25 @@ test('local projection is the authority for current professional copy', async ()
     )?.paragraphs[0];
   assert.match(institutionalToolsParagraph, /bulletin-generation tool/);
   assert.match(institutionalToolsParagraph, /CFP No\. 7/);
-  assert.match(
+  const currentItem = (heading) =>
+    projection.site.sections.experience.currentDevelopment.items
+      .find((item) => item.heading === heading)?.paragraphs.join(' ');
+  assert.match(currentItem('Teaching and learning'), /\bAula\b/);
+  const developmentEnvironment = currentItem('Development environment');
+  for (const aspect of [/versioned/, /recoverable/, /Windows and WSL/, /verification/, /recovery/, /shared working conventions/]) {
+    assert.match(developmentEnvironment, aspect);
+  }
+  assert.equal(
     projection.cv.currentDevelopment.text,
-    /teaching and school workflows/
+    'My current development work spans institutional tools, software for teaching and learning, and tooling for my own development environment.'
   );
-  assert.match(projection.cv.currentDevelopment.text, /professional site/);
+  assert.doesNotMatch(projection.cv.currentDevelopment.text, /Aula|bulletin|professional site|this site/i);
+  const currentDevelopmentSerialized = JSON.stringify([
+    projection.site.sections.experience.currentDevelopment,
+    projection.cv.currentDevelopment
+  ]);
+  assert.doesNotMatch(currentDevelopmentSerialized, /\b(?:small|tiny|little|modest)\b/i);
+  assert.doesNotMatch(currentDevelopmentSerialized, /This site|professional site|dev-setup|DevOps/i);
   assert.match(
     projection.cv.teaching.text,
     /Information Technology teacher in Buenos Aires high schools and Head of IT Training for CFP No\. 7’s high school IT track since 2023\./
@@ -174,7 +192,7 @@ test('local projection is the authority for current professional copy', async ()
   assert.equal(serialized.includes('secondary school'), false);
   assert.equal(serialized.includes('secondary IT'), false);
   assert.equal(serialized.includes('secondary curriculum'), false);
-  assert.match(serialized, /school workflows/);
+  assert.equal(serialized.includes('dev-setup'), false);
 });
 
 test('Astro owns structure while site and CV copy stay in the projection', async () => {
