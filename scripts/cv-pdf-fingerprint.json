@@ -1,21 +1,21 @@
 {
-  "printableSha256": "bbf2f24932069b169f5b6079414a32abb13009da1d63eb71491b850bea4a1852",
+  "printableSha256": "72ddca39da9656d8080213a8853a4d87c316b0923ef494cb401c9d4031152407",
   "files": {
     "public/cv/andres-atencio-cv-a4.pdf": {
-      "sha256": "6cc6ec42de126b053ad7faf176b881046ac73535ffc654aa1cb74750348b0c96",
-      "bytes": 83542
+      "sha256": "2fe4d71a17adb1264087af283b4a17818e8d6aab38f52bcf9881f6885450aa15",
+      "bytes": 83570
     },
     "public/cv/andres-atencio-cv-letter.pdf": {
-      "sha256": "52b22c1e66bc7003643c72e857aca28da9d2bd699f6f9c3a8b2b816bf264121e",
-      "bytes": 80747
+      "sha256": "09a5d24edfbe1338342f18020ccbc4665efd5afc0bff6f64685f90807044a4f2",
+      "bytes": 80774
     },
     "public/es/cv/andres-atencio-cv-es-a4.pdf": {
-      "sha256": "9511a6fa71c89abd3bd02da509bed61f780274c2b5043396744144b5de273a05",
-      "bytes": 85298
+      "sha256": "157f8f16364add5ea7188f91951cf9d555f0de5391df755b3353b89c068f0a72",
+      "bytes": 85344
     },
     "public/es/cv/andres-atencio-cv-es-carta.pdf": {
-      "sha256": "1f46c826a14d7ec832ed23ad0ddeebc5fb56ba9174d35d574da2d8a2f370c112",
-      "bytes": 82524
+      "sha256": "389d53a70647046de144217533968d58463757c2160f4082ab4b1e925a016b65",
+      "bytes": 82571
     }
   }
 }

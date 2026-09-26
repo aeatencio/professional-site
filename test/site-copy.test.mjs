@@ -30,11 +30,11 @@ test('local projection is the authority for current professional copy', async ()
   );
   assert.deepEqual(
     projection.site.sections.experience.currentDevelopment.paragraphs,
-    ['Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and my own development environment.']
+    ['Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and personal projects.']
   );
   assert.deepEqual(
     projection.site.sections.experience.currentDevelopment.items.map(({ heading }) => heading),
-    ['Institutional tools', 'Teaching and learning', 'Development environment']
+    ['Institutional tools', 'Teaching and learning', 'Personal projects']
   );
   assert.equal(
     projection.site.sections.experience.teaching.heading,
@@ -101,13 +101,14 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.experience.currentDevelopment.items
       .find((item) => item.heading === heading)?.paragraphs.join(' ');
   assert.match(currentItem('Teaching and learning'), /\bAula\b/);
-  const developmentEnvironment = currentItem('Development environment');
-  for (const aspect of [/versioned/, /recoverable/, /Windows and WSL/, /verification/, /recovery/, /shared working conventions/]) {
-    assert.match(developmentEnvironment, aspect);
+  const personalProjects = currentItem('Personal projects');
+  assert.match(personalProjects, /^Projects for my own work, including a versioned, recoverable development environment/);
+  for (const aspect of [/Windows and WSL/, /verification/, /shared working conventions/]) {
+    assert.match(personalProjects, aspect);
   }
   assert.equal(
     projection.cv.currentDevelopment.text,
-    'My current development work spans institutional tools, software for teaching and learning, and tooling for my own development environment.'
+    'My current development work spans institutional tools, software for teaching and learning, and personal projects.'
   );
   assert.doesNotMatch(projection.cv.currentDevelopment.text, /Aula|bulletin|professional site|this site/i);
   const currentDevelopmentSerialized = JSON.stringify([
