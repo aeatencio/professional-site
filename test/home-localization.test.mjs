@@ -88,9 +88,30 @@ test('Spanish lists stay keyed to projected entries and preserve identity, dates
     assert.equal(esRoles[index].description, spanishRoles[role.organization].description);
   });
   const serialized = JSON.stringify(spanish.site);
-  for (const name of ['Surveda', 'Elixir/Phoenix', 'JavaScript/TypeScript', 'React', 'Node.js', 'Python', 'Ruby on Rails', 'PostgreSQL', 'Flutter/Dart', 'Android/Java', 'C#', 'ASP.NET', 'Angular', 'SQL Server', 'Visual Basic', 'Astro', 'TypeScript', 'UNAHUR', 'IES Juan B. Justo', 'Universidad del Salvador']) {
+  for (const name of ['Surveda', 'Elixir/Phoenix', 'JavaScript/TypeScript', 'React', 'Node.js', 'Python', 'Ruby on Rails', 'PostgreSQL', 'Flutter/Dart', 'Android/Java', 'C#', 'ASP.NET', 'Angular', 'SQL Server', 'Visual Basic', 'TypeScript', 'UNAHUR', 'IES Juan B. Justo', 'Universidad del Salvador', 'CFP N.º 7', 'Aula', 'Windows', 'WSL']) {
     assert.ok(serialized.includes(name), `Missing projected name ${name}`);
   }
+});
+
+test('Spanish Current development follows the projected categories', () => {
+  const english = homeCopy('en').site.sections.experience.currentDevelopment;
+  const spanish = homeCopy('es').site.sections.experience.currentDevelopment;
+  assert.equal(spanish.heading, 'Desarrollo actual');
+  assert.deepEqual(spanish.paragraphs, [
+    'Junto con la docencia, hoy mi trabajo de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y mi propio entorno de desarrollo.'
+  ]);
+  assert.deepEqual(english.items.map((item) => item.heading), ['Institutional tools', 'Teaching and learning', 'Development environment']);
+  assert.deepEqual(spanish.items.map((item) => item.heading), ['Herramientas institucionales', 'Enseñanza y aprendizaje', 'Entorno de desarrollo']);
+  const [institutional, teaching, environment] = spanish.items.map((item) => item.paragraphs.join(' '));
+  assert.match(institutional, /generador de boletines/);
+  assert.match(institutional, /CFP N\.º 7/);
+  assert.match(teaching, /\bAula\b/);
+  for (const aspect of [/versionada/, /recuperable/, /Windows y WSL/, /verificación/, /recuperación/, /convenciones de trabajo compartidas/]) {
+    assert.match(environment, aspect);
+  }
+  const serialized = JSON.stringify(spanish);
+  assert.doesNotMatch(serialized, /Este sitio|este sitio|sitio profesional|dev-setup|DevOps|Astro/);
+  assert.doesNotMatch(serialized, /pequeñ|diminut|modest/i);
 });
 
 test('language switch uses named native links to the equivalent page', async () => {
