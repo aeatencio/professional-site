@@ -98,16 +98,17 @@ test('Spanish Current development follows the projected categories', () => {
   const spanish = homeCopy('es').site.sections.experience.currentDevelopment;
   assert.equal(spanish.heading, 'Desarrollo actual');
   assert.deepEqual(spanish.paragraphs, [
-    'Junto con la docencia, hoy mi trabajo de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y mi propio entorno de desarrollo.'
+    'Junto con la docencia, hoy mi trabajo de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y proyectos personales.'
   ]);
-  assert.deepEqual(english.items.map((item) => item.heading), ['Institutional tools', 'Teaching and learning', 'Development environment']);
-  assert.deepEqual(spanish.items.map((item) => item.heading), ['Herramientas institucionales', 'Enseñanza y aprendizaje', 'Entorno de desarrollo']);
-  const [institutional, teaching, environment] = spanish.items.map((item) => item.paragraphs.join(' '));
+  assert.deepEqual(english.items.map((item) => item.heading), ['Institutional tools', 'Teaching and learning', 'Personal projects']);
+  assert.deepEqual(spanish.items.map((item) => item.heading), ['Herramientas institucionales', 'Enseñanza y aprendizaje', 'Proyectos personales']);
+  const [institutional, teaching, personal] = spanish.items.map((item) => item.paragraphs.join(' '));
   assert.match(institutional, /generador de boletines/);
   assert.match(institutional, /CFP N\.º 7/);
   assert.match(teaching, /\bAula\b/);
-  for (const aspect of [/versionada/, /recuperable/, /Windows y WSL/, /verificación/, /recuperación/, /convenciones de trabajo compartidas/]) {
-    assert.match(environment, aspect);
+  assert.match(personal, /^Proyectos para mi propio trabajo, entre ellos un entorno de desarrollo/);
+  for (const aspect of [/versionado/, /recuperable/, /Windows y WSL/, /verificación/, /convenciones de trabajo compartidas/]) {
+    assert.match(personal, aspect);
   }
   const serialized = JSON.stringify(spanish);
   assert.doesNotMatch(serialized, /Este sitio|este sitio|sitio profesional|dev-setup|DevOps|Astro/);

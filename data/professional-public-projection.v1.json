@@ -61,7 +61,7 @@
         "currentDevelopment": {
           "heading": "Current development",
           "paragraphs": [
-            "Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and my own development environment."
+            "Alongside teaching, my development work today spans institutional tools, software for teaching and learning, and personal projects."
           ],
           "items": [
             {
@@ -77,9 +77,9 @@
               ]
             },
             {
-              "heading": "Development environment",
+              "heading": "Personal projects",
               "paragraphs": [
-                "A versioned, recoverable setup for my own development work across Windows and WSL, with verification, recovery steps and shared working conventions."
+                "Projects for my own work, including a versioned, recoverable development environment across Windows and WSL, with verification and shared working conventions."
               ]
             }
           ]
@@ -195,7 +195,7 @@
     },
     "currentDevelopment": {
       "heading": "Current development",
-      "text": "My current development work spans institutional tools, software for teaching and learning, and tooling for my own development environment."
+      "text": "My current development work spans institutional tools, software for teaching and learning, and personal projects."
     },
     "teaching": {
       "heading": "Teaching",

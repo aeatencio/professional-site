@@ -60,16 +60,16 @@
  * page edge. `cv:pdf` and `layout:check` measure that distance.
  */
 .cv-document[data-cv-format="a4"]:lang(es) {
-  --cv-stack-gap: 8.4mm;
+  --cv-stack-gap: 7.7mm;
   --cv-role-gap: 8.2mm;
-  --cv-edu-gap: 5.6mm;
+  --cv-edu-gap: 5.1mm;
 }
 
 .cv-document[data-cv-format="letter"]:lang(es) {
   --cv-masthead-gap: 9.2mm;
-  --cv-stack-gap: 7mm;
+  --cv-stack-gap: 6.3mm;
   --cv-role-gap: 5.4mm;
-  --cv-edu-gap: 4.2mm;
+  --cv-edu-gap: 3.7mm;
 }
 
 .cv-page {

@@ -101,7 +101,7 @@ const spanishCv: Cv = {
   },
   currentDevelopment: {
     heading: 'Desarrollo actual',
-    text: 'Mi trabajo actual de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y herramientas para mi propio entorno de desarrollo.'
+    text: 'Mi trabajo actual de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y proyectos personales.'
   },
   teaching: {
     heading: 'Enseñanza',

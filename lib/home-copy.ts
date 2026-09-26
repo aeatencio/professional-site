@@ -54,9 +54,9 @@ export const spanishCurrentItems = {
     heading: 'Enseñanza y aprendizaje',
     paragraphs: ['Proyectos web para la enseñanza y el aprendizaje, entre ellos Aula, un sitio web en el que publico los materiales que uso en clase para que se puedan proyectar, consultar y retomar más adelante.']
   },
-  'Development environment': {
-    heading: 'Entorno de desarrollo',
-    paragraphs: ['Una configuración versionada y recuperable para mi propio trabajo de desarrollo en Windows y WSL, con verificación, pasos de recuperación y convenciones de trabajo compartidas.']
+  'Personal projects': {
+    heading: 'Proyectos personales',
+    paragraphs: ['Proyectos para mi propio trabajo, entre ellos un entorno de desarrollo versionado y recuperable en Windows y WSL, con verificación y convenciones de trabajo compartidas.']
   }
 } satisfies Record<string, TextItem>;
 
@@ -110,7 +110,7 @@ const spanishSite: HomeCopy['site'] = {
       },
       currentDevelopment: {
         heading: 'Desarrollo actual',
-        paragraphs: ['Junto con la docencia, hoy mi trabajo de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y mi propio entorno de desarrollo.'],
+        paragraphs: ['Junto con la docencia, hoy mi trabajo de desarrollo abarca herramientas institucionales, software para la enseñanza y el aprendizaje, y proyectos personales.'],
         items: sections.experience.currentDevelopment.items.map((item) =>
           translationFor<TextItem>(spanishCurrentItems, item.heading))
       },
