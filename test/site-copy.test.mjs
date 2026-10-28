@@ -67,7 +67,7 @@ test('local projection is the authority for current professional copy', async ()
     projection.site.sections.workingTogether.paragraphs,
     [
       'I’m comfortable taking ownership of a well-defined piece of work in an existing product, from investigation and technical approach through implementation, testing and delivery. That can include bugs, features, integrations and data changes.',
-      'I’m available for part-time remote contract or freelance work, with collaboration that can be mostly asynchronous.',
+      'I’m available for remote contract or freelance work, from short, focused projects to sustained engagements, with the time commitment agreed case by case. I work best when development time can be arranged flexibly across the week and collaboration is mostly asynchronous; scheduled meetings and some overlap with the team are fine.',
       'A good place to start is a free 15–20-minute call to see whether there’s a fit. For focused questions that can be addressed during a live conversation, I also offer paid consultation sessions by appointment. Research, codebase review, problem reproduction, implementation and written deliverables are scoped separately.'
     ]
   );

@@ -92,7 +92,7 @@ const spanishSite: HomeCopy['site'] = {
     home: {
       paragraphs: [
         'Soy desarrollador de software y profesor de Informática en Buenos Aires. Durante unos quince años trabajé profesionalmente en software, sobre todo en productos web y móviles ya existentes. A fines de 2023, la enseñanza de Informática pasó a ser mi actividad profesional principal.',
-        'Seguí desarrollando software en proyectos educativos, institucionales y personales. Hoy estoy construyendo mi propia actividad como desarrollador independiente, en paralelo con la docencia, y el desarrollo volvió a ocupar un lugar central en mi trabajo. Busco trabajo remoto a tiempo parcial, por contrato o como freelance, con una colaboración que pueda ser mayormente asincrónica.'
+        'Seguí desarrollando software en proyectos educativos, institucionales y personales. Hoy estoy construyendo mi propia actividad como desarrollador independiente, en paralelo con la docencia, y el desarrollo volvió a ocupar un lugar central en mi trabajo. Busco trabajo remoto por contrato o como freelance, con una colaboración que pueda ser mayormente asincrónica.'
       ]
     },
     experience: {
@@ -137,7 +137,7 @@ const spanishSite: HomeCopy['site'] = {
       heading: 'Trabajemos juntos',
       paragraphs: [
         'Puedo hacerme cargo de un trabajo bien delimitado dentro de un producto existente, desde la investigación y la definición técnica hasta la implementación, las pruebas y la entrega. Puede tratarse de corregir errores, incorporar funcionalidades, integrar sistemas o realizar cambios en los datos.',
-        'Tengo disponibilidad para trabajar de forma remota y a tiempo parcial, por contrato o como freelance, con una colaboración que pueda ser mayormente asincrónica.',
+        'Tengo disponibilidad para trabajar de forma remota, por contrato o como freelance, desde proyectos breves y acotados hasta trabajos sostenidos en el tiempo, con la dedicación acordada en cada caso. Trabajo mejor cuando puedo organizar con flexibilidad mi tiempo de desarrollo a lo largo de la semana y la colaboración es mayormente asincrónica; puedo participar en reuniones agendadas y coincidir parte del horario con el equipo.',
         'Podemos empezar con una llamada de 15 a 20 minutos, sin costo, para conversar y ver si podemos trabajar juntos. Para consultas puntuales que se puedan resolver en una conversación, también ofrezco sesiones pagas con cita previa. La investigación, la revisión de código, la reproducción de problemas, la implementación y los entregables escritos se acuerdan por separado, con un alcance definido.'
       ]
     },
