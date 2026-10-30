@@ -78,7 +78,7 @@ duplicated in Astro source.
 The projection is organized around the real artifacts:
 
 - `shared`: English language, public name, professional identity, broad
-  location, public contact email and profile links;
+  location, public contact email and phone, and profile links;
 - `site`: title, description and content for the five SITE-V1 sections,
   including explicit software roles, current-development examples, teaching
   copy and compact education items;

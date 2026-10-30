@@ -18,7 +18,7 @@ The closed document has six top-level fields:
 
 - `contract`, `version`, `publicId`;
 - `shared`: English language, name, professional identity, broad location,
-  public contact email and profile links;
+  public contact email and phone, and profile links;
 - `site`: title, description and Home, Experience, Background, Working
   together and Contact content;
 - `cv`: independent profile, software experience, current development,
@@ -29,7 +29,9 @@ Home uses the shared public name as the document heading and keeps the shared
 professional identity as the visible opening title. Experience contains
 explicit software roles, current-development examples and teaching copy.
 Background contains compact education items. Working together and Contact are
-text sections; Contact also renders shared location, email and profile links. The
+text sections; Contact also renders shared location, email, phone and profile
+links. The phone is projected in its visible international form; the site
+derives its `tel:` link by removing the separators. The
 projection contains no public fact ontology, `factId` relations, approval
 actors, permissions, editorial states, audit timestamps or language-selection
 workflow.

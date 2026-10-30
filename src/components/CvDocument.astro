@@ -1,6 +1,7 @@
 ---
 import CvActions from './CvActions.astro';
 import type { CvCopy } from '../../lib/cv-copy';
+import { phoneHref } from '../../lib/site-identity.mjs';
 
 interface Props {
   copy: CvCopy;
@@ -19,11 +20,12 @@ function visibleProfileUrl(url: string) {
     <div class="cv-masthead">
       <h1>{shared.name}</h1>
       <p class="cv-identity">{cv.title}</p>
+      <p class="cv-location">{shared.location}</p>
       <CvActions copy={copy} />
     </div>
     <address class="cv-contact">
-      <span>{shared.location}</span>
       <a href={`mailto:${shared.email}`}>{shared.email}</a>
+      <a href={phoneHref(shared.phone)}>{shared.phone}</a>
       {siteUrl ? (
         <a href={siteUrl} rel="me" aria-label={ui.website}>{visibleProfileUrl(siteUrl)}</a>
       ) : null}

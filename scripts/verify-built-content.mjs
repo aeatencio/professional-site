@@ -3,7 +3,7 @@ import { homeCopy } from '../lib/home-copy.ts';
 import { cvCopy } from '../lib/cv-copy.ts';
 import { readFile } from 'node:fs/promises';
 import { CV_PDF, PUBLIC_SITE_ORIGIN, verifyCvPdfs } from '../lib/cv-pdf.mjs';
-import { LOCALIZED_PATHS } from '../lib/site-identity.mjs';
+import { LOCALIZED_PATHS, phoneHref } from '../lib/site-identity.mjs';
 import { SOCIAL_CARDS, socialCardAlt, verifySocialCard } from '../lib/social-card.mjs';
 import { printableCvFingerprint, stylesheetHrefsFromHtml } from '../lib/printable-cv.mjs';
 
@@ -39,6 +39,7 @@ const expectedSite = [
   projection.shared.professionalIdentity,
   projection.shared.location,
   projection.shared.email,
+  projection.shared.phone,
   ...collectStrings(projection.shared.links),
   ...collectStrings(projection.site)
 ];
@@ -52,6 +53,7 @@ const expectedCv = [
   projection.cv.title,
   projection.shared.location,
   projection.shared.email,
+  projection.shared.phone,
   ...collectStrings(projection.shared.links),
   ...collectStrings(projection.cv)
 ];
@@ -64,6 +66,7 @@ for (const [language, html] of [['en', siteHtml], ['es', spanishHtml]]) {
   }
   assert.match(html, new RegExp(`<html lang="${language}"`));
   assert.ok(html.includes(`rel="canonical" href="${url}"`));
+  assert.ok(html.includes(`<a href="${phoneHref(projection.shared.phone)}">${projection.shared.phone}</a>`), `${language} Home phone is not linked`);
   for (const [hreflang, path] of [['en', '/'], ['es', '/es/'], ['x-default', '/']]) {
     assert.equal(html.split(`rel="alternate" hreflang="${hreflang}" href="${PUBLIC_SITE_ORIGIN}${path}"`).length - 1, 1);
   }
@@ -127,6 +130,7 @@ for (const [language, html] of [['en', siteHtml], ['es', spanishHtml]]) {
   assert.equal(person.name, projection.shared.name);
   assert.equal(person.jobTitle, copy.shared.professionalIdentity);
   assert.deepEqual(person.sameAs, projection.shared.links.map((link) => link.url));
+  assert.equal(Object.hasOwn(person, 'telephone'), false, 'Person JSON-LD keeps contact points out of the identity graph');
 }
 
 for (const paragraph of collectStrings(projection.site.sections)) {
@@ -169,6 +173,7 @@ for (const [language, route, html] of [
     copy.shared.name,
     copy.shared.location,
     copy.shared.email,
+    copy.shared.phone,
     ...collectStrings(copy.shared.links),
     ...collectStrings(copy.cv),
     copy.ui.pdfA4,
@@ -177,6 +182,7 @@ for (const [language, route, html] of [
     assert.ok(html.includes(text), `${label} is missing localized content: ${text}`);
   }
   assert.ok(html.includes(`<a class="skip-link" href="#cv-main">${copy.ui.skip}</a>`), `${label} skip link`);
+  assert.ok(html.includes(`<a href="${phoneHref(copy.shared.phone)}">${copy.shared.phone}</a>`), `${label} phone is not linked`);
   assert.ok(
     html.includes(`<p class="identity"><a href="${LOCALIZED_PATHS.home[language]}">`),
     `${label} identity must return to the Home in its language`

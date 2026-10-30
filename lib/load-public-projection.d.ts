@@ -70,6 +70,7 @@ export interface PublicProjection {
     professionalIdentity: string;
     location: string;
     email: string;
+    phone: string;
     links: Array<{
       label: string;
       url: string;

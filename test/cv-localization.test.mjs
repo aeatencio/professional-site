@@ -139,3 +139,12 @@ test('Spanish CV follows the Spanish Home terminology and offers its own PDFs', 
   assert.equal(spanish.ui.pdfLetter, 'PDF Carta');
   assert.doesNotMatch(JSON.stringify(spanish.ui), /inglés/i);
 });
+
+test('CV and Home availability no longer present part-time as a current restriction', () => {
+  for (const language of ['en', 'es']) {
+    const serialized = JSON.stringify([cvCopy(language), homeCopy(language)]);
+    assert.doesNotMatch(serialized, /part-time|part time|tiempo parcial|medio tiempo/i, language);
+  }
+  assert.match(cvCopy('en').cv.profile.text, /am available for remote contract or freelance work\.$/);
+  assert.match(cvCopy('es').cv.profile.text, /tengo disponibilidad para trabajo remoto por contrato o freelance\.$/);
+});

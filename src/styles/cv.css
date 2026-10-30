@@ -169,6 +169,14 @@
   line-height: 1.15;
 }
 
+/* Location sits under the title so the contact column keeps one line per link. */
+.cv-location {
+  color: var(--cv-ink);
+  font-family: var(--cv-font-sans);
+  font-size: 8.6pt;
+  line-height: 11.2pt;
+}
+
 .cv-contact {
   display: flex;
   flex-direction: column;
@@ -481,6 +489,12 @@
     font-size: 1.125rem;
     font-weight: 650;
     line-height: 1.4;
+  }
+
+  .cv-location {
+    margin-top: 0.15rem !important;
+    font-size: 0.9375rem;
+    line-height: 1.5;
   }
 
   .cv-actions {

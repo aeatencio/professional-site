@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/home.css';
 import { homeCopy, type HomeLanguage } from '../../lib/home-copy';
-import { homeIdentityGraph, LOCALIZED_PATHS } from '../../lib/site-identity.mjs';
+import { homeIdentityGraph, LOCALIZED_PATHS, phoneHref } from '../../lib/site-identity.mjs';
 import { CV_PDF } from '../../lib/cv-pdf.mjs';
 import { socialCardAlt } from '../../lib/social-card.mjs';
 
@@ -170,6 +170,7 @@ const jsonLd = homeIdentityGraph({
         <p class="contact-location">{shared.location}</p>
         <ul class="contact-links">
           <li><a href={`mailto:${shared.email}`}>{shared.email}</a></li>
+          <li><a href={phoneHref(shared.phone)}>{shared.phone}</a></li>
           {shared.links.map((link) => (
             <li><a href={link.url} rel="me">{link.label}</a></li>
           ))}

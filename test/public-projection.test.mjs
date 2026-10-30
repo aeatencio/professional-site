@@ -25,6 +25,7 @@ const valid = () => ({
     professionalIdentity: 'Software Developer · IT Teacher',
     location: 'Synthetic City',
     email: 'synthetic@example.com',
+    phone: '+1 555 0100',
     links: [{ label: 'Profile', url: 'https://example.com/profile' }]
   },
   site: {
@@ -178,6 +179,7 @@ test('productive entry validates and loads the repository-local content', async 
   );
   assert.equal(projection.shared.location, 'Buenos Aires, Argentina');
   assert.equal(projection.shared.email, 'aeatencio@gmail.com');
+  assert.equal(projection.shared.phone, '+54 9 11 6273-0701');
   assert.deepEqual(
     projection.shared.links.map(({ label }) => label),
     ['GitHub', 'LinkedIn']

@@ -12,6 +12,7 @@ test('local projection is the authority for current professional copy', async ()
     'Software Developer · IT Teacher'
   );
   assert.equal(projection.shared.email, 'aeatencio@gmail.com');
+  assert.equal(projection.shared.phone, '+54 9 11 6273-0701');
   assert.equal(projection.site.sections.experience.heading, 'Experience');
   assert.equal(projection.site.sections.background.heading, 'Background');
   assert.equal(projection.site.sections.cv.heading, 'Curriculum vitae');
@@ -238,6 +239,8 @@ test('Astro owns structure while site and CV copy stay in the projection', async
   assert.equal(page.includes('window.print'), false);
   assert.equal(page.includes('Buenos Aires, Argentina'), false);
   assert.equal(page.includes('aeatencio@gmail.com'), false);
+  assert.equal(page.includes('6273-0701'), false);
+  assert.equal(cvDocument.includes('6273-0701'), false);
   assert.equal(page.includes('loadLocalPublicProjection'), false);
   assert.equal(page.includes('projection.cv'), false);
   assert.equal(cvPage.includes('Manas Technology Solutions'), false);

@@ -8,6 +8,7 @@
     "professionalIdentity": "Software Developer · IT Teacher",
     "location": "Buenos Aires, Argentina",
     "email": "aeatencio@gmail.com",
+    "phone": "+54 9 11 6273-0701",
     "links": [
       {
         "label": "GitHub",
@@ -143,7 +144,7 @@
     "title": "Software Developer",
     "profile": {
       "heading": "Profile",
-      "text": "I’m a software developer with around fifteen years of professional experience across existing web, desktop and mobile systems, with a strong background in back-end development, databases, APIs and integrations and broad full-stack experience. My work has also included automated testing, data changes and following changes into production when needed. Since late 2023, teaching Information Technology has been my main professional work, while I’ve kept developing software. I’m now building an independent software practice alongside teaching and am available for part-time remote contract or freelance work."
+      "text": "I’m a software developer with around fifteen years of professional experience across existing web, desktop and mobile systems, with a strong background in back-end development, databases, APIs and integrations and broad full-stack experience. My work has also included automated testing, data changes and following changes into production when needed. Since late 2023, teaching Information Technology has been my main professional work, while I’ve kept developing software. I’m now building an independent software practice alongside teaching and am available for remote contract or freelance work."
     },
     "softwareExperience": {
       "heading": "Software experience",

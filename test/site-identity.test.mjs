@@ -9,7 +9,8 @@ import {
   HOME_PATH,
   absoluteUrl,
   homeIdentityGraph,
-  isIndexableSitemapUrl
+  isIndexableSitemapUrl,
+  phoneHref
 } from '../lib/site-identity.mjs';
 
 function nodeByType(graph, type) {
@@ -68,6 +69,13 @@ test('Home identity graph models ProfilePage, Person and sameAs from the project
   assert.equal(profilePage.isPartOf['@id'], website['@id']);
   assert.equal(serialized.includes('Software developer Buenos Aires'), false);
   assert.equal(Object.hasOwn(person, 'email'), false);
+  assert.equal(Object.hasOwn(person, 'telephone'), false);
+});
+
+test('phone links dial the projected number without its visual separators', async () => {
+  const projection = await loadLocalPublicProjection();
+  assert.equal(phoneHref(projection.shared.phone), 'tel:+5491162730701');
+  assert.equal(phoneHref('+1 555-0100'), 'tel:+15550100');
 });
 
 test('layouts declare canonical metadata from the site origin', async () => {

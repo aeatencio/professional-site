@@ -74,7 +74,7 @@ test('Spanish copy covers every section with natural wording and its own CV', ()
 test('Spanish lists stay keyed to projected entries and preserve identity, dates and technology names', () => {
   const english = homeCopy('en');
   const spanish = homeCopy('es');
-  for (const key of ['name', 'location', 'email', 'links']) {
+  for (const key of ['name', 'location', 'email', 'phone', 'links']) {
     assert.deepEqual(spanish.shared[key], english.shared[key]);
   }
   const enRoles = english.site.sections.experience.softwareDevelopment.roles;

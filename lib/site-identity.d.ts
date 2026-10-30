@@ -9,6 +9,7 @@ export const LOCALIZED_PATHS: {
 export function absoluteUrl(pathname: string, site: string | URL): string;
 export function pagePathname(pageUrl: string): string;
 export function isIndexableSitemapUrl(pageUrl: string): boolean;
+export function phoneHref(phone: string): string;
 
 export function homeIdentityGraph(options: {
   shared: {
