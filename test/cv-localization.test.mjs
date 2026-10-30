@@ -50,6 +50,8 @@ test('Spanish CV translates every visible string without changing facts', () => 
   assert.equal(spanish.path, '/es/cv/');
   assert.deepEqual(spanish.shared, homeCopy('es').shared);
   assert.equal(spanish.cv.title, 'Desarrollador de software');
+  assert.equal(english.cv.workAuthorization, 'EU citizen (Italy)');
+  assert.equal(spanish.cv.workAuthorization, 'Ciudadano de la UE (Italia)');
 
   // Names, periods and technologies are reused; `Bachiller` and a year read the
   // same in both languages.

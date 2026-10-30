@@ -160,6 +160,7 @@
       "additionalProperties": false,
       "required": [
         "title",
+        "workAuthorization",
         "profile",
         "softwareExperience",
         "currentDevelopment",
@@ -170,6 +171,7 @@
       ],
       "properties": {
         "title": { "type": "string", "minLength": 1 },
+        "workAuthorization": { "type": "string", "minLength": 1 },
         "profile": { "$ref": "#/$defs/cvTextSection" },
         "softwareExperience": { "$ref": "#/$defs/cvSoftwareExperience" },
         "currentDevelopment": { "$ref": "#/$defs/cvTextSection" },

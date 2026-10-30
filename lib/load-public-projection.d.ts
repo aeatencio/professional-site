@@ -17,6 +17,7 @@ export interface PublicCvTextSection {
 
 export interface PublicCv {
   title: string;
+  workAuthorization: string;
   profile: PublicCvTextSection;
   softwareExperience: {
     heading: string;

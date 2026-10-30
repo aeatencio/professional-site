@@ -169,12 +169,17 @@
   line-height: 1.15;
 }
 
-/* Location sits under the title so the contact column keeps one line per link. */
+/* Location sits under the title so the contact column keeps one line per link.
+   The CV-only work authorization shares that line instead of adding height. */
 .cv-location {
   color: var(--cv-ink);
   font-family: var(--cv-font-sans);
   font-size: 8.6pt;
   line-height: 11.2pt;
+}
+
+.cv-work-authorization {
+  white-space: nowrap;
 }
 
 .cv-contact {
@@ -676,6 +681,14 @@
 
   .cv-identity {
     font-size: 1.0625rem;
+  }
+
+  .cv-work-authorization {
+    display: block;
+  }
+
+  .cv-separator {
+    display: none;
   }
 
   .cv-actions {

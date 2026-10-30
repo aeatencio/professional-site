@@ -84,6 +84,7 @@ const valid = () => ({
 
 const validCv = () => ({
   title: 'Synthetic software CV',
+  workAuthorization: 'Synthetic work authorization',
   profile: {
     heading: 'Profile',
     text: 'Synthetic profile summary.'
@@ -185,6 +186,8 @@ test('productive entry validates and loads the repository-local content', async 
     ['GitHub', 'LinkedIn']
   );
   assert.equal(projection.cv.title, 'Software Developer');
+  assert.equal(projection.cv.workAuthorization, 'EU citizen (Italy)');
+  assert.doesNotMatch(JSON.stringify(projection), /United States|\bUS\b|sponsor/);
   assert.deepEqual(
     projection.cv.softwareExperience.roles.map(({ organization }) => organization),
     ['Manas Technology Solutions', 'Mobile Streams', 'RVM Soluciones']

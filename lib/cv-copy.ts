@@ -88,6 +88,7 @@ const { cv } = projection;
 
 const spanishCv: Cv = {
   title: 'Desarrollador de software',
+  workAuthorization: 'Ciudadano de la UE (Italia)',
   profile: {
     heading: 'Perfil',
     text: 'Soy desarrollador de software, con unos quince años de experiencia profesional en sistemas web, de escritorio y móviles existentes, una base sólida en desarrollo back-end, bases de datos, APIs e integraciones, y amplia experiencia full-stack. Mi trabajo también incluyó pruebas automatizadas, cambios en datos y el seguimiento de cambios hasta producción cuando hacía falta. Desde fines de 2023, la enseñanza de Informática es mi actividad profesional principal, sin dejar de desarrollar software. Hoy construyo una actividad independiente como desarrollador junto con la docencia y tengo disponibilidad para trabajo remoto por contrato o freelance.'

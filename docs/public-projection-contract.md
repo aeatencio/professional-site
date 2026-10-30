@@ -21,9 +21,9 @@ The closed document has six top-level fields:
   public contact email and phone, and profile links;
 - `site`: title, description and Home, Experience, Background, Working
   together and Contact content;
-- `cv`: independent profile, software experience, current development,
-  teaching, education, technical background and languages for the Software
-  Development CV.
+- `cv`: independent work-authorization line, profile, software experience,
+  current development, teaching, education, technical background and languages
+  for the Software Development CV.
 
 Home uses the shared public name as the document heading and keeps the shared
 professional identity as the visible opening title. Experience contains
@@ -36,7 +36,9 @@ projection contains no public fact ontology, `factId` relations, approval
 actors, permissions, editorial states, audit timestamps or language-selection
 workflow.
 
-The CV object is required and must include all eight fields. Site and CV
+The CV object is required and must include all nine fields. The
+work-authorization line appears only in the CV header, under the shared
+location; Home, Contact and structured data do not render it. Site and CV
 remain independent in selection and wording; that independence does not make
 the CV optional.
 

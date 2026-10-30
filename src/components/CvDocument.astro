@@ -20,7 +20,9 @@ function visibleProfileUrl(url: string) {
     <div class="cv-masthead">
       <h1>{shared.name}</h1>
       <p class="cv-identity">{cv.title}</p>
-      <p class="cv-location">{shared.location}</p>
+      <p class="cv-location">
+        {shared.location} <span class="cv-work-authorization"><span class="cv-separator" aria-hidden="true">· </span>{cv.workAuthorization}</span>
+      </p>
       <CvActions copy={copy} />
     </div>
     <address class="cv-contact">

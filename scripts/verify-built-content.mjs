@@ -58,9 +58,15 @@ const expectedCv = [
   ...collectStrings(projection.cv)
 ];
 
+// Work authorization is CV header copy only: Home, Contact and JSON-LD omit it.
+const workAuthorizations = [cvCopy('en').cv.workAuthorization, cvCopy('es').cv.workAuthorization];
+
 for (const [language, html] of [['en', siteHtml], ['es', spanishHtml]]) {
   const copy = homeCopy(language);
   const url = `${PUBLIC_SITE_ORIGIN}${copy.path}`;
+  for (const text of workAuthorizations) {
+    assert.ok(!html.includes(text), `${language} Home must not render CV work authorization: ${text}`);
+  }
   for (const text of [...collectStrings(copy.site), ...collectStrings(copy.shared), ...Object.values(copy.ui)]) {
     assert.ok(html.includes(text), `${language} Home is missing localized content: ${text}`);
   }
