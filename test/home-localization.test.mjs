@@ -42,7 +42,7 @@ test('Spanish copy covers every section with natural wording and its own CV', ()
     'Colegio Nacional de Buenos Aires', 'Formación en sistemas', 'Una formación amplia'
   ]);
   assert.match(spanish.site.sections.background.items[2].paragraphs[0], /12 de las 15 materias del plan aprobadas/);
-  assert.match(spanish.site.sections.contact.paragraphs[0], /querés.*escribime/);
+  assert.match(spanish.site.sections.contact.paragraphs[0], /querés.*escribime o llamame\.$/);
   // The Spanish web CV and PDFs are Spanish documents: nothing points back to English.
   assert.equal(spanish.ui.readCv, 'Ver el CV');
   assert.equal(spanish.ui.footerCv, 'CV');

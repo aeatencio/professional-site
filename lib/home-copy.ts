@@ -143,7 +143,7 @@ const spanishSite: HomeCopy['site'] = {
     },
     contact: {
       heading: 'Contacto',
-      paragraphs: ['Si querés conversar sobre una oportunidad de trabajo en software, un proyecto o una consulta, escribime.']
+      paragraphs: ['Si querés conversar sobre una oportunidad de trabajo en software, un proyecto o una consulta, escribime o llamame.']
     }
   }
 };

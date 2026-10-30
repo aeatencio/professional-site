@@ -84,7 +84,7 @@ test('local projection is the authority for current professional copy', async ()
   assert.deepEqual(
     projection.site.sections.contact.paragraphs,
     [
-      'If you’d like to discuss a software role or project, or arrange a consultation, get in touch.'
+      'If you’d like to discuss a software role or project, or arrange a consultation, email me or give me a call.'
     ]
   );
   assert.equal(projection.cv.title, 'Software Developer');
